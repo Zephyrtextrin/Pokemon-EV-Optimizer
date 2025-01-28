@@ -70,8 +70,8 @@ public class Miscellaneous {
     public static double[] getSpecifications(){
         //find values for base stat calculation
         final int IV = InputHelper.getRangedInt("Enter Speed IV",0,31);
-        final int EV = InputHelper.getRangedInt("Enter Speed EV",0,252)/4; //divided by 4 to make the stat calc more streamlined (since evs r divided by 4 in calcs)
-        final String nature = InputHelper.getStringInArray(new String[]{"positive","neutral","negative"},"Enter Nature");
+        final int EV = InputHelper.getRangedInt("Enter Speed EV",0,252);
+        final String nature = InputHelper.getStringInArray(new String[]{"positive","neutral","negative"},"Enter Nature"); //todo: make it also let u type in natures like adamant
         final double natureMultiplier = Miscellaneous.getNature(nature);
         final int level = InputHelper.getRangedInt("Enter Level",1,100);
 
