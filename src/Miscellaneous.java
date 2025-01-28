@@ -97,7 +97,7 @@ public class Miscellaneous {
         }
 
          //finds what stat boost you need to be at to be faster than a given stat
-        public static int findLeastEVs (int IV, int baseStat, double nature, int level, int targetStat, int targetBaseStat,int boostCount){
+        public static int findLeastEVs (int IV, int baseStat, double nature, int level, int targetStat,int boostCount){
             for(int EV = 0; EV<=252; EV++){
                 final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level)*getBoostModifier(boostCount));
                 if(stat>targetStat){return EV;}
