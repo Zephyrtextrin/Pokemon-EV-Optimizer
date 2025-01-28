@@ -1,7 +1,7 @@
-public class Miscellaneous {
-    protected static void printStats(int[] stats, String name){
-        System.out.println("\n[POKEMON LOADED]: "+name.toUpperCase());
-        System.out.printf("[HP]: %d\n[ATTACK]: %d\n[DEFENSE]: %d\n[SP. ATTACK]: %d\n[SP. DEFENSE]: %d\n[SPEED]: %d\n\n",stats[0],stats[1],stats[2],stats[3],stats[4],stats[5]);
+public class Miscellaneous extends Pokedex{
+    protected static void printStats(Pokemon poke){
+        System.out.println("\n[POKEMON LOADED]: "+poke.name.toUpperCase());
+        System.out.printf("[HP]: %d\n[ATTACK]: %d\n[DEFENSE]: %d\n[SP. ATTACK]: %d\n[SP. DEFENSE]: %d\n[SPEED]: %d\n\n",poke.HP,poke.attack,poke.defense,poke.spatk,poke.spdef,poke.speed);
     }
 
     protected static String convertToCamelCase(String input){
@@ -39,32 +39,28 @@ public class Miscellaneous {
             case "The Dust Bowl"->"Ting-Lu";
             case "Ttar"->"Tyranitar";
             case "Chandy"->"Chandelure";
-            case "Exca"->"Excadrill";
-            case "Iron Val"->"Iron Valiant";
+            case "Exbo"->"Typhlosion";
             default -> input;
         };
     }
 
     //get selected mon
-    public static int[] selectPokemon(){
+    public static Pokemon selectPokemon(){
         boolean keepGoing = true;
-        int[] baseStats;
+        Pokemon pokemon;
         do {
             String name = Miscellaneous.getAlias(Miscellaneous.convertToCamelCase(InputHelper.getString("Enter a Pokemon name."))); //must convert to camel case bc lists r case sensitive also this is a really long line of code but alles ok cause its tryna catch like 15 different errors
-            baseStats = Pokedex.getPokemonStats(name);
-
-            if (baseStats[0] != -1) { //only continues if pokemon is valid
-                Miscellaneous.printStats(baseStats, name); //lists stats
+            pokemon = Pokedex.getPokemonStats(getAlias(convertToCamelCase(name)));
+            if(pokemon!=null){ //only continues if pokemon is valid
+                Miscellaneous.printStats(pokemon); //lists stats
                 keepGoing = !InputHelper.getYN("Is this the Pokemon you wanted?");
-            } else {
-                System.out.println("[INVALID INPUT!]\nThe Pokedex does not recognize that Pokemon.\n[INPUT POKEMON]: " + name + "\nThis Pokemon either does not exist or cases the code to throw an error. You'll have to type a new Pokemon.\nif you believe this to be a mistake, lmk - Alexander");
-            } //the biggest print of all time
+            }else{System.out.println("[INVALID INPUT!]\nThe Pokedex does not recognize that Pokemon.\n[INPUT POKEMON]: " + name + "\nThis Pokemon either does not exist or cases the code to throw an error. You'll have to type a new Pokemon.\nif you believe this to be a mistake, lmk - Alexander");} //the biggest print of all time
 
             System.out.println();//makes new line break for formatting. u cant append \n after the keepGoing input because it would mess up the user input and make the formatting even worse
 
         }while(keepGoing);
 
-        return baseStats;
+        return pokemon;
     }
 
     public static double[] getSpecifications(){
@@ -88,8 +84,8 @@ public class Miscellaneous {
         }
 
         //finds what stat boost you need to be at to be faster than a given stat
-        public static int findLeastStatBoosted(int IV, int EV, double nature, int level, int targetStat, int targetBaseStat,int boostCount){
-            for(int currentStat = 0; currentStat <targetBaseStat; currentStat++){
+        public static int findLeastStatBoosted(int IV, int EV, double nature, int level, int targetStat, int boostCount){
+            for(int currentStat = 0; currentStat<255; currentStat++){
                 final int stat = (int)(statCalculation(currentStat,IV,EV,nature,level)*getBoostModifier(boostCount));
                 if(stat>targetStat){return currentStat;}
             }

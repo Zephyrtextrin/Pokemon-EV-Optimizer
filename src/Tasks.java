@@ -4,37 +4,33 @@
 2 = nature
 3 = level
 */
-public class Tasks{
+public class Tasks extends Pokedex{
     //finds how fast you need to be base-stats wise to outspeed something, includes boosts and evs
     public static void findBaseStatsToOutspeed(){
-        Pokedex.initialize(); //loads the pokedex
 
-        int baseSpeed = Miscellaneous.selectPokemon()[5];
+        final Pokemon target = Miscellaneous.selectPokemon();
+        final int baseSpeed = target.speed;
 
         double[] specifications = Miscellaneous.getSpecifications();
 
         final int stat = Miscellaneous.Calculators.statCalculation(baseSpeed, (int)specifications[0], (int)specifications[1],specifications[2], (int)specifications[3]);
         System.out.println("\n[STAT]: "+stat);
 
-        TaskOutput.baseStatFinder((int)specifications[3],stat,baseSpeed);
+        TaskOutput.baseStatFinder((int)specifications[3],stat,(int)specifications[1],baseSpeed, target.name.toUpperCase());
     }
 
     public static void findEVsToOutspeed() {
         System.out.println("This input is for YOUR Pokemon.");
-        int yourBaseSpeed = Miscellaneous.selectPokemon()[5];
+        final Pokemon you = Miscellaneous.selectPokemon();
+        final int yourBaseSpeed = you.speed;
 
         System.out.println("This is for the OPPONENT's Pokemon.");
-        int targetBaseSpeed = Miscellaneous.selectPokemon()[5];
+        final Pokemon target = Miscellaneous.selectPokemon();
+        final int baseSpeed = target.speed;
+        System.out.println("This is for the OPPONENT's Pokemon."); //print again cause it can be kinda easy to forget
         double[] specifications = Miscellaneous.getSpecifications();
-        final int targetStat = Miscellaneous.Calculators.statCalculation(targetBaseSpeed, (int)specifications[0], (int)specifications[1], specifications[2], (int)specifications[3]);
+        final int targetStat = Miscellaneous.Calculators.statCalculation(baseSpeed, (int)specifications[0], (int)specifications[1], specifications[2], (int)specifications[3]);
 
-        //PLACEHOLDER ADD TEXT TO IT LATER neutral nature no boosts
-        System.out.println(Miscellaneous.Calculators.findLeastEVs(31, yourBaseSpeed, 1.0, (int)specifications[3], targetStat, 0));
-        //PLACEHOLDER ADD TEXT TO IT LATER pos nature no boosts
-        System.out.println(Miscellaneous.Calculators.findLeastEVs(31, yourBaseSpeed, 1.1, (int)specifications[3], targetStat, 0));
-        //PLACEHOLDER ADD TEXT TO IT LATER neutral nature 1 boost
-        System.out.println(Miscellaneous.Calculators.findLeastEVs(31, yourBaseSpeed, 1.0, (int)specifications[3], targetStat, 1));
-        //PLACEHOLDER ADD TEXT TO IT LATER pos nature 1 boost
-        System.out.println(Miscellaneous.Calculators.findLeastEVs(31, yourBaseSpeed, 1.1, (int)specifications[3], targetStat, 1));
+        TaskOutput.EVFinder(yourBaseSpeed,(int)specifications[3],targetStat, (int)specifications[1],specifications[2], target.name.toUpperCase(), you.name.toUpperCase());
     }
 }
