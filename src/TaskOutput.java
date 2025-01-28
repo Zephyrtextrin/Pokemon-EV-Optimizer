@@ -1,3 +1,5 @@
+//since the output for these tasks contain lots of prints this is in a different class
+
 public class TaskOutput{
     //outputs all possible results to outspeed at certain points (reduces clutter in main method)
     public static void baseStatFinder(int level, int targetStat, int targetBaseStat){
