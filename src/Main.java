@@ -9,6 +9,7 @@ public class Main {
         int selection = InputHelper.getRangedInt("Enter a number.",1,options.length);
         switch(selection){
             case(1)->Tasks.findBaseStatsToOutspeed();
+            case(2)->Tasks.findEVsToOutspeed();
         }
     }
 }
