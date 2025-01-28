@@ -15,7 +15,7 @@ public class Tasks{
         final int stat = Miscellaneous.Calculators.statCalculation(baseSpeed,IV,EV,natureMultiplier,level);
         System.out.println("\n[STAT]: "+stat);
 
-        Miscellaneous.outputAllPossibleResults(level,stat,baseSpeed);
+        TaskOutput.baseStatFinder(level,stat,baseSpeed);
     }
     
 }
