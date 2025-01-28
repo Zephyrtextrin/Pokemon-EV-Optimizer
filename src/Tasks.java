@@ -1,4 +1,5 @@
-public class Tasks {
+public class Tasks{
+    //finds how fast you need to be base-stats wise to outspeed something, includes boosts and evs
     public static void findBaseStatsToOutspeed{
         Pokedex.initialize(); //loads the pokedex
 
@@ -16,4 +17,5 @@ public class Tasks {
 
         Miscellaneous.outputAllPossibleResults(level,stat,baseSpeed);
     }
+    
 }
