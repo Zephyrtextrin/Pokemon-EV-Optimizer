@@ -46,7 +46,7 @@ public class Miscellaneous {
     }
 
     //get selected mon
-    public static int[] getSelectedPokemon(){
+    public static int[] selectPokemon(){
         boolean keepGoing = true;
         int[] baseStats;
         do {
@@ -67,11 +67,23 @@ public class Miscellaneous {
         return baseStats;
     }
 
+    public static double[] getSpecifications(){
+        //find values for base stat calculation
+        final int IV = InputHelper.getRangedInt("Enter Speed IV",0,31);
+        final int EV = InputHelper.getRangedInt("Enter Speed EV",0,252)/4; //divided by 4 to make the stat calc more streamlined (since evs r divided by 4 in calcs)
+        final String nature = InputHelper.getStringInArray(new String[]{"positive","neutral","negative"},"Enter Nature");
+        final double natureMultiplier = Miscellaneous.getNature(nature);
+        final int level = InputHelper.getRangedInt("Enter Level",1,100);
+
+        return new double[]{IV,EV,natureMultiplier,level};
+    }
+    
     public final static class Calculators{
         //calculation for all stats (excluding HP)
         //more info: https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward
         //must be cast to double to prevent floating point error but has to be cast back to int because all pokemon calculations *always* round down
         public static int statCalculation(int baseStat, int IV, int EV, double nature, int level){
+            EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
             return (int)((((double)((2*baseStat+IV+EV)*level) /100)+5)*nature);
         }
 
@@ -81,7 +93,16 @@ public class Miscellaneous {
                 final int stat = (int)(statCalculation(currentStat,IV,EV,nature,level)*getBoostModifier(boostCount));
                 if(stat>targetStat){return currentStat;}
             }
-            return 0;
+            return -1;
+        }
+
+         //finds what stat boost you need to be at to be faster than a given stat
+        public static int findLeastEVs (int IV, int baseStat, double nature, int level, int targetStat, int targetBaseStat,int boostCount){
+            for(int EV = 0; EV<=252; EV++){
+                final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level)*getBoostModifier(boostCount));
+                if(stat>targetStat){return EV;}
+            }
+            return -1;
         }
 
         //get stat boost modifier
