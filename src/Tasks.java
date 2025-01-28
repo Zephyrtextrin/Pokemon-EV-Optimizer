@@ -1,5 +1,5 @@
-public class OutspeedBaseStats {
-    public static void main(String[] args){
+public class Tasks {
+    public static void findBaseStatsToOutspeed{
         Pokedex.initialize(); //loads the pokedex
 
         int baseSpeed = Miscellaneous.getSelectedPokemon()[5];
