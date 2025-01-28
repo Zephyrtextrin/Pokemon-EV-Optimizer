@@ -1,5 +1,5 @@
 public class Main {
-    public static void Main(String[] args){
+    public static void main(String[] args){
         int index = 0;
         String[] options = {"FIND BASE STATS/EVS/BOOST COMBINATIONS TO OUTSPEED A SPECIFIC POKEMON","FIND EVS/BOOSTS/NATURE TO OUTSPEED A POKEMON AT A SPECIFIC BASE STAT","EV OPTIMIZER: HOW MUCH DEFENSE DO YOU NEED TO SURVIVE AN ATTACK?"};
         for(String i:options){
