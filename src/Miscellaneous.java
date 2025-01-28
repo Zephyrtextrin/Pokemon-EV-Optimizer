@@ -46,34 +46,56 @@ public class Miscellaneous {
     }
 
     //outputs all possible results to outspeed at certain points (reduces clutter in main method)
-    public static void outputAllPossibleResults(int IV, int EV, String nature, int level, int targetStat, int targetBaseStat, String targetName){
-        System.out.printf("\n--[SPEED VALUES NEEDED TO OUTSPEED %s NATURE %s]--\n",nature.toUpperCase(),targetName.toUpperCase());
+    public static void outputAllPossibleResults(int level, int targetStat, int targetBaseStat){
+        System.out.println("\n--[SPEED VALUES NEEDED TO OUTSPEED TARGET]--\n(All calculations assume 31 IVs)");
 
 
 
         System.out.println("-[ONE BOOST]-");
 
         //+1 boost no evs neutral
-        System.out.println("[NO EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(IV,0,1,level,targetStat,targetBaseStat,1));
+        System.out.println("[NO EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,0,1,level,targetStat,targetBaseStat,1));
         //+1 boost no evs positive
-        System.out.println("[NO EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(IV,0,1.1,level,targetStat,targetBaseStat,1));
+        System.out.println("[NO EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,0,1.1,level,targetStat,targetBaseStat,1));
         //+1 boost 252 evs neutral
-        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(IV,252/4,1,level,targetStat,targetBaseStat,1));
+        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1,level,targetStat,targetBaseStat,1));
         //+1 boost 252 evs positive
-        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(IV,252/4,1.1,level,targetStat,targetBaseStat,1));
+        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1.1,level,targetStat,targetBaseStat,1));
 
 
 
         System.out.println("\n-TWO BOOSTS]-");
 
         //+2 boost no evs neutral
-        System.out.println("[NO EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(IV,0,1,level,targetStat,targetBaseStat,2));
+        System.out.println("[NO EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,0,1,level,targetStat,targetBaseStat,2));
         //+2 boost no evs positive
-        System.out.println("[NO EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(IV,0,1.1,level,targetStat,targetBaseStat,2));
+        System.out.println("[NO EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,0,1.1,level,targetStat,targetBaseStat,2));
         //+2 boost 252 evs neutral
-        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(IV,252/4,1,level,targetStat,targetBaseStat,2));
+        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1,level,targetStat,targetBaseStat,2));
         //+2 boost 252 evs positive
-        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(IV,252/4,1.1,level,targetStat,targetBaseStat,2));
+        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1.1,level,targetStat,targetBaseStat,2));
+    }
+
+    //get selected mon
+    public static int[] getSelectedPokemon(){
+        boolean keepGoing = true;
+        int[] baseStats;
+        do {
+            String name = Miscellaneous.getAlias(Miscellaneous.convertToCamelCase(InputHelper.getString("Enter a Pokemon name."))); //must convert to camel case bc lists r case sensitive also this is a really long line of code but alles ok cause its tryna catch like 15 different errors
+            baseStats = Pokedex.getPokemonStats(name);
+
+            if (baseStats[0] != -1) { //only continues if pokemon is valid
+                Miscellaneous.printStats(baseStats, name); //lists stats
+                keepGoing = !InputHelper.getYN("Is this the Pokemon you wanted?");
+            } else {
+                System.out.println("[INVALID INPUT!]\nThe Pokedex does not recognize that Pokemon.\n[INPUT POKEMON]: " + name + "\nThis Pokemon either does not exist or cases the code to throw an error. You'll have to type a new Pokemon.\nif you believe this to be a mistake, lmk - Alexander");
+            } //the biggest print of all time
+
+            System.out.println();//makes new line break for formatting. u cant append \n after the keepGoing input because it would mess up the user input and make the formatting even worse
+
+        }while(keepGoing);
+
+        return baseStats;
     }
 
     public final static class Calculators{
