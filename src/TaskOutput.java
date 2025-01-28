@@ -1,6 +1,6 @@
-public class TaskOutputMethods{
+public class TaskOutput{
     //outputs all possible results to outspeed at certain points (reduces clutter in main method)
-    public static void bulkOutputBaseStats(int level, int targetStat, int targetBaseStat){
+    public static void baseStatFinder(int level, int targetStat, int targetBaseStat){
         System.out.println("\n--[SPEED VALUES NEEDED TO OUTSPEED TARGET]--\n(All calculations assume 31 IVs)");
 
         
