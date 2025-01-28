@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Miscellaneous extends Pokedex{
     protected static void printStats(Pokemon poke){
         System.out.println("\n[POKEMON LOADED]: "+poke.name.toUpperCase());
@@ -101,6 +104,30 @@ public class Miscellaneous extends Pokedex{
             return -1;
         }
 
+        //bro just make a seperate class that has all the evs and ivs and thr base stats atp
+        //ALL THESE ARE PLACEHOLDERS!!
+        public static int damageCalc(int[] attackingMonDetails, Pokemon attackingMonName, int[] defendingMonDetails, Pokemon defendingMonName){
+            int attackingStat = attackingMonName.attack;
+            int defendingStat = defendingMonName.defense;
+            boolean isPhysical = InputHelper.getYN("is the move physical"); //PLACEHOLDER CHANGE LATER
+            if(!isPhysical){
+                attackingStat = attackingMonName.spatk;
+                defendingStat = defendingMonName.spdef;
+            }
+            attackingStat=Miscellaneous.Calculators.statCalculation(attackingStat,attackingMonDetails[0],attackingMonDetails[1],attackingMonDetails[2],attackingMonDetails[3]);
+            defendingStat=Miscellaneous.Calculators.statCalculation(defendingStat,attackingMonDetails[0],attackingMonDetails[1],attackingMonDetails[2],attackingMonDetails[3]);
+
+            int movePower = InputHelper.getRangedInt("move power",20,250);
+            boolean superEffective = InputHelper.getYN("is it super effective");
+            boolean targets = InputHelper.getYN("did it hit multiple targets");
+            boolean notEffective = InputHelper.getYN("is it not effective");
+            String item = InputHelper.getString("held item");
+            double itemMultiplier = switch(item){
+                case "choice band","choice specs" -> 1.5;
+                case "life orb" -> 1.3;
+            }
+
+        }
         //get stat boost modifier
         private static double getBoostModifier(int boostCount){return (double)(boostCount+2)/2;}
 

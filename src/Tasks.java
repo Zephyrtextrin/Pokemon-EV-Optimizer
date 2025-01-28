@@ -1,3 +1,7 @@
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /* specifications[]
 0 = IV
 1 = EV
@@ -33,4 +37,29 @@ public class Tasks extends Pokedex{
 
         TaskOutput.EVFinder(yourBaseSpeed,(int)specifications[3],targetStat, (int)specifications[1],specifications[2], target.name.toUpperCase(), you.name.toUpperCase());
     }
+
+    public static void outspeedPercentage() {
+        //init vars
+        final HashMap<String, Pokemon> dex = Pokedex.changeDex();
+        final double total = dex.size() * 3;
+        double outsped = 0;
+        final Pokemon you = Miscellaneous.selectPokemon();
+
+        double[] specifications = Miscellaneous.getSpecifications();
+        final int stat = Miscellaneous.Calculators.statCalculation(you.speed, (int)specifications[0], (int)specifications[1], specifications[2], (int)specifications[3]);
+        System.out.printf("[%s'S SPEED STAT]: %d\n",you.name.toUpperCase(),stat);
+        for (Pokemon currentMon : dex.values()) {
+            int neutral = Miscellaneous.Calculators.statCalculation(currentMon.speed, 31, 252, 1, (int)specifications[3]);
+            int positive = Miscellaneous.Calculators.statCalculation(currentMon.speed, 31, 252, 1.1, (int)specifications[3]);
+            int noInvest = Miscellaneous.Calculators.statCalculation(currentMon.speed, 31, 0, 1, (int)specifications[3]);
+            if(stat>neutral){outsped++;}
+            if(stat>positive){outsped++;}
+            if(stat>noInvest){outsped++;}
+        }
+        System.out.println("\n[HOW MANY POKEMON DOES "+you.name.toUpperCase()+" OUTSPEED?]\n(This includes 252 Positive nature, 252 neutral nature, and zero investment for each Pokemon.)\n");
+        System.out.println("DEX TOTAL: "+(int)total);
+        System.out.println("OUTSPED: "+(int)outsped);
+        System.out.println("PERCENTAGE: "+(outsped/total)*100+"%");
+    }
+
 }
