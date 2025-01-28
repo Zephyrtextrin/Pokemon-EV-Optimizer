@@ -22,9 +22,9 @@ public class TaskOutput{
         //+1 boost no evs positive
         System.out.println("[NO EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,0,1.1,level,targetStat,targetBaseStat,1));
         //+1 boost 252 evs neutral
-        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1,level,targetStat,targetBaseStat,1));
+        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,252,1,level,targetStat,targetBaseStat,1));
         //+1 boost 252 evs positive
-        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1.1,level,targetStat,targetBaseStat,1));
+        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,252,1.1,level,targetStat,targetBaseStat,1));
 
 
 
@@ -35,8 +35,8 @@ public class TaskOutput{
         //+2 boost no evs positive
         System.out.println("[NO EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,0,1.1,level,targetStat,targetBaseStat,2));
         //+2 boost 252 evs neutral
-        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1,level,targetStat,targetBaseStat,2));
+        System.out.println("[252 EVS, NEUTRAL NATURE]: "+Calculators.findLeastStatBoosted(31,252,1,level,targetStat,targetBaseStat,2));
         //+2 boost 252 evs positive
-        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,252/4,1.1,level,targetStat,targetBaseStat,2));
+        System.out.println("[252 EVS, POSITIVE NATURE]: "+Calculators.findLeastStatBoosted(31,252,1.1,level,targetStat,targetBaseStat,2));
   }
 }
