@@ -1,10 +1,10 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class Miscellaneous extends Pokedex{
     protected static void printStats(Pokemon poke){
         System.out.println("\n[POKEMON LOADED]: "+poke.name.toUpperCase());
-        System.out.printf("[HP]: %d\n[ATTACK]: %d\n[DEFENSE]: %d\n[SP. ATTACK]: %d\n[SP. DEFENSE]: %d\n[SPEED]: %d\n\n",poke.HP,poke.attack,poke.defense,poke.spatk,poke.spdef,poke.speed);
+        System.out.printf("[HP]: %d\n[ATTACK]: %d\n[DEFENSE]: %d\n[SP. ATTACK]: %d\n[SP. DEFENSE]: %d\n[SPEED]: %d\n\n",poke.baseHP,poke.baseAttack,poke.baseDefense,poke.baseSpatk,poke.baseSpdef,poke.baseSpeed);
     }
 
     protected static String convertToCamelCase(String input){
@@ -66,6 +66,18 @@ public class Miscellaneous extends Pokedex{
         return pokemon;
     }
 
+    //OPTION 1: just download all the fanmade gen6+ sprites and use urls for gen 1-5 (placeholder)
+    //OPTION 2: make a github repo of all the images (this is the dream)
+    //OPTION 3: just download *all the sprites* (this world increase download times)
+    public static URL getImageURL(String name) throws MalformedURLException{
+        String link = "https://img.pokemondb.net/sprites/black-white/normal/";
+        int index = Pokedex.getIndex(name);
+        if(index<=697){
+            link +=name.toLowerCase()+".png";
+        }
+        return new URL(link);
+    }
+
     public static double[] getSpecifications(){
         //find values for base stat calculation
         final int IV = InputHelper.getRangedInt("Enter Speed IV",0,31);
@@ -105,14 +117,14 @@ public class Miscellaneous extends Pokedex{
         }
 
         //bro just make a seperate class that has all the evs and ivs and thr base stats atp
-        //ALL THESE ARE PLACEHOLDERS!!
+        //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
         public static int damageCalc(int[] attackingMonDetails, Pokemon attackingMonName, int[] defendingMonDetails, Pokemon defendingMonName){
-            int attackingStat = attackingMonName.attack;
-            int defendingStat = defendingMonName.defense;
+            int attackingStat = attackingMonName.baseAttack;
+            int defendingStat = defendingMonName.baseDefense;
             boolean isPhysical = InputHelper.getYN("is the move physical"); //PLACEHOLDER CHANGE LATER
             if(!isPhysical){
-                attackingStat = attackingMonName.spatk;
-                defendingStat = defendingMonName.spdef;
+                attackingStat = attackingMonName.baseSpatk;
+                defendingStat = defendingMonName.baseSpdef;
             }
             attackingStat=Miscellaneous.Calculators.statCalculation(attackingStat,attackingMonDetails[0],attackingMonDetails[1],attackingMonDetails[2],attackingMonDetails[3]);
             defendingStat=Miscellaneous.Calculators.statCalculation(defendingStat,attackingMonDetails[0],attackingMonDetails[1],attackingMonDetails[2],attackingMonDetails[3]);
@@ -125,8 +137,9 @@ public class Miscellaneous extends Pokedex{
             double itemMultiplier = switch(item){
                 case "choice band","choice specs" -> 1.5;
                 case "life orb" -> 1.3;
-            }
-
+                default -> 1;
+            };
+            return 1;
         }
         //get stat boost modifier
         private static double getBoostModifier(int boostCount){return (double)(boostCount+2)/2;}

@@ -1,7 +1,10 @@
-public class Main {
-    public static void main(String[] args){
+import java.io.IOException;
+
+public class Main{
+    public static void main(String[] args) throws IOException{
         Pokedex.initialize(); //loads the pokedex
-        int index = 0;
+        AttackOptimizer.initUI();
+        /*int index = 0;
         String[] options = {
                 "EV OPTIMIZER: HOW MUCH ATTACK YOU NEED TO OHKO",
                 "EV OPTIMIZER: HOW MUCH DEFENSE YOU NEED TO SURVIVE AN ATTACK",
@@ -17,6 +20,6 @@ public class Main {
             case(3)->Tasks.findEVsToOutspeed();
             case(4)->Tasks.findBaseStatsToOutspeed();
             case(5)->Tasks.outspeedPercentage();
-        }
+        }*/
     }
 }

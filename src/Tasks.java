@@ -13,7 +13,7 @@ public class Tasks extends Pokedex{
     public static void findBaseStatsToOutspeed(){
 
         final Pokemon target = Miscellaneous.selectPokemon();
-        final int baseSpeed = target.speed;
+        final int baseSpeed = target.baseSpeed;
 
         double[] specifications = Miscellaneous.getSpecifications();
 
@@ -26,11 +26,11 @@ public class Tasks extends Pokedex{
     public static void findEVsToOutspeed() {
         System.out.println("This input is for YOUR Pokemon.");
         final Pokemon you = Miscellaneous.selectPokemon();
-        final int yourBaseSpeed = you.speed;
+        final int yourBaseSpeed = you.baseSpeed;
 
         System.out.println("This is for the OPPONENT's Pokemon.");
         final Pokemon target = Miscellaneous.selectPokemon();
-        final int baseSpeed = target.speed;
+        final int baseSpeed = target.baseSpeed;
         System.out.println("This is for the OPPONENT's Pokemon."); //print again cause it can be kinda easy to forget
         double[] specifications = Miscellaneous.getSpecifications();
         final int targetStat = Miscellaneous.Calculators.statCalculation(baseSpeed, (int)specifications[0], (int)specifications[1], specifications[2], (int)specifications[3]);
@@ -46,12 +46,12 @@ public class Tasks extends Pokedex{
         final Pokemon you = Miscellaneous.selectPokemon();
 
         double[] specifications = Miscellaneous.getSpecifications();
-        final int stat = Miscellaneous.Calculators.statCalculation(you.speed, (int)specifications[0], (int)specifications[1], specifications[2], (int)specifications[3]);
+        final int stat = Miscellaneous.Calculators.statCalculation(you.baseSpeed, (int)specifications[0], (int)specifications[1], specifications[2], (int)specifications[3]);
         System.out.printf("[%s'S SPEED STAT]: %d\n",you.name.toUpperCase(),stat);
         for (Pokemon currentMon : dex.values()) {
-            int neutral = Miscellaneous.Calculators.statCalculation(currentMon.speed, 31, 252, 1, (int)specifications[3]);
-            int positive = Miscellaneous.Calculators.statCalculation(currentMon.speed, 31, 252, 1.1, (int)specifications[3]);
-            int noInvest = Miscellaneous.Calculators.statCalculation(currentMon.speed, 31, 0, 1, (int)specifications[3]);
+            int neutral = Miscellaneous.Calculators.statCalculation(currentMon.baseSpeed, 31, 252, 1, (int)specifications[3]);
+            int positive = Miscellaneous.Calculators.statCalculation(currentMon.baseSpeed, 31, 252, 1.1, (int)specifications[3]);
+            int noInvest = Miscellaneous.Calculators.statCalculation(currentMon.baseSpeed, 31, 0, 1, (int)specifications[3]);
             if(stat>neutral){outsped++;}
             if(stat>positive){outsped++;}
             if(stat>noInvest){outsped++;}
