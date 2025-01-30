@@ -3,6 +3,7 @@ import java.util.HashMap;
 
 //this is very long bc it contains an entry for every pokemon and an entry for every paldea mon
 public class Pokedex {
+    private static final ArrayList<Pokemon> natDexList = new ArrayList<>();
     private static final HashMap<String, Pokemon> natDex = new HashMap<>();
     private static final HashMap<String, Pokemon> paldeaDex = new HashMap<>();
 
@@ -44,20 +45,13 @@ public class Pokedex {
         return -1;
     }
 
-    public static int[] findPercentage(int speed, HashMap<String, Pokemon> dex, int level) {
-        final int total = dex.size() * 3;
-        int outsped = 0;
-        for (Pokemon currentMon : dex.values()) {
-            int neutral = Miscellaneous.Calculators.statCalculation(currentMon.baseSpeed, 31, 252, 1, level);
-            int positive = Miscellaneous.Calculators.statCalculation(currentMon.baseSpeed, 31, 252, 1.1, level);
-            int noInvest = Miscellaneous.Calculators.statCalculation(currentMon.baseSpeed, 31, 0, 1, level);
-            if(speed>=neutral){outsped++;}
-            if(speed>=positive){outsped++;}
-            if(speed>=noInvest){outsped++;}
-        }
-        return new int[]{outsped, total};
+    public static Pokemon[] getNatDex(){
+        Pokemon[] tempArray = new Pokemon[natDexList.size()];
+        return natDexList.toArray(tempArray);
     }
-    
+
+    public static String[] getWeather(){return new String[]{"Sun","Rain","Sandstorm","Snow"};}
+
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){
         new Pokemon("Bulbasaur", 45, 49, 49, 65, 65, 45);

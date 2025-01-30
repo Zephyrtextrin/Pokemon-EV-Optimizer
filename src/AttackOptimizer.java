@@ -3,10 +3,11 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-public class AttackOptimizer{
+public class AttackOptimizer extends Pokedex{
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
-        final int BOUNDS = 5; //how far each image should be padded
+        final String[] WEATHER = Pokedex.getWeather();
+        final Pokemon[] natDex = Pokedex.getNatDex();
         final int SIZE = 500;
 
         final JFrame frame = new JFrame();
@@ -19,22 +20,41 @@ public class AttackOptimizer{
         frame.add(panel);
 
 
+
         //gallade is placeholder rn i dont have the files for everyone else
+
+
+        //left side (the pokemon who is using the move
+        JPanel attackerPanel = new JPanel();
+        attackerPanel.setBounds(0,0,SIZE/3,SIZE);
+        attackerPanel.setLayout(new BoxLayout(attackerPanel, BoxLayout.PAGE_AXIS));
+        frame.add(attackerPanel);
+
+        //text to denote who is attacking
+        JLabel attackerTitleLabel = new JLabel("   Attacking");
+        attackerPanel.add(attackerTitleLabel);
 
         //image display for your pokemon
         final File yourIMGFile = new File("src/assets/gallade.png"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
         final ImageIcon yourIcon = new ImageIcon(ImageIO.read(yourIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel youDisplayLabel = new JLabel(yourIcon);
-        youDisplayLabel.setBounds(BOUNDS,BOUNDS,96,96);
-        panel.add(youDisplayLabel);
+        attackerPanel.add(youDisplayLabel);
 
-        //image display for your pokemon
-        final File opponentIMGFile = new File("src/assets/gallade.png"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
-        final ImageIcon opponentIcon = new ImageIcon(ImageIO.read(opponentIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
-        //the label that actually displays it
-        final JLabel opponentDisplayLabel = new JLabel(opponentIcon);
-        opponentDisplayLabel.setBounds(SIZE-150,BOUNDS,96,96);
-        panel.add(opponentDisplayLabel);
+        //select what pokemonis attacking
+        JComboBox<Pokemon> pokemonSelect = new JComboBox<>(natDex);
+        attackerPanel.add(pokemonSelect);
+
+        //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        JComboBox<Pokemon> itemSelect = new JComboBox<>(natDex);
+        attackerPanel.add(itemSelect);
+
+        //select what weather
+        JComboBox<String> weather = new JComboBox<>(WEATHER);
+        attackerPanel.add(weather);
+
+        //select what move PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        JComboBox<Pokemon> moveSelect = new JComboBox<>(natDex);
+        attackerPanel.add(moveSelect);
     }
 }
