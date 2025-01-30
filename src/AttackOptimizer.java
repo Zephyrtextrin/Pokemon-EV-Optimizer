@@ -3,11 +3,11 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-public class AttackOptimizer extends Pokedex{
+public class AttackOptimizer{
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
         final String[] WEATHER = Pokedex.getWeather();
-        final Pokemon[] natDex = Pokedex.getNatDex();
+        final String[] natDex = Pokedex.getNatDex();
         final int SIZE = 500;
 
         final JFrame frame = new JFrame();
@@ -42,11 +42,11 @@ public class AttackOptimizer extends Pokedex{
         attackerPanel.add(youDisplayLabel);
 
         //select what pokemonis attacking
-        JComboBox<Pokemon> pokemonSelect = new JComboBox<>(natDex);
+        JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
         attackerPanel.add(pokemonSelect);
 
         //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        JComboBox<Pokemon> itemSelect = new JComboBox<>(natDex);
+        JComboBox<String> itemSelect = new JComboBox<>(natDex);
         attackerPanel.add(itemSelect);
 
         //select what weather
@@ -54,7 +54,9 @@ public class AttackOptimizer extends Pokedex{
         attackerPanel.add(weather);
 
         //select what move PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        JComboBox<Pokemon> moveSelect = new JComboBox<>(natDex);
+        JComboBox<String> moveSelect = new JComboBox<>(natDex);
         attackerPanel.add(moveSelect);
+
+        attackerPanel.revalidate();
     }
 }

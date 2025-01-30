@@ -1,9 +1,7 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 //this is very long bc it contains an entry for every pokemon and an entry for every paldea mon
 public class Pokedex {
-    private static final ArrayList<Pokemon> natDexList = new ArrayList<>();
     private static final HashMap<String, Pokemon> natDex = new HashMap<>();
     private static final HashMap<String, Pokemon> paldeaDex = new HashMap<>();
 
@@ -45,10 +43,14 @@ public class Pokedex {
         return -1;
     }
 
-    public static Pokemon[] getNatDex(){
-        Pokemon[] tempArray = new Pokemon[natDexList.size()];
-        return natDexList.toArray(tempArray);
+    public static String[] getNatDex(){
+        final Set<String> set = natDex.keySet();
+        final ArrayList<String list = set.toArray();
+        Collections.sort(set);
+        return tempArray.toArray(String[]::new);
     }
+
+    public static Pokemon getPokemon(String input){return natDex.get(input);}
 
     public static String[] getWeather(){return new String[]{"Sun","Rain","Sandstorm","Snow"};}
 
