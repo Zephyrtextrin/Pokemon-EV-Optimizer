@@ -43,16 +43,14 @@ public class Pokedex {
         return -1;
     }
 
-    public static String[] getNatDex(){
+    public static ArrayList<String> getNatDexAsArrayList(){
         final Set<String> set = natDex.keySet();
-        final ArrayList<String list = set.toArray();
-        Collections.sort(set);
-        return tempArray.toArray(String[]::new);
+        final ArrayList<String> list = new ArrayList<>(set);
+        Collections.sort(list);
+        return list;
     }
 
     public static Pokemon getPokemon(String input){return natDex.get(input);}
-
-    public static String[] getWeather(){return new String[]{"Sun","Rain","Sandstorm","Snow"};}
 
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){

@@ -3,7 +3,9 @@ import java.io.IOException;
 public class Main{
     public static void main(String[] args) throws IOException{
         Pokedex.initialize(); //loads the pokedex
+        new Type(); //inits types
         AttackOptimizer.initUI();
+
         /*int index = 0;
         String[] options = {
                 "EV OPTIMIZER: HOW MUCH ATTACK YOU NEED TO OHKO",
