@@ -88,7 +88,14 @@ public class Miscellaneous extends Pokedex{
 
         return new double[]{IV,EV,natureMultiplier,level};
     }
-    
+
+/* details[]
+0 = IV
+1 = EV
+2 = nature
+3 = level
+*/
+
     public final static class Calculators{
         //calculation for all stats (excluding HP)
         //more info: https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward
@@ -108,7 +115,7 @@ public class Miscellaneous extends Pokedex{
         }
 
          //finds what stat boost you need to be at to be faster than a given stat
-        public static int findLeastEVs (int IV, int baseStat, double nature, int level, int targetStat,int boostCount){
+        public static int findLeastSpeedEVs(int IV, int baseStat, double nature, int level, int targetStat, int boostCount){
             for(int EV = 0; EV<=252; EV++){
                 final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level)*getBoostModifier(boostCount));
                 if(stat>targetStat){return EV;}
@@ -116,29 +123,31 @@ public class Miscellaneous extends Pokedex{
             return -1;
         }
 
+        private static int calcHP(double[] details, Pokemon monName){
+            double baseStat = monName.baseHP;
+            double IV = details[0];
+            double EV = details[1];
+            double level = details[3];
+
+            return (int)((int)(((2*baseStat+IV+(EV/4))*level)/100)+level+10);
+        }
+
+        //the damage calc process is SO incredibly freaking complicated that i have to make a SEPERATE method to unify all the FUCKING 9000 VARIABLES that go into calcing damage
+        public static void damageCalc(){
+
+        }
+
         //bro just make a seperate class that has all the evs and ivs and thr base stats atp
         //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
-        public static int damageCalc(int[] attackingMonDetails, Pokemon attackingMonName, int[] defendingMonDetails, Pokemon defendingMonName){
-            int attackingStat = attackingMonName.baseAttack;
-            int defendingStat = defendingMonName.baseDefense;
-            boolean isPhysical = InputHelper.getYN("is the move physical"); //PLACEHOLDER CHANGE LATER
-            if(!isPhysical){
-                attackingStat = attackingMonName.baseSpatk;
-                defendingStat = defendingMonName.baseSpdef;
-            }
-            attackingStat=Miscellaneous.Calculators.statCalculation(attackingStat,attackingMonDetails[0],attackingMonDetails[1],attackingMonDetails[2],attackingMonDetails[3]);
-            defendingStat=Miscellaneous.Calculators.statCalculation(defendingStat,attackingMonDetails[0],attackingMonDetails[1],attackingMonDetails[2],attackingMonDetails[3]);
+        private static double actualDamageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat){
+            int moveBP = 75; //placeholder
+            attackerLevel = ((2*attackerLevel)/5)+2;
 
-            int movePower = InputHelper.getRangedInt("move power",20,250);
-            boolean superEffective = InputHelper.getYN("is it super effective");
-            boolean targets = InputHelper.getYN("did it hit multiple targets");
-            boolean notEffective = InputHelper.getYN("is it not effective");
-            String item = InputHelper.getString("held item");
-            double itemMultiplier = switch(item){
-                case "choice band","choice specs" -> 1.5;
-                case "life orb" -> 1.3;
-                default -> 1;
-            };
+
+            //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
+            double rawDamage = ((attackerLevel*moveBP*(attackingMonAttack/targetDefenseStat))/50)+2;
+            rawDamage*=1.5; //stab (PLACEHOLDER)
+            System.out.println(rawDamage);
             return 1;
         }
         //get stat boost modifier

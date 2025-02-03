@@ -52,7 +52,7 @@ public class TaskOutput {
     }
 
     private static void outputEV(String header, int[] inputs, double nature, int boostCount){
-        final int value = Miscellaneous.Calculators.findLeastEVs(31, inputs[0], nature, inputs[1], inputs[2], boostCount);
+        final int value = Miscellaneous.Calculators.findLeastSpeedEVs(31, inputs[0], nature, inputs[1], inputs[2], boostCount);
 
         if(value !=-1) {System.out.println(header + value);
         }else{System.out.println(header + "NOT POSSIBLE");}

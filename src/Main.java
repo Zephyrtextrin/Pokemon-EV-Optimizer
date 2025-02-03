@@ -2,6 +2,10 @@ import java.io.IOException;
 
 public class Main{
     public static void main(String[] args) throws IOException{
+        Pokedex.Pokemon yourTempMon = Pokedex.getPokemon("Iron Valiant");
+        Pokedex.Pokemon opp = Pokedex.getPokemon("Abomasnow");
+
+        Miscellaneous.Calculators.actualDamageCalc(100,297,273);
         Pokedex.initialize(); //loads the pokedex
         new Type(); //inits types
         AttackOptimizer.initUI();
