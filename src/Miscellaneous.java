@@ -125,10 +125,11 @@ public class Miscellaneous extends Pokedex{
         }
 
         //finds what stat boost you need to ohko
-        public static int findLeastSpeedEVs(int baseStat, double nature, int level, int targetStat, int boostCount){
+        public static int findLeastAtkEVs(int baseStat, double nature, int level, int targetStat, Move move, int defenderStat, int boostCount, int HP){
             for(int EV = 0; EV<=252; EV++){
-                final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level)*getBoostModifier(boostCount));
-                if(stat>targetStat){return EV;}
+                final int stat = (int)(statCalculation(baseStat,31,EV,nature,level)*getBoostModifier(boostCount));
+                final int damage = (int)damageCalc(level,stat,defenderStat,move);
+                if(damage>=HP){return EV;}
             }
             return -1;
         }
@@ -142,35 +143,15 @@ public class Miscellaneous extends Pokedex{
             return (int)((int)(((2*baseStat+IV+(EV/4))*level)/100)+level+10);
         }
 
-        //the damage calc process is SO incredibly freaking complicated that i have to make a SEPERATE method to unify all the FUCKING 9000 VARIABLES that go into calcing damage
-        //make method in hte ui or a seperate method to switch the evs/nature depending on move cat
-        public static void damageCalc(int attackerBase,int defenderBase,Move move, int attackerEV, int attackerLevel, double attackerNature, int defenderEV, double defenderNature){
-            move = Pokedex.getMove("Spirit Break"); //placeholder
-            final String[] attackerType = {"Fairy", "Fighting"};
-            final String[] defenderType = {"Ice","Grass"};
-            final int attackingMonAttack = statCalculation(attackerBase,31,attackerEV,attackerNature,attackerLevel);
-            final int defendingMonDefense = statCalculation(defenderBase,31,defenderEV,defenderNature,attackerLevel);
-            final Type defenderType1 = Pokedex.Type.getType(defenderType[0]);
-            final Type defenderType2 = Pokedex.Type.getType(defenderType[1]);
-            final Type[] defenderTypeList = {defenderType1,defenderType2};
-            double typeEffectiveness = Type.getMatchups(defenderTypeList, move.type);
-            double STAB = 1;
-
-            if(move.type.equals(attackerType[0])||move.type.equalsIgnoreCase(attackerType[1])){STAB = 1.5;}
-            actualDamageCalc(attackerLevel, attackingMonAttack, defendingMonDefense, move, STAB, typeEffectiveness);
-        }
-
         //bro just make a seperate class that has all the evs and ivs and thr base stats atp
         //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
-        private static double actualDamageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, double STAB, double typeEffectiveness){
+        private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move){
             int moveBP = move.baseDamage; //placeholder
             attackerLevel = ((2*attackerLevel)/5)+2;
 
 
             //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
             double rawDamage = ((attackerLevel*moveBP*(attackingMonAttack/targetDefenseStat))/50)+2;
-            rawDamage*=STAB; //type (PLACEHOLDER)
-            rawDamage*=typeEffectiveness;
             System.out.println(rawDamage);
             return 1;
         }

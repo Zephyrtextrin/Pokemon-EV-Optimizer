@@ -8,6 +8,14 @@ public class Main{
         Pokedex.initialize(); //loads the pokedex
         AttackOptimizer.initUI();
 
+        /*to do
+        make pokemon have types
+        add stab
+        add type effectiveness
+        natures
+        items
+        make the UI pass in different vars depending on the move's secial or physical
+         */
         /*int index = 0;
         String[] options = {
                 "EV OPTIMIZER: HOW MUCH ATTACK YOU NEED TO OHKO",
