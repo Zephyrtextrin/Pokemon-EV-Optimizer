@@ -53,6 +53,13 @@ public class Pokedex {
         return list;
     }
 
+    public static ArrayList<String> getMoveListAsArrayList(){
+        final Set<String> set = moveList.keySet();
+        final ArrayList<String> list = new ArrayList<>(set);
+        Collections.sort(list);
+        return list;
+    }
+
     public static Pokemon getPokemon(String input){return natDex.get(input);}
 
     public static Move getMove(String input){return moveList.get(input);}
@@ -1825,6 +1832,7 @@ public class Pokedex {
 
         protected static void init(){
             new Move("Spirit Break",75,"Fairy", Constants.MOVE_CATS.Physical);
+            new Move("Close Combat",120,"Fighting", Constants.MOVE_CATS.Physical);
         }
     }
 
@@ -1865,12 +1873,13 @@ public class Pokedex {
                 return 2;
             } else if (Arrays.asList(defendingType.resistances).contains(attackingType)) {
                 return 0.5;
-            } else if (Arrays.asList(defendingType.immunities).contains(attackingType)) {
-                return 0;
-            }
+            }try {
+                if (Arrays.asList(defendingType.immunities).contains(attackingType)) {
+                    return 0;
+                }
+            }catch(Exception _){};
 
             return 1;
-
         }
 
         public static void init(){
@@ -1904,7 +1913,7 @@ public class Pokedex {
             typeMap.get("Fighting").resistances = new String[]{"Rock", "Bug", "Dark"};
             typeMap.get("Flying").resistances = new String[]{"Fighting", "Bug", "Grass"};
                 typeMap.get("Fire").resistances = new String[]{"Fighting"};
-                typeMap.get("Grass").resistances = new String[]{"Fighting"};
+                typeMap.get("Grass").resistances = new String[]{"Fire"};
                 typeMap.get("Water").resistances = new String[]{"Fighting"};
                 typeMap.get("Electric").resistances = new String[]{"Fighting"};
                 typeMap.get("Ground").resistances = new String[]{"Fighting"};
@@ -1917,7 +1926,7 @@ public class Pokedex {
                 typeMap.get("Ghost").resistances = new String[]{"Fighting"};
                 typeMap.get("Fairy").resistances = new String[]{"Fighting"};
                 typeMap.get("Psychic").resistances = new String[]{"Fighting"};
-                typeMap.get("Ice").resistances = new String[]{"Fighting"};
+                typeMap.get("Ice").resistances = new String[]{"Fire"};
 
                 //immunities
                 typeMap.get("Normal").immunities = new String[]{"Ghost"};

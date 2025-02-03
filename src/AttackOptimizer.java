@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AttackOptimizer{
+public class AttackOptimizer extends Pokedex{
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
         final String[] WEATHER = Constants.WEATHER_LIST;
-        final String[] natDex = getNatDexAsStringArray();
+        final String[] natDex = arrayListToArray(Pokedex.getNatDexAsArrayList());
+        final String[] moveList = arrayListToArray(Pokedex.getMoveListAsArrayList());
         final int SIZE = 500;
         final int BOUNDS = 35;
 
@@ -46,13 +47,17 @@ public class AttackOptimizer{
         //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JComboBox<String> itemSelect = new JComboBox<>(natDex);
         attackerPanel.add(itemSelect);
-        
+
+        //select what level PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        final JTextField yourLevelSelect = new JTextField();
+        attackerPanel.add(yourLevelSelect);
+
         //select what nature PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> natureSelect = new JComboBox<>(natDex);
+        final JComboBox<String> natureSelect = new JComboBox<>(Constants.NATURE);
         attackerPanel.add(natureSelect);
 
         //select what move PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> moveSelect = new JComboBox<>(natDex);
+        final JComboBox<String> moveSelect = new JComboBox<>(moveList);
         attackerPanel.add(moveSelect);
 
         //select what attackBoost
@@ -105,8 +110,12 @@ public class AttackOptimizer{
         final JComboBox<String> opponentPokemonSelect = new JComboBox<>(natDex);
         defenderPanel.add(opponentPokemonSelect);
 
+        //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        final JTextField oppLevelSelect = new JTextField();
+        defenderPanel.add(oppLevelSelect);
+
         //select what nature PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> opponentNatureSelect = new JComboBox<>(natDex);
+        final JComboBox<String> opponentNatureSelect = new JComboBox<>(Constants.NATURE);
         defenderPanel.add(opponentNatureSelect);
 
         //select what hp ev
@@ -130,14 +139,76 @@ public class AttackOptimizer{
         defenderPanel.add(spdefBoosts);
 
         defenderPanel.revalidate();
+
+        //gathers all info on both sides and performs preliminary calcs needed for damage calcing
+        run.addActionListener(_ ->{
+            final Move move = (Move)moveSelect.getSelectedItem();
+
+            final Pokemon you = Pokedex.getPokemon((String)pokemonSelect.getSelectedItem());
+            final Pokemon opp = Pokedex.getPokemon((String)opponentPokemonSelect.getSelectedItem());
+
+            assert you != null;
+            int yourBase = you.baseAttack;
+            assert opp != null;
+            int oppBase = opp.baseDefense;
+
+            JTextField defenderEVSource = defenseEV;
+
+            final String yourNature = (String)natureSelect.getSelectedItem();
+            final String oppNature = (String)opponentNatureSelect.getSelectedItem();
+            double yourNatureMultiplier;
+            double oppNatureMultiplier;
+
+            final int yourLevel = Integer.parseInt(yourLevelSelect.getText());
+            final int oppLevel = Integer.parseInt(oppLevelSelect.getText());
+
+
+            yourNatureMultiplier = switch(yourNature){
+                case "+Attack" -> 1.1;
+                case "-Attack" -> 0.9;
+                default -> 1;
+            };
+
+            oppNatureMultiplier = switch(oppNature){
+                case "+Defense" -> 1.1;
+                case "-Defense" -> 0.9;
+                default -> 1;
+            };
+
+            if(move.type.equals("SPECIAL")){
+                yourBase = you.baseSpatk;
+                oppBase = opp.baseSpdef;
+                defenderEVSource = spdefEV;
+
+                yourNatureMultiplier = switch(yourNature){
+                    case "+Spatk" -> 1.1;
+                    case "-Spatk" -> 0.9;
+                    default -> 1;
+                };
+
+                oppNatureMultiplier = switch(oppNature){
+                    case "+Spdef" -> 1.1;
+                    case "-Spdef" -> 0.9;
+                    default -> 1;
+                };
+            }
+
+            int oppEV = Integer.parseInt(defenderEVSource.getText());
+
+            final int oppDefenseStat = Miscellaneous.Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel);
+            final int oppHP = Miscellaneous.Calculators.calcHP(oppEV,oppLevel,opp.baseHP);
+
+            int EV = Miscellaneous.Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,Pokedex.getMove("Close Combat"),oppDefenseStat,0,oppHP);
+
+            System.out.println("final min ev: "+EV);
+        });
     }
 
-    private static String[] getNatDexAsStringArray(){
-        final ArrayList<String> natDexAsArrayList = Pokedex.getNatDexAsArrayList();
-        final int size = natDexAsArrayList.size();
-        final String[] natDex = new String[size];
+    private static String[] arrayListToArray(ArrayList<String> arrayList){
+        final int size = arrayList.size();
+        final String[] array = new String[size];
 
-        for(int i =0;i<size;i++){natDex[i] = natDexAsArrayList.get(i);}
-        return natDex;
+        for(int i =0;i<size;i++){array[i] = arrayList.get(i);}
+        return array;
     }
 }
