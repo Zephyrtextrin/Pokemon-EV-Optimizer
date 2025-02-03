@@ -5,9 +5,7 @@ public class Main{
         Pokedex.Pokemon yourTempMon = Pokedex.getPokemon("Iron Valiant");
         Pokedex.Pokemon opp = Pokedex.getPokemon("Abomasnow");
 
-        Miscellaneous.Calculators.actualDamageCalc(100,297,273);
         Pokedex.initialize(); //loads the pokedex
-        new Type(); //inits types
         AttackOptimizer.initUI();
 
         /*int index = 0;

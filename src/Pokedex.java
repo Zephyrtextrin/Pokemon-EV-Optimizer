@@ -6,11 +6,7 @@ public class Pokedex {
     private static final HashMap<String, Pokemon> paldeaDex = new HashMap<>();
     private static final HashMap<String, Move> moveList = new HashMap<>();
 
-    public enum MOVE_CATS{
-        PHYSICAL,
-        SPECIAL,
-        STATUS;
-    }
+
 
     public static Pokemon getPokemonStats(String name){
         Pokemon temp;
@@ -58,6 +54,8 @@ public class Pokedex {
     }
 
     public static Pokemon getPokemon(String input){return natDex.get(input);}
+
+    public static Move getMove(String input){return moveList.get(input);}
 
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){
@@ -1250,6 +1248,8 @@ public class Pokedex {
         new Pokemon("Pecharunt", 88, 88, 160, 88, 88, 88);
 
         initPaldeaDex();
+        Type.init();
+        Move.init();
     }
 
     private static void initPaldeaDex() {
@@ -1811,16 +1811,20 @@ public class Pokedex {
     static public class Move{
         String name;
         int baseDamage;
-        Type type;
-        MOVE_CATS moveCategory;
+        String type;
+        Constants.MOVE_CATS moveCategory;
 
-        private Move(String name, int baseDamage, Type type, MOVE_CATS moveCategory) {
+        private Move(String name, int baseDamage, String type, Constants.MOVE_CATS moveCategory) {
             this.name = name;
             this.baseDamage = baseDamage;
             this.type = type;
             this.moveCategory = moveCategory;
 
             moveList.put(name, this);
+        }
+
+        protected static void init(){
+            new Move("Spirit Break",75,"Fairy", Constants.MOVE_CATS.Physical);
         }
     }
 
@@ -1845,76 +1849,84 @@ public class Pokedex {
         }
 
 
-        public static double getMatchups(Type[] types, String attackType){
+        public static double getMatchups(Type[] types, String attackType) {
             final Type typeOne = types[0];
             final Type typeTwo = types[1];
             double typeTwoMod = 1;
-            if(typeTwo!=null){typeTwoMod = returnMatchupModifier(typeTwo, attackType);}
+            if (typeTwo != null) {
+                typeTwoMod = returnMatchupModifier(typeTwo, attackType);
+            }
 
-            return (returnMatchupModifier(typeOne,attackType)*typeTwoMod);
+            return (returnMatchupModifier(typeOne, attackType) * typeTwoMod);
         }
 
-        private static double returnMatchupModifier(Type defendingType, String attackingType){
-            if(Arrays.asList(defendingType.weaknesses).contains(attackingType)){return 2;
-            }else if(Arrays.asList(defendingType.resistances).contains(attackingType)){return 0.5;
-            }else if(Arrays.asList(defendingType.immunities).contains(attackingType)){return 0;}
+        private static double returnMatchupModifier(Type defendingType, String attackingType) {
+            if (Arrays.asList(defendingType.weaknesses).contains(attackingType)) {
+                return 2;
+            } else if (Arrays.asList(defendingType.resistances).contains(attackingType)) {
+                return 0.5;
+            } else if (Arrays.asList(defendingType.immunities).contains(attackingType)) {
+                return 0;
+            }
 
             return 1;
 
         }
-        //type database (inits all types into the array
-        public Type(){
-            for(int i = 0; i<=typeNames.length-1;i++){
-                new Type(typeNames[i]);}
+
+        public static void init(){
+            //type database (inits all types into the array
+            for (int i = 0; i <= typeNames.length - 1; i++) {
+                new Type(typeNames[i]);
+            }
 
             //weaknesses
             typeMap.get("Normal").weaknesses = new String[]{"Fighting"};
-            typeMap.get("Fighting").weaknesses = new String[]{"Flying","Psychic","Fairy"};
-            typeMap.get("Flying").weaknesses = new String[]{"Rock","Electric","Ice"};
-            typeMap.get("Fire").weaknesses = new String[]{"Water","Ground","Rock"};
-            typeMap.get("Grass").weaknesses = new String[]{"Poison","Flying","Ice","Fire","Bug"};
+            typeMap.get("Fighting").weaknesses = new String[]{"Flying", "Psychic", "Fairy"};
+            typeMap.get("Flying").weaknesses = new String[]{"Rock", "Electric", "Ice"};
+            typeMap.get("Fire").weaknesses = new String[]{"Water", "Ground", "Rock"};
+            typeMap.get("Grass").weaknesses = new String[]{"Poison", "Flying", "Ice", "Fire", "Bug"};
             typeMap.get("Water").weaknesses = new String[]{"Electric", "Grass"};
             typeMap.get("Electric").weaknesses = new String[]{"Ground"};
-            typeMap.get("Ground").weaknesses = new String[]{"Water", "Ice","Grass"};
-            typeMap.get("Rock").weaknesses = new String[]{"Fighting","Water","Grass","Ground","Steel"};
-            typeMap.get("Dragon").weaknesses = new String[]{"Ice","Fairy"};
-            typeMap.get("Poison").weaknesses = new String[]{"Ground","Psychic"};
-            typeMap.get("Bug").weaknesses = new String[]{"Flying","Rock","Fire"};
-            typeMap.get("Dark").weaknesses = new String[]{"Fighting","Fairy","Bug"};
-            typeMap.get("Steel").weaknesses = new String[]{"Fighting","Fire","Ground"};
-            typeMap.get("Ghost").weaknesses = new String[]{"Ghost","Dark"};
-            typeMap.get("Fairy").weaknesses = new String[]{"Steel","Poison"};
-            typeMap.get("Psychic").weaknesses = new String[]{"Dark","Ghost","Bug"};
-            typeMap.get("Ice").weaknesses = new String[]{"Fighting","Rock","Fire","Steel"};
+            typeMap.get("Ground").weaknesses = new String[]{"Water", "Ice", "Grass"};
+            typeMap.get("Rock").weaknesses = new String[]{"Fighting", "Water", "Grass", "Ground", "Steel"};
+            typeMap.get("Dragon").weaknesses = new String[]{"Ice", "Fairy"};
+            typeMap.get("Poison").weaknesses = new String[]{"Ground", "Psychic"};
+            typeMap.get("Bug").weaknesses = new String[]{"Flying", "Rock", "Fire"};
+            typeMap.get("Dark").weaknesses = new String[]{"Fighting", "Fairy", "Bug"};
+            typeMap.get("Steel").weaknesses = new String[]{"Fighting", "Fire", "Ground"};
+            typeMap.get("Ghost").weaknesses = new String[]{"Ghost", "Dark"};
+            typeMap.get("Fairy").weaknesses = new String[]{"Steel", "Poison"};
+            typeMap.get("Psychic").weaknesses = new String[]{"Dark", "Ghost", "Bug"};
+            typeMap.get("Ice").weaknesses = new String[]{"Fighting", "Rock", "Fire", "Steel"};
 
             //resists
             typeMap.get("Normal").resistances = new String[]{};
-            typeMap.get("Fighting").resistances = new String[]{"Rock","Bug","Dark"};
-            typeMap.get("Flying").resistances = new String[]{"Fighting","Bug","Grass"};
-            typeMap.get("Fire").resistances = new String[]{"Fighting"};
-            typeMap.get("Grass").resistances = new String[]{"Fighting"};
-            typeMap.get("Water").resistances = new String[]{"Fighting"};
-            typeMap.get("Electric").resistances = new String[]{"Fighting"};
-            typeMap.get("Ground").resistances = new String[]{"Fighting"};
-            typeMap.get("Rock").resistances = new String[]{"Fighting"};
-            typeMap.get("Dragon").resistances = new String[]{"Fighting"};
-            typeMap.get("Poison").resistances = new String[]{"Fighting"};
-            typeMap.get("Bug").resistances = new String[]{"Fighting"};
-            typeMap.get("Dark").resistances = new String[]{"Fighting"};
-            typeMap.get("Steel").resistances = new String[]{"Fighting"};
-            typeMap.get("Ghost").resistances = new String[]{"Fighting"};
-            typeMap.get("Fairy").resistances = new String[]{"Fighting"};
-            typeMap.get("Psychic").resistances = new String[]{"Fighting"};
-            typeMap.get("Ice").resistances = new String[]{"Fighting"};
+            typeMap.get("Fighting").resistances = new String[]{"Rock", "Bug", "Dark"};
+            typeMap.get("Flying").resistances = new String[]{"Fighting", "Bug", "Grass"};
+                typeMap.get("Fire").resistances = new String[]{"Fighting"};
+                typeMap.get("Grass").resistances = new String[]{"Fighting"};
+                typeMap.get("Water").resistances = new String[]{"Fighting"};
+                typeMap.get("Electric").resistances = new String[]{"Fighting"};
+                typeMap.get("Ground").resistances = new String[]{"Fighting"};
+                typeMap.get("Rock").resistances = new String[]{"Fighting"};
+                typeMap.get("Dragon").resistances = new String[]{"Fighting"};
+                typeMap.get("Poison").resistances = new String[]{"Fighting"};
+                typeMap.get("Bug").resistances = new String[]{"Fighting"};
+                typeMap.get("Dark").resistances = new String[]{"Fighting"};
+                typeMap.get("Steel").resistances = new String[]{"Fighting"};
+                typeMap.get("Ghost").resistances = new String[]{"Fighting"};
+                typeMap.get("Fairy").resistances = new String[]{"Fighting"};
+                typeMap.get("Psychic").resistances = new String[]{"Fighting"};
+                typeMap.get("Ice").resistances = new String[]{"Fighting"};
 
-            //immunities
-            typeMap.get("Normal").immunities = new String[]{"Ghost"};
-            typeMap.get("Fighting").immunities = new String[]{"Ghost"};
-            typeMap.get("Flying").immunities = new String[]{"Ground"};
-            typeMap.get("Steel").immunities = new String[]{"Poison"};
-            typeMap.get("Ghost").immunities = new String[]{"Normal","Fighting"};
-            typeMap.get("Fairy").immunities = new String[]{"Dragon"};
+                //immunities
+                typeMap.get("Normal").immunities = new String[]{"Ghost"};
+                typeMap.get("Fighting").immunities = new String[]{"Ghost"};
+                typeMap.get("Flying").immunities = new String[]{"Ground"};
+                typeMap.get("Steel").immunities = new String[]{"Poison"};
+                typeMap.get("Ghost").immunities = new String[]{"Normal", "Fighting"};
+                typeMap.get("Fairy").immunities = new String[]{"Dragon"};
 
+            }
         }
     }
-}

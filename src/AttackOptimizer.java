@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class AttackOptimizer{
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
-        final String[] WEATHER = Constants.WEATHER;
+        final String[] WEATHER = Constants.WEATHER_LIST;
         final String[] natDex = getNatDexAsStringArray();
         final int SIZE = 500;
         final int BOUNDS = 35;

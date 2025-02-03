@@ -1,5 +1,6 @@
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 public class Miscellaneous extends Pokedex{
     protected static void printStats(Pokemon poke){
@@ -133,25 +134,61 @@ public class Miscellaneous extends Pokedex{
         }
 
         //the damage calc process is SO incredibly freaking complicated that i have to make a SEPERATE method to unify all the FUCKING 9000 VARIABLES that go into calcing damage
-        public static void damageCalc(){
+        public static void damageCalc(Pokemon attacker,Pokemon defender,Move move, int attackerAtkEV,int attackerSpatkEV, String attackerNature, int defenderDefEV,int defenderSpdefEV, String defenderNature){
+            move = Pokedex.getMove("Spirit Break");
+            Type[] attackerType = {Type.getType("Fairy"),Type.getType("Fighting")};
+            Type[] defenderType = {Type.getType("Ice"),Type.getType("Grass")};
+            int attackerLevel = 100; //placeholder read off the actual level UI element later
+            double attackerNatureMultiplier = getNature(attackerNature, "Special");
+            double defenderNatureMultiplier = getNature(defenderNature, "Special Defense");
+            int attackingMonAttack = statCalculation(attacker.baseSpatk,31,attackerSpatkEV,attackerNatureMultiplier,attackerLevel);
+            int defendingMonDefense = statCalculation(defender.baseSpatk,31,attackerSpatkEV,defenderNatureMultiplier,attackerLevel);
 
+            if(move.moveCategory==Constants.MOVE_CATS.Physical){
+                attackerNatureMultiplier = getNature(attackerNature, "Attack");
+                attackingMonAttack = statCalculation(attacker.baseAttack,31,attackerAtkEV,attackerNatureMultiplier,attackerLevel);
+                defenderNatureMultiplier = getNature(defenderNature, "Special Defense");
+                defendingMonDefense = statCalculation(defender.baseSpatk,31,attackerSpatkEV,defenderNatureMultiplier,attackerLevel);
+
+            }
+
+            double type = Type.getMatchups(defenderType, move.type);
+            if(){ //stab
+
+            }
         }
 
         //bro just make a seperate class that has all the evs and ivs and thr base stats atp
         //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
-        private static double actualDamageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat){
+        private static double actualDamageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, double type, Move move){
             int moveBP = 75; //placeholder
             attackerLevel = ((2*attackerLevel)/5)+2;
 
 
             //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
             double rawDamage = ((attackerLevel*moveBP*(attackingMonAttack/targetDefenseStat))/50)+2;
-            rawDamage*=1.5; //stab (PLACEHOLDER)
+            rawDamage*=type; //type (PLACEHOLDER)
             System.out.println(rawDamage);
             return 1;
         }
         //get stat boost modifier
         private static double getBoostModifier(int boostCount){return (double)(boostCount+2)/2;}
 
+    }
+
+    //placeholder
+    private static double getNature(String natureName, String stat){
+        if(Objects.equals(natureName, "Special")){
+            if(Objects.equals(stat, "Special")){
+                return 1.1;
+            }
+        }
+
+        if(Objects.equals(natureName, "Attack")){
+            if(Objects.equals(stat, "Attack")){
+                return 1.1;
+            }
+        }
+        return 1;
     }
 }
