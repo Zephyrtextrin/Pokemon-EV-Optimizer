@@ -134,28 +134,16 @@ public class Miscellaneous extends Pokedex{
         }
 
         //the damage calc process is SO incredibly freaking complicated that i have to make a SEPERATE method to unify all the FUCKING 9000 VARIABLES that go into calcing damage
-        public static void damageCalc(Pokemon attacker,Pokemon defender,Move move, int attackerAtkEV,int attackerSpatkEV, String attackerNature, int defenderDefEV,int defenderSpdefEV, String defenderNature){
+        //make method in hte ui or a seperate method to switch the evs/nature depending on move cat
+public static void damageCalc(int attackerBase,int defenderBase,Move move, int attackerEV, double attackerNature, int defenderEV, double defenderNature){
             move = Pokedex.getMove("Spirit Break");
             Type[] attackerType = {Type.getType("Fairy"),Type.getType("Fighting")};
             Type[] defenderType = {Type.getType("Ice"),Type.getType("Grass")};
             int attackerLevel = 100; //placeholder read off the actual level UI element later
-            double attackerNatureMultiplier = getNature(attackerNature, "Special");
-            double defenderNatureMultiplier = getNature(defenderNature, "Special Defense");
-            int attackingMonAttack = statCalculation(attacker.baseSpatk,31,attackerSpatkEV,attackerNatureMultiplier,attackerLevel);
-            int defendingMonDefense = statCalculation(defender.baseSpatk,31,attackerSpatkEV,defenderNatureMultiplier,attackerLevel);
-
-            if(move.moveCategory==Constants.MOVE_CATS.Physical){
-                attackerNatureMultiplier = getNature(attackerNature, "Attack");
-                attackingMonAttack = statCalculation(attacker.baseAttack,31,attackerAtkEV,attackerNatureMultiplier,attackerLevel);
-                defenderNatureMultiplier = getNature(defenderNature, "Special Defense");
-                defendingMonDefense = statCalculation(defender.baseSpatk,31,attackerSpatkEV,defenderNatureMultiplier,attackerLevel);
-
-            }
+            int attackingMonAttack = statCalculation(attackerBase,31,attackerEV,attackerNature,attackerLevel);
+            int defendingMonDefense = statCalculation(defenderBase,31,defenderEV,defenderNature,attackerLevel);
 
             double type = Type.getMatchups(defenderType, move.type);
-            if(){ //stab
-
-            }
         }
 
         //bro just make a seperate class that has all the evs and ivs and thr base stats atp
