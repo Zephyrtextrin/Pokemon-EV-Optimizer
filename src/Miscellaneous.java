@@ -124,6 +124,15 @@ public class Miscellaneous extends Pokedex{
             return -1;
         }
 
+        //finds what stat boost you need to ohko
+        public static int findLeastSpeedEVs(int baseStat, double nature, int level, int targetStat, int boostCount){
+            for(int EV = 0; EV<=252; EV++){
+                final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level)*getBoostModifier(boostCount));
+                if(stat>targetStat){return EV;}
+            }
+            return -1;
+        }
+
         private static int calcHP(double[] details, Pokemon monName){
             double baseStat = monName.baseHP;
             double IV = details[0];
@@ -161,6 +170,7 @@ public class Miscellaneous extends Pokedex{
             //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
             double rawDamage = ((attackerLevel*moveBP*(attackingMonAttack/targetDefenseStat))/50)+2;
             rawDamage*=STAB; //type (PLACEHOLDER)
+            rawDamage*=typeEffectiveness;
             System.out.println(rawDamage);
             return 1;
         }
