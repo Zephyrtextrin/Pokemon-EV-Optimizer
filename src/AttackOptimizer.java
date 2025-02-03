@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AttackOptimizer extends Pokedex{
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
@@ -61,11 +62,11 @@ public class AttackOptimizer extends Pokedex{
         attackerPanel.add(moveSelect);
 
         //select what attackBoost
-        final JTextField attackBoost = new JTextField("Attack Boosts");
+        final JComboBox<String> attackBoost = new JComboBox<>(Constants.BOOSTS);
         attackerPanel.add(attackBoost);
 
         //select what spattackBoost
-        final JTextField specialAttackBoost = new JTextField("Special Attack Boosts");
+        final JComboBox<String> specialAttackBoost = new JComboBox<>(Constants.BOOSTS);
         attackerPanel.add(specialAttackBoost);
 
         attackerPanel.revalidate();
@@ -131,11 +132,11 @@ public class AttackOptimizer extends Pokedex{
         defenderPanel.add(spdefEV);
 
         //select what def boost
-        final JTextField defBoosts = new JTextField("Defense Boosts");
+        final JComboBox<String> defBoosts = new JComboBox<>(Constants.BOOSTS);
         defenderPanel.add(defBoosts);
 
         //select what spdef boost
-        final JTextField spdefBoosts = new JTextField("Special Defense Boosts");
+        final JComboBox<String> spdefBoosts = new JComboBox<>(Constants.BOOSTS);
         defenderPanel.add(spdefBoosts);
 
         defenderPanel.revalidate();
@@ -159,11 +160,11 @@ public class AttackOptimizer extends Pokedex{
             double yourNatureMultiplier;
             double oppNatureMultiplier;
 
-            final int yourLevel = Integer.parseInt(yourLevelSelect.getText());
-            final int oppLevel = Integer.parseInt(oppLevelSelect.getText());
+            final int yourLevel = Integer.parseInt(Objects.requireNonNull(yourLevelSelect.getText()));
+            final int oppLevel = Integer.parseInt(Objects.requireNonNull(oppLevelSelect.getText()));
 
-            int atkBoostCount = (int)Double.parseDouble(attackBoost.getText());
-            int defBoostCount = (int)Double.parseDouble(defBoosts.getText());
+            int atkBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(attackBoost.getSelectedItem()));
+            int defBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(defBoosts.getSelectedItem()));
 
 
             yourNatureMultiplier = switch(yourNature){
@@ -194,8 +195,8 @@ public class AttackOptimizer extends Pokedex{
                     case "-Spdef" -> 0.9;
                     default -> 1;
                 };
-                atkBoostCount = (int)Double.parseDouble(specialAttackBoost.getText());
-                defBoostCount = (int)Double.parseDouble(spdefBoosts.getText());
+                atkBoostCount = (int)Double.parseDouble((String) Objects.requireNonNull(specialAttackBoost.getSelectedItem()));
+                defBoostCount = (int)Double.parseDouble((String) Objects.requireNonNull(spdefBoosts.getSelectedItem()));
             }
 
             int oppEV = Integer.parseInt(defenderEVSource.getText());
