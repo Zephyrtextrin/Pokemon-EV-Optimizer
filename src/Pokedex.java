@@ -6,36 +6,6 @@ public class Pokedex {
     private static final HashMap<String, Pokemon> paldeaDex = new HashMap<>();
     private static final HashMap<String, Move> moveList = new HashMap<>();
 
-
-
-    public static Pokemon getPokemonStats(String name){
-        Pokemon temp;
-        final ArrayList<Pokemon> results = new ArrayList<>();
-        for (Pokemon current : natDex.values()) {
-            if (current.name.startsWith(name)) {
-                results.add(current);
-            }
-        }
-        //if user types in a string that contains multiple mons
-        if (results.size()>1){
-            for(Pokemon i:results) {System.out.println(i.name);}
-            final String selection = InputHelper.getString("Multiple Pokemon fit the criteria you searched for. Which one would you like to select?");
-            temp = natDex.get(Miscellaneous.convertToCamelCase(selection));
-        }else if(results.isEmpty()) {return null;
-        }else{temp = results.get(0);}
-
-        return temp;
-    }
-
-    public static HashMap<String, Pokemon> changeDex() {
-        final String[] currentSupportedDexes = {"paldea", "national"};
-        final String dexSelection = InputHelper.getStringInArray(currentSupportedDexes, "Which Pokedex do you want to sort by? (Note this includes DLC and transfer-only Pokemon.)");
-        return switch (dexSelection) { //do not make an if-statement in case i add more dexes
-            case "Paldea" -> paldeaDex;
-            default -> natDex;
-        };
-    }
-
     //this might not be the best way to do it
     public static int getIndex(String name){
         int index = 0;

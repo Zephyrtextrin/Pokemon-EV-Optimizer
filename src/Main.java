@@ -7,28 +7,9 @@ public class Main{
 
         /*to do
         make pokemon have types
-        add stab
-        add type effectiveness
-        natures
         items
-        make the UI pass in different vars depending on the move's secial or physical
+        make calc to see how much defense u need to tank smth
+        make calc to see how much speed u need to outspeed
          */
-        /*int index = 0;
-        String[] options = {
-                "EV OPTIMIZER: HOW MUCH ATTACK YOU NEED TO OHKO",
-                "EV OPTIMIZER: HOW MUCH DEFENSE YOU NEED TO SURVIVE AN ATTACK",
-                "EV OPTIMIZER: HOW MANY EVS TO OUTSPEED?",
-                "FIND BASE STAT + STAT BOOST COMBINATION TO OUTSPEED A SPECIFIC POKEMON",
-                "FIND MUCH OF THE FORMAT YOU OUTSPEED (In percentage)"};
-        for(String i:options){
-            index++;
-            System.out.println(index+"- "+i);
-        }
-        int selection = InputHelper.getRangedInt("Enter a number.",1,options.length);
-        switch(selection){
-            case(3)->Tasks.findEVsToOutspeed();
-            case(4)->Tasks.findBaseStatsToOutspeed();
-            case(5)->Tasks.outspeedPercentage();
-        }*/
     }
 }

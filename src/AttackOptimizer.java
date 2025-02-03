@@ -167,12 +167,14 @@ public class AttackOptimizer extends Pokedex{
             int defBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(defBoosts.getSelectedItem()));
 
 
+            assert yourNature != null;
             yourNatureMultiplier = switch(yourNature){
                 case "+Attack" -> 1.1;
                 case "-Attack" -> 0.9;
                 default -> 1;
             };
 
+            assert oppNature != null;
             oppNatureMultiplier = switch(oppNature){
                 case "+Defense" -> 1.1;
                 case "-Defense" -> 0.9;
@@ -201,10 +203,10 @@ public class AttackOptimizer extends Pokedex{
 
             int oppEV = Integer.parseInt(defenderEVSource.getText());
 
-            final int oppDefenseStat = Miscellaneous.Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel,defBoostCount);
-            final int oppHP = Miscellaneous.Calculators.calcHP(oppEV,oppLevel,opp.baseHP);
+            final int oppDefenseStat = Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel,defBoostCount);
+            final int oppHP = Calculators.calcHP(oppEV,oppLevel,opp.baseHP);
 
-            int EV = Miscellaneous.Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP);
+            int EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP);
 
             System.out.println("final min ev: "+EV);
         });
