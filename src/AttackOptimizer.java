@@ -9,8 +9,8 @@ public class AttackOptimizer extends Pokedex{
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
         final String[] WEATHER = Constants.WEATHER_LIST;
-        final String[] natDex = arrayListToArray(Pokedex.getNatDexAsArrayList());
-        final String[] moveList = arrayListToArray(Pokedex.getMoveListAsArrayList());
+        final String[] natDex = arrayListToArray(getNatDexAsArrayList());
+        final String[] moveList = arrayListToArray(getMoveListAsArrayList());
         final int SIZE = 500;
         final int BOUNDS = 35;
 
@@ -142,10 +142,10 @@ public class AttackOptimizer extends Pokedex{
 
         //gathers all info on both sides and performs preliminary calcs needed for damage calcing
         run.addActionListener(_ ->{
-            final Move move = (Move)moveSelect.getSelectedItem();
+            final Move move = getMove((String)moveSelect.getSelectedItem());
 
-            final Pokemon you = Pokedex.getPokemon((String)pokemonSelect.getSelectedItem());
-            final Pokemon opp = Pokedex.getPokemon((String)opponentPokemonSelect.getSelectedItem());
+            final Pokemon you = getPokemon((String)pokemonSelect.getSelectedItem());
+            final Pokemon opp = getPokemon((String)opponentPokemonSelect.getSelectedItem());
 
             assert you != null;
             int yourBase = you.baseAttack;
@@ -161,6 +161,9 @@ public class AttackOptimizer extends Pokedex{
 
             final int yourLevel = Integer.parseInt(yourLevelSelect.getText());
             final int oppLevel = Integer.parseInt(oppLevelSelect.getText());
+
+            int atkBoostCount = (int)Double.parseDouble(attackBoost.getText());
+            int defBoostCount = (int)Double.parseDouble(defBoosts.getText());
 
 
             yourNatureMultiplier = switch(yourNature){
@@ -191,14 +194,16 @@ public class AttackOptimizer extends Pokedex{
                     case "-Spdef" -> 0.9;
                     default -> 1;
                 };
+                atkBoostCount = (int)Double.parseDouble(specialAttackBoost.getText());
+                defBoostCount = (int)Double.parseDouble(spdefBoosts.getText());
             }
 
             int oppEV = Integer.parseInt(defenderEVSource.getText());
 
-            final int oppDefenseStat = Miscellaneous.Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel);
+            final int oppDefenseStat = Miscellaneous.Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel,defBoostCount);
             final int oppHP = Miscellaneous.Calculators.calcHP(oppEV,oppLevel,opp.baseHP);
 
-            int EV = Miscellaneous.Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,Pokedex.getMove("Close Combat"),oppDefenseStat,0,oppHP);
+            int EV = Miscellaneous.Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP);
 
             System.out.println("final min ev: "+EV);
         });

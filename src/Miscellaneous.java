@@ -101,15 +101,15 @@ public class Miscellaneous extends Pokedex{
         //calculation for all stats (excluding HP)
         //more info: https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward
         //must be cast to double to prevent floating point error but has to be cast back to int because all pokemon calculations *always* round down
-        public static int statCalculation(int baseStat, int IV, int EV, double nature, int level){
+        public static int statCalculation(int baseStat, int IV, int EV, double nature, int level, int boostCount){
             EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
-            return (int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature);
+            return (int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
         }
 
         //finds what stat boost you need to be at to be faster than a given stat
         public static int findLeastStatBoosted(int IV, int EV, double nature, int level, int targetStat, int boostCount){
             for(int currentStat = 0; currentStat<255; currentStat++){
-                final int stat = (int)(statCalculation(currentStat,IV,EV,nature,level)*getBoostModifier(boostCount));
+                final int stat = (int)(statCalculation(currentStat,IV,EV,nature,level,boostCount)*getBoostModifier(boostCount));
                 if(stat>targetStat){return currentStat;}
             }
             return -1;
@@ -118,7 +118,7 @@ public class Miscellaneous extends Pokedex{
          //finds what stat boost you need to be at to be faster than a given stat
         public static int findLeastSpeedEVs(int IV, int baseStat, double nature, int level, int targetStat, int boostCount){
             for(int EV = 0; EV<=252; EV++){
-                final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level)*getBoostModifier(boostCount));
+                final int stat = (int)(statCalculation(baseStat,IV,EV,nature,level,boostCount));
                 if(stat>targetStat){return EV;}
             }
             return -1;
@@ -128,7 +128,7 @@ public class Miscellaneous extends Pokedex{
         public static int findLeastAtkEVs(int baseStat, double nature, int level, Move move, int defenderStat, int boostCount, int oppHP){
             System.out.println("opp hp "+oppHP);
             for(int EV = 0; EV<=252; EV++){
-                final int stat = (int)(statCalculation(baseStat,31,EV,nature,level)*getBoostModifier(boostCount));
+                final int stat = (int)(statCalculation(baseStat,31,EV,nature,level,boostCount));
                 final int damage = (int)damageCalc(level,stat,defenderStat,move);
                 if(damage>=oppHP){return EV;}
             }
