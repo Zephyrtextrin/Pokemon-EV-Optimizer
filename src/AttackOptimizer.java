@@ -45,13 +45,13 @@ public class AttackOptimizer extends Pokedex{
         final JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
         attackerPanel.add(pokemonSelect);
 
-        //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> itemSelect = new JComboBox<>(natDex);
-        attackerPanel.add(itemSelect);
-
         //select what level PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JTextField yourLevelSelect = new JTextField();
         attackerPanel.add(yourLevelSelect);
+
+        //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        final JComboBox<String> itemSelect = new JComboBox<>(natDex);
+        attackerPanel.add(itemSelect);
 
         //select what nature PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JComboBox<String> natureSelect = new JComboBox<>(Constants.NATURE);
