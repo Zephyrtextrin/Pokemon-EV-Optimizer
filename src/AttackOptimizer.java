@@ -39,7 +39,7 @@ public class AttackOptimizer extends Database {
         attackerPanel.add(attackerTitleLabel);
 
         //image display for your pokemon
-        final File yourIMGFile = getSpriteFile("1"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        final File yourIMGFile = getSpriteFile("0"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
         final ImageIcon yourIcon = new ImageIcon(ImageIO.read(yourIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel youDisplayLabel = new JLabel(yourIcon);
@@ -50,7 +50,9 @@ public class AttackOptimizer extends Database {
         attackerPanel.add(pokemonSelect);
 
         pokemonSelect.addActionListener(_ ->{
-            try {youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString()))));
+            final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
+            final Pokemon selectedMon = getPokemon(selected);
+            try {youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(String.valueOf(selectedMon.dexNumber)))));
             }catch(IOException e){
                 try{youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}
                 throw new RuntimeException(e);
@@ -113,7 +115,7 @@ public class AttackOptimizer extends Database {
         defenderPanel.add(defenderTitleLabel);
 
         //image display for your pokemon
-        final File opponentIMGFile = new File("1"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        final File opponentIMGFile = getSpriteFile("0"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
         final ImageIcon opponentIcon = new ImageIcon(ImageIO.read(opponentIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel opponentDisplayLabel = new JLabel(opponentIcon);
@@ -124,7 +126,9 @@ public class AttackOptimizer extends Database {
         defenderPanel.add(opponentPokemonSelect);
 
         opponentPokemonSelect.addActionListener(_ ->{
-            try {opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(Objects.requireNonNull(opponentPokemonSelect.getSelectedItem()).toString()))));
+            final String selected = Objects.requireNonNull(opponentPokemonSelect.getSelectedItem()).toString();
+            final Pokemon selectedMon = getPokemon(selected);
+            try {opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(String.valueOf(selectedMon.dexNumber)))));
             }catch(IOException e){
                 try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}
                 throw new RuntimeException(e);
