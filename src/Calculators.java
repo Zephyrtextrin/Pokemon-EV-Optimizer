@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Calculators extends Database {
     //calculation for all stats (excluding HP)
     //more info: https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward
@@ -26,11 +28,11 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int findLeastAtkEVs(int baseStat, double nature, int level, Move move, int defenderStat, int boostCount, int oppHP, Pokemon you, Pokemon opp, String item){
+    public static int findLeastAtkEVs(int baseStat, double nature, int level, Move move, int defenderStat, int boostCount, int oppHP, Pokemon you, Pokemon opp, String item, String weather){
         System.out.println("opp hp "+oppHP);
         for(int EV = 0; EV<=252; EV++){
             final int stat = statCalculation(baseStat,31,EV,nature,level,boostCount);
-            final int damage = (int)damageCalc(level,stat,defenderStat,move, you,opp,item);
+            final int damage = (int)damageCalc(level,stat,defenderStat,move, you,opp,item, weather);
             if(damage>=oppHP){return EV;}
         }
         return -1;
@@ -40,11 +42,11 @@ public class Calculators extends Database {
 
     //bro just make a seperate class that has all the evs and ivs and thr base stats atp
     //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
-    private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item){
+    private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item, String weather){
         attackerLevel=((2*attackerLevel)/5)+2;
         //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
         double rawDamage = ((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/50)+2;
-        rawDamage*=other(you.types,opp.types, move, item);
+        rawDamage*=other(you.types,opp.types, move, item, weather);
         System.out.println("raw damage: "+rawDamage);
         return rawDamage;
     }
@@ -57,7 +59,7 @@ public class Calculators extends Database {
 
 
     //other factors
-    private static double other(Type[] yourTypes, Type[] oppTypes, Move move, String item){
+    private static double other(Type[] yourTypes, Type[] oppTypes, Move move, String item, String weather){
         double total = 1;
 
         total*= Database.Type.getMatchups(oppTypes,move.type);
@@ -75,5 +77,9 @@ public class Calculators extends Database {
             }else{
                 return 1;
             }
+        }
+
+        private static double getWeatherMultiplier(Move move, Type[] opp, String weather){
+        if(weather.equals("Sun")&&Objects.equals(move.type, "Fire")){return 1.5;}
         }
 }

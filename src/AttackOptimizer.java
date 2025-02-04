@@ -167,8 +167,11 @@ public class AttackOptimizer extends Database {
 
             JComboBox<String> boostSourceYou = attackBoost;
             JComboBox<String> boostSourceOpp = defBoosts;
-            int atkBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(attackBoost.getSelectedItem()));
-            int defBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(defBoosts.getSelectedItem()));
+
+            int atkBoostCount;
+            int defBoostCount;
+
+            final String selectedWeather = Objects.requireNonNull(weather.getSelectedItem()).toString();
 
             final String item = Objects.requireNonNull(itemSelect.getSelectedItem()).toString();
 
@@ -221,7 +224,7 @@ public class AttackOptimizer extends Database {
             final int oppDefenseStat = Calculators.statCalculation(oppBase,31, oppDefense,yourNatureMultiplier,oppLevel,defBoostCount);
             final int oppHP = Calculators.calcHP(oppHP_EV,oppLevel,opp.baseHP);
 
-            int Min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item);
+            int Min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather);
 
             String yourLevelForOutput = "";
             if(yourLevel!=100&&yourLevel!=50){yourLevelForOutput = " level "+yourLevel;}
