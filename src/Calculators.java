@@ -61,14 +61,14 @@ public class Calculators extends Database {
     private static double other(Type[] yourTypes, Type[] oppTypes, Move move, String item, String weather){
         double total = 1;
 
-        total*= Database.Type.getMatchups(oppTypes,move.type);
-        System.out.println("type "+ Database.Type.getMatchups(oppTypes,move.type));
+        total*= Type.getMatchups(oppTypes,move.type);
+        System.out.println("type "+ Type.getMatchups(oppTypes,move.type));
         
         total*=STAB(yourTypes,move);
         System.out.println("STAB: "+STAB(yourTypes,move));
         
-        total*=Database.Items.getItemEffect(item, move.moveCategory);
-        System.out.println("Item: "+Database.Items.getItemEffect(item,move.moveCategory));
+        total*= Items.getItemEffect(item, move.moveCategory);
+        System.out.println("Item: "+ Items.getItemEffect(item,move.moveCategory));
         
         total*=getWeatherMultiplier(move, oppTypes, weather);
         System.out.println("Weather: "+getWeatherMultiplier(move, oppTypes, weather));
@@ -77,7 +77,7 @@ public class Calculators extends Database {
     }
 
     private static double STAB(Type[] yourTypes, Move move){
-            if(containsType(yourTypes, move.type)){
+            if(containsType(yourTypes, Type.getType(move.type))){
                 return 1.5;
             }else{
                 return 1;
@@ -87,28 +87,30 @@ public class Calculators extends Database {
     //all of this is shit code i made on the editor on the github website and its basically the equivalent of using google docs as an ide
     //so this code is proly shit and bad so fix it all later 
     private static double getWeatherMultiplier(Move move, Type[] opp, String weather){
-        if(weather.equals("Sun"){
-            if(move.type.equals("Fire"){return 1.5;
-            }else if(move.type.equals("Water")){return 0.5;}
-                
+        if(weather.equals("Sun")){
+            return switch(move.type){
+                case "Fire" -> 1.5;
+                case "Water" -> 0.5;
+                default -> 1;
+            };
+
         }else if(weather.equals("Rain")){
-            if(move.type.equals("Water"){return 1.5;
-            }else if(move.type.equals("Fire")){return 0.5;}
+            return switch(move.type){
+                case "Water" -> 1.5;
+                case "Fire" -> 0.5;
+                default -> 1;
+            };
             
-        }else if(weather.equals("Sand"){
-            if(containsType(opp, Database.Type.getType("Rock"){
-            if(move.moveCategory==Constants.MOVE_CATS.Special){return 0.5;} //rocks get spdef boost
-            }else{
-            System.out.println("extra damage from sandstorm chip");
-            return 1.0625; //1/16 damage from sandstorm chip
-        }
-        }else if(weather.equals("Snow")&&containsType(opp, Database.Type.getType("Ice"))&&move.moveCategory==Constants.MOVE_CATS.Physical){return 0.5;}
+        }else if(weather.equals("Sand")&&containsType(opp, Type.getType("Rock"))&&move.moveCategory==Constants.MOVE_CATS.Special){return 0.5; //rocks get spdef boost
+
+        }else if(weather.equals("Snow")&&containsType(opp, Type.getType("Ice"))&&move.moveCategory==Constants.MOVE_CATS.Physical){return 0.5;}
+
         return 1;
     }
     
-    private static boolean containsType(Type[] type, Type target){
+    private static boolean containsType(Type[] type, Type target){  
         Type secondType = type[0];
-        if(type[1]!=null){secondType=type[1]} //u have to do this because some pokemon arent dual type so u use the first type as a fallback
+        if(type[1]!=null){secondType=type[1];} //u have to do this because some pokemon arent dual type so u use the first type as a fallback
         return type[0]==target||secondType==target;
     }
 }
