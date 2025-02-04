@@ -6,6 +6,7 @@ public class Database {
     private static final HashMap<String, Move> moveList = new HashMap<>();
     private static final Map<String, Type> typeMap = new HashMap<>(); //allows u to sort by type name
     private static final ArrayList<String> itemList = new ArrayList<>();
+    private static final ArrayList<String> abilities = new ArrayList<>();
 
     public static ArrayList<String> getNatDexAsArrayList(){
         final Set<String> set = natDex.keySet();
@@ -26,6 +27,8 @@ public class Database {
     public static Move getMove(String input){return moveList.get(input);}
 
     public static ArrayList<String> getItemList(){return itemList;}
+
+    public static ArrayList<String> getAbilities(){return abilities;}
 
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){
@@ -1902,6 +1905,12 @@ public class Database {
             itemList.add("Choice Scarf"); //use when u make outspeed calc
             itemList.add("Life Orb");
             itemList.add("Booster Energy [doesn't work rn]"); //use when u add abilities
+        }
+    }
+
+    public static class Abilities{
+        private static void init(){
+            
         }
     }
 }

@@ -75,6 +75,10 @@ public class AttackOptimizer extends Database {
         final JComboBox<String> moveSelect = new JComboBox<>(moveList);
         attackerPanel.add(moveSelect);
 
+        //select what move PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        final JComboBox<String> ability = new JComboBox<>(moveList);
+        attackerPanel.add(moveSelect);
+
         //select what attackBoost
         final JComboBox<String> attackBoost = new JComboBox<>(Constants.BOOSTS);
         attackerPanel.add(attackBoost);
