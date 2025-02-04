@@ -1351,9 +1351,6 @@ public class Database {
             typeMap.get("Steel").immunities = new String[]{"Poison"};
             typeMap.get("Ghost").immunities = new String[]{"Normal", "Fighting"};
             typeMap.get("Fairy").immunities = new String[]{"Dragon"};
-
-
-
             }
         }
 
@@ -1370,7 +1367,7 @@ public class Database {
             itemList.add("Choice Specs");
             itemList.add("Choice Scarf"); //use when u make outspeed calc
             itemList.add("Life Orb");
-            itemList.add("Booster Energy [doesnt work rn]"); //use when u add abilities
+            itemList.add("Booster Energy [doesn't work rn]"); //use when u add abilities
         }
     }
 }
