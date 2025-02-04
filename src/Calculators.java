@@ -40,15 +40,14 @@ public class Calculators extends Database {
 
     public static int calcHP(double EV, double level, double baseHP){return (int)((int)(((2*baseHP+31+(EV/4))*level)/100)+level+10);}
 
-    //bro just make a seperate class that has all the evs and ivs and thr base stats atp
-    //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
+    //"why do you cast to int so much?" everything rounds down. all calculations *always* round down.
     private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item, String weather){
-        attackerLevel=((2*attackerLevel)/5)+2;
+        attackerLevel=(int)(((2*attackerLevel)/5)+2);
         //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
-        double rawDamage = ((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/50)+2;
+        double rawDamage = (int)(((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/50)+2);
         rawDamage*=other(you.types,opp.types, move, item, weather);
         System.out.println("raw damage: "+rawDamage);
-        return rawDamage;
+        return (int)rawDamage;
     }
 
     //get stat boost modifier
