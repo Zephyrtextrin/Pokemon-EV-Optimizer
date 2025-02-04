@@ -162,8 +162,8 @@ public class AttackOptimizer extends Database {
             double yourNatureMultiplier;
             double oppNatureMultiplier;
 
-            final int yourLevel = Integer.parseInt(Objects.requireNonNull(yourLevelSelect.getText()));
-            final int oppLevel = Integer.parseInt(Objects.requireNonNull(oppLevelSelect.getText()));
+            final int yourLevel = errorHandler(yourLevelSelect, 1,100);
+            final int oppLevel = errorHandler(oppLevelSelect, 1, 100);
 
             int atkBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(attackBoost.getSelectedItem()));
             int defBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(defBoosts.getSelectedItem()));
@@ -204,14 +204,15 @@ public class AttackOptimizer extends Database {
                 defBoostCount = (int)Double.parseDouble((String) Objects.requireNonNull(spdefBoosts.getSelectedItem()));
             }
 
-            int oppEV = Integer.parseInt(defenderEVSource.getText());
+            int oppHP_EV = errorHandler(HP_EV, 0,252);
+            final int oppDefense = errorHandler(defenderEVSource, 0,252);
 
-            final int oppDefenseStat = Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel,defBoostCount);
-            final int oppHP = Calculators.calcHP(oppEV,oppLevel,opp.baseHP);
+            final int oppDefenseStat = Calculators.statCalculation(oppBase,31, oppDefense,yourNatureMultiplier,oppLevel,defBoostCount);
+            final int oppHP = Calculators.calcHP(oppHP_EV,oppLevel,opp.baseHP);
 
-            int EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item);
+            int Min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item);
 
-            System.out.println("final min ev: "+EV);
+            System.out.println("final min ev: "+ Min_OHKO_EV);
         });
     }
 
