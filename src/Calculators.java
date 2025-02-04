@@ -64,15 +64,21 @@ public class Calculators extends Database {
 
         total*= Database.Type.getMatchups(oppTypes,move.type);
         System.out.println("type "+ Database.Type.getMatchups(oppTypes,move.type));
+        
         total*=STAB(yourTypes,move);
+        System.out.println("STAB: "+STAB(yourTypes,move));
+        
         total*=Database.Items.getItemEffect(item, move.moveCategory);
         System.out.println("Item: "+Database.Items.getItemEffect(item,move.moveCategory));
+        
+        total*=getWeatherMultiplier(move, oppTypes, weather);
+        System.out.println("Weather: "+getWeatherMultiplier(move, oppTypes, weather));
+        
         return total;
     }
 
     private static double STAB(Type[] yourTypes, Move move){
-            if(yourTypes[0].equals(Type.getType(move.type))||yourTypes[1].equals(Type.getType(move.type))){
-                System.out.println("STAB! 1.5 increase");
+            if(containsType(yourTypes, move.type)){
                 return 1.5;
             }else{
                 return 1;
@@ -98,6 +104,7 @@ public class Calculators extends Database {
             return 1.0625; //1/16 damage from sandstorm chip
         }
         }else if(weather.equals("Snow")&&containsType(opp, Database.Type.getType("Ice"))&&move.moveCategory==Constants.MOVE_CATS.Physical){return 0.5;}
+        return 1;
     }
     
     private static boolean containsType(Type[] type, Type target){
