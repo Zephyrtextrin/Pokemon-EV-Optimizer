@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class AttackOptimizer extends Pokedex{
+public class AttackOptimizer extends Database {
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
         final String[] WEATHER = Constants.WEATHER_LIST;
         final String[] natDex = arrayListToArray(getNatDexAsArrayList());
         final String[] moveList = arrayListToArray(getMoveListAsArrayList());
+        final String[] itemList = arrayListToArray(Database.getItemList());
+
         final int SIZE = 500;
         final int BOUNDS = 35;
 
@@ -50,7 +52,7 @@ public class AttackOptimizer extends Pokedex{
         attackerPanel.add(yourLevelSelect);
 
         //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> itemSelect = new JComboBox<>(natDex);
+        final JComboBox<String> itemSelect = new JComboBox<>(itemList);
         attackerPanel.add(itemSelect);
 
         //select what nature PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
@@ -166,6 +168,7 @@ public class AttackOptimizer extends Pokedex{
             int atkBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(attackBoost.getSelectedItem()));
             int defBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(defBoosts.getSelectedItem()));
 
+            final String item = Objects.requireNonNull(itemSelect.getSelectedItem()).toString();
 
             assert yourNature != null;
             yourNatureMultiplier = switch(yourNature){
@@ -206,7 +209,7 @@ public class AttackOptimizer extends Pokedex{
             final int oppDefenseStat = Calculators.statCalculation(oppBase,31,oppEV,yourNatureMultiplier,oppLevel,defBoostCount);
             final int oppHP = Calculators.calcHP(oppEV,oppLevel,opp.baseHP);
 
-            int EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP);
+            int EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item);
 
             System.out.println("final min ev: "+EV);
         });
@@ -218,5 +221,13 @@ public class AttackOptimizer extends Pokedex{
 
         for(int i =0;i<size;i++){array[i] = arrayList.get(i);}
         return array;
+    }
+
+    private static int errorHandler(JTextField field, int min, int max){
+        int temp;
+        try{temp = Integer.parseInt(field.getText());}catch(Exception e){return 1;}
+        if(temp>max||temp<min){return 1;}
+
+        return temp;
     }
 }

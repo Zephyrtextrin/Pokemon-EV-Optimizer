@@ -9,6 +9,15 @@ public class Constants{
         Status;
     }
 
+    public enum STATS{
+        HP,
+        Attack,
+        Defense,
+        SpAtk,
+        SpDef,
+        Speed;
+    }
+
     public static final String[] WEATHER_LIST = {"No Weather","Sun","Rain","Sand","Snow"};
 
 
