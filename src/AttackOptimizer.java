@@ -13,6 +13,8 @@ public class AttackOptimizer extends Database {
         final String[] natDex = arrayListToArray(getNatDexAsArrayList());
         final String[] moveList = arrayListToArray(getMoveListAsArrayList());
         final String[] itemList = arrayListToArray(Database.getItemList());
+        String yourName;
+        String oppName;
 
         final int SIZE = 500;
         final int BOUNDS = 35;
@@ -37,7 +39,7 @@ public class AttackOptimizer extends Database {
         attackerPanel.add(attackerTitleLabel);
 
         //image display for your pokemon
-        final File yourIMGFile = new File("src/assets/gallade.png"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        final File yourIMGFile = getSpriteFile("1"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
         final ImageIcon yourIcon = new ImageIcon(ImageIO.read(yourIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel youDisplayLabel = new JLabel(yourIcon);
@@ -46,6 +48,14 @@ public class AttackOptimizer extends Database {
         //select what pokemonis attacking
         final JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
         attackerPanel.add(pokemonSelect);
+
+        pokemonSelect.addActionListener(_ ->{
+            try {youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString()))));
+            }catch(IOException e){
+                try{youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}
+                throw new RuntimeException(e);
+            }
+        });
 
         //select what level PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JTextField yourLevelSelect = new JTextField();
@@ -103,7 +113,7 @@ public class AttackOptimizer extends Database {
         defenderPanel.add(defenderTitleLabel);
 
         //image display for your pokemon
-        final File opponentIMGFile = new File("src/assets/gallade.png"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        final File opponentIMGFile = new File("1"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
         final ImageIcon opponentIcon = new ImageIcon(ImageIO.read(opponentIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel opponentDisplayLabel = new JLabel(opponentIcon);
@@ -112,6 +122,14 @@ public class AttackOptimizer extends Database {
         //select what pokemonis attacking
         final JComboBox<String> opponentPokemonSelect = new JComboBox<>(natDex);
         defenderPanel.add(opponentPokemonSelect);
+
+        opponentPokemonSelect.addActionListener(_ ->{
+            try {opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(Objects.requireNonNull(opponentPokemonSelect.getSelectedItem()).toString()))));
+            }catch(IOException e){
+                try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}
+                throw new RuntimeException(e);
+            }
+        });
 
         //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JTextField oppLevelSelect = new JTextField();
@@ -250,5 +268,10 @@ public class AttackOptimizer extends Database {
         if(temp>max||temp<min){return 1;}
 
         return temp;
+    }
+
+    private static File getSpriteFile(String name){
+        String file = "src/assets/"+name+".png";
+        return new File(file);
     }
 }
