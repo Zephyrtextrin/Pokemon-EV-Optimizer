@@ -165,6 +165,8 @@ public class AttackOptimizer extends Database {
             final int yourLevel = errorHandler(yourLevelSelect, 1,100);
             final int oppLevel = errorHandler(oppLevelSelect, 1, 100);
 
+            JComboBox<String> boostSourceYou = attackBoost;
+            JComboBox<String> boostSourceOpp = defBoosts;
             int atkBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(attackBoost.getSelectedItem()));
             int defBoostCount = (int)Double.parseDouble((String)Objects.requireNonNull(defBoosts.getSelectedItem()));
 
@@ -188,6 +190,8 @@ public class AttackOptimizer extends Database {
                 yourBase = you.baseSpatk;
                 oppBase = opp.baseSpdef;
                 defenderEVSource = spdefEV;
+                boostSourceYou = specialAttackBoost;
+                boostSourceOpp = spdefBoosts;
 
                 yourNatureMultiplier = switch(yourNature){
                     case "+Spatk" -> 1.1;
@@ -200,9 +204,16 @@ public class AttackOptimizer extends Database {
                     case "-Spdef" -> 0.9;
                     default -> 1;
                 };
-                atkBoostCount = (int)Double.parseDouble((String) Objects.requireNonNull(specialAttackBoost.getSelectedItem()));
-                defBoostCount = (int)Double.parseDouble((String) Objects.requireNonNull(spdefBoosts.getSelectedItem()));
+
+
             }
+
+            String youBoost = Objects.requireNonNull(boostSourceYou.getSelectedItem()).toString();
+            String oppBoost = Objects.requireNonNull(boostSourceOpp.getSelectedItem()).toString();
+
+            atkBoostCount = (int)Double.parseDouble(String.valueOf(youBoost.charAt(1)));
+            defBoostCount = (int)Double.parseDouble(String.valueOf(oppBoost.charAt(1)));
+
 
             int oppHP_EV = errorHandler(HP_EV, 0,252);
             final int oppDefense = errorHandler(defenderEVSource, 0,252);
@@ -212,7 +223,13 @@ public class AttackOptimizer extends Database {
 
             int Min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item);
 
-            System.out.println("final min ev: "+ Min_OHKO_EV);
+            String yourLevelForOutput = "";
+            if(yourLevel!=100&&yourLevel!=50){yourLevelForOutput = " level "+yourLevel;}
+
+            String oppLevelForOutput = "";
+            if(oppLevel!=100&&oppLevel!=50){oppLevelForOutput = " level "+oppLevel;}
+
+            System.out.printf("Minimum EVs needed for%s %s %s Nature %s %s to OHKO%s %s %s Nature %s with %s: %d",yourLevelForOutput,youBoost,yourNature,item,you.name,oppLevelForOutput,oppBoost,oppNature,opp.name,move.name,Min_OHKO_EV);
         });
     }
 

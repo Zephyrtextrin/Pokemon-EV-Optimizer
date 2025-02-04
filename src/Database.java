@@ -29,6 +29,10 @@ public class Database {
 
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){
+        Type.init();
+        Items.init();
+        Move.init();
+
         new Pokemon(1, "Bulbasaur", new Type[]{typeMap.get("Grass"), typeMap.get("Poison")},45,49,49,65,65,45);
         new Pokemon(2, "Ivysaur", new Type[]{typeMap.get("Grass"),typeMap.get("Poison")},60,62,63,80,80,60);
         new Pokemon(3, "Venusaur", new Type[]{typeMap.get("Grass"),typeMap.get("Poison")},80,82,83,100,100,80);
@@ -1211,10 +1215,6 @@ public class Database {
         new Pokemon(1023, "Iron Crown", new Type[]{typeMap.get("Steel"),typeMap.get("Psychic")},90,72,100,122,108,98);
         new Pokemon(1024, "Terapagos Normal Form", new Type[]{typeMap.get("Normal")},90,65,85,65,85,60);
         new Pokemon(1025, "Pecharunt", new Type[]{typeMap.get("Poison"),typeMap.get("Ghost")},88,88,160,88,88,88);
-
-        Type.init();
-        Items.init();
-        Move.init();
     }
 
     static public class Pokemon {
@@ -1287,12 +1287,12 @@ public class Database {
         public static double getMatchups(Type[] types, String attackType) {
             final Type typeOne = types[0];
             double typeTwoMod = 1;
-            if (types[1]!=null) {typeTwoMod = returnOneMatchup(types[1], attackType);}
+            if(types[1]!=null){typeTwoMod = returnOneMatchup(types[1], attackType);}
 
             return (returnOneMatchup(typeOne, attackType)*typeTwoMod);
         }
 
-        private static double returnOneMatchup(Type defendingType, String attackingType) {
+        private static double returnOneMatchup(Type defendingType, String attackingType){
             if(Arrays.asList(defendingType.weaknesses).contains(attackingType)) {return 2;
             }else if(Arrays.asList(defendingType.resistances).contains(attackingType)){return 0.5;
             }try{if(Arrays.asList(defendingType.immunities).contains(attackingType)) {return 0;}}catch(Exception _){}

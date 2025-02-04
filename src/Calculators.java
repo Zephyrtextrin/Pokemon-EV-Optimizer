@@ -41,8 +41,7 @@ public class Calculators extends Database {
     //bro just make a seperate class that has all the evs and ivs and thr base stats atp
     //THIS IS SHITTY UNOPTIMIZED PLACEHOLDER CODE TO GET THE SYSTEM WORKING. ALL THESE ARE PLACEHOLDERS!!
     private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item){
-        attackerLevel = ((2*attackerLevel)/5)+2;
-
+        attackerLevel=((2*attackerLevel)/5)+2;
         //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
         double rawDamage = ((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/50)+2;
         rawDamage*=other(you.types,opp.types, move, item);
@@ -60,16 +59,18 @@ public class Calculators extends Database {
     //other factors
     private static double other(Type[] yourTypes, Type[] oppTypes, Move move, String item){
         double total = 1;
-        total*= Database.Type.getMatchups(yourTypes,move.type);
+
+        total*= Database.Type.getMatchups(oppTypes,move.type);
         System.out.println("type "+ Database.Type.getMatchups(oppTypes,move.type));
         total*=STAB(yourTypes,move);
         total*=Database.Items.getItemEffect(item, move.moveCategory);
+        System.out.println("Item: "+Database.Items.getItemEffect(item,move.moveCategory));
         return total;
     }
 
     private static double STAB(Type[] yourTypes, Move move){
             if(yourTypes[0].equals(Type.getType(move.type))||yourTypes[1].equals(Type.getType(move.type))){
-                System.out.println("STAB!");
+                System.out.println("STAB! 1.5 increase");
                 return 1.5;
             }else{
                 return 1;
