@@ -79,7 +79,30 @@ public class Calculators extends Database {
             }
         }
 
-        private static double getWeatherMultiplier(Move move, Type[] opp, String weather){
-        if(weather.equals("Sun")&&Objects.equals(move.type, "Fire")){return 1.5;}
+    //all of this is shit code i made on the editor on the github website and its basically the equivalent of using google docs as an ide
+    //so this code is proly shit and bad so fix it all later 
+    private static double getWeatherMultiplier(Move move, Type[] opp, String weather){
+        if(weather.equals("Sun"){
+            if(move.type.equals("Fire"){return 1.5;
+            }else if(move.type.equals("Water")){return 0.5;}
+                
+        }else if(weather.equals("Rain")){
+            if(move.type.equals("Water"){return 1.5;
+            }else if(move.type.equals("Fire")){return 0.5;}
+            
+        }else if(weather.equals("Sand"){
+            if(containsType(opp, Database.Type.getType("Rock"){
+            if(move.moveCategory==Constants.MOVE_CATS.Special){return 0.5;} //rocks get spdef boost
+            }else{
+            System.out.println("extra damage from sandstorm chip");
+            return 1.0625; //1/16 damage from sandstorm chip
         }
+        }else if(weather.equals("Snow")&&containsType(opp, Database.Type.getType("Ice"))&&move.moveCategory==Constants.MOVE_CATS.Physical){return 0.5;}
+    }
+    
+    private static boolean containsType(Type[] type, Type target){
+        Type secondType = type[0];
+        if(type[1]!=null){secondType=type[1]} //u have to do this because some pokemon arent dual type so u use the first type as a fallback
+        return type[0]==target||secondType==target;
+    }
 }
