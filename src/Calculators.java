@@ -28,12 +28,14 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int findLeastAtkEVs(int baseStat, double nature, int level, Move move, int defenderStat, int boostCount, int oppHP, Pokemon you, Pokemon opp, String item, String weather){
-        System.out.println("opp hp "+oppHP);
+    public static int findLeastAtkEVs(int baseStat, double nature, int level, Move move, int defenderStat, int boostCount, int oppHP, Pokemon you, Pokemon opp, String item, String weather, double roll){
         for(int EV = 0; EV<=252; EV++){
             final int stat = statCalculation(baseStat,31,EV,nature,level,boostCount);
-            final int damage = (int)damageCalc(level,stat,defenderStat,move, you,opp,item, weather);
-            if(damage>=oppHP){return EV;}
+            final int damage = (int)(damageCalc(level,stat,defenderStat,move, you,opp,item, weather)*roll);
+            if(damage>=oppHP){
+                if(Constants.DEBUG_MODE){System.out.println("EV: "+EV);}
+                return EV;
+            }
         }
         return -1;
     }
@@ -43,11 +45,15 @@ public class Calculators extends Database {
     //"why do you cast to int so much?" everything rounds down. all calculations *always* round down.
     private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item, String weather){
         attackerLevel=(int)(((2*attackerLevel)/5)+2);
+
         //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
         double rawDamage = (int)(((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/50)+2);
-        rawDamage*=other(you.types,opp.types, move, item, weather);
-        System.out.println("raw damage: "+rawDamage);
-        return (int)rawDamage;
+
+        rawDamage*=other(you.types,opp.types, move, item, weather); //other factors such as stab/weather
+
+        if(Constants.DEBUG_MODE){System.out.println("final damage: "+rawDamage);}
+
+        return rawDamage;
     }
 
     //get stat boost modifier
@@ -62,17 +68,12 @@ public class Calculators extends Database {
         double total = 1;
 
         total*= getMatchups(oppTypes,move.type);
-        System.out.println("type "+ getMatchups(oppTypes,move.type));
-        
         total*=STAB(yourTypes,move);
-        System.out.println("STAB: "+STAB(yourTypes,move));
-        
         total*= Items.getItemEffect(item, move.moveCategory);
-        System.out.println("Item: "+ Items.getItemEffect(item,move.moveCategory));
-        
         total*=getWeatherMultiplier(move, oppTypes, weather);
-        System.out.println("Weather: "+getWeatherMultiplier(move, oppTypes, weather));
-        
+
+        if(Constants.DEBUG_MODE){System.out.println("type "+getMatchups(oppTypes,move.type)+"\nSTAB: "+STAB(yourTypes,move)+"\nItem: "+Items.getItemEffect(item,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, oppTypes, weather));}
+
         return total;
     }
 

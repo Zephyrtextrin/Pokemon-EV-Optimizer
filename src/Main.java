@@ -3,7 +3,7 @@ import java.io.IOException;
 public class Main{
     public static void main(String[] args) throws IOException{
         Database.initialize(); //loads the pokedex
-        AttackOptimizer.initUI();
+        AttackOptimizerUI.initUI();
 
         /*to do
         make pokemon have types

@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class AttackOptimizer extends Database {
+public class AttackOptimizerUI extends Database {
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     public static void initUI() throws IOException{
         final String[] WEATHER = Constants.WEATHER_LIST;
         final String[] natDex = arrayListToArray(getNatDexAsArrayList());
         final String[] moveList = arrayListToArray(getMoveListAsArrayList());
         final String[] itemList = arrayListToArray(Database.getItemList());
-        String yourName;
-        String oppName;
+        String yourName = natDex[0];
+        String oppName = natDex[0];
 
         final int SIZE = 500;
         final int BOUNDS = 35;
@@ -39,7 +39,8 @@ public class AttackOptimizer extends Database {
         attackerPanel.add(attackerTitleLabel);
 
         //image display for your pokemon
-        final File yourIMGFile = getSpriteFile("0"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        final File yourIMGFile = getSpriteFile(yourName); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        System.out.println(yourIMGFile);
         final ImageIcon yourIcon = new ImageIcon(ImageIO.read(yourIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel youDisplayLabel = new JLabel(yourIcon);
@@ -59,25 +60,20 @@ public class AttackOptimizer extends Database {
             }
         });
 
-        //select what level PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JTextField yourLevelSelect = new JTextField();
+        final JTextField yourLevelSelect = new JTextField("100");
         attackerPanel.add(yourLevelSelect);
 
-        //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> itemSelect = new JComboBox<>(itemList);
-        attackerPanel.add(itemSelect);
-
-        //select what nature PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JComboBox<String> natureSelect = new JComboBox<>(Constants.NATURE);
         attackerPanel.add(natureSelect);
 
-        //select what move PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
+        final JComboBox<String> itemSelect = new JComboBox<>(itemList);
+        attackerPanel.add(itemSelect);
+
         final JComboBox<String> moveSelect = new JComboBox<>(moveList);
         attackerPanel.add(moveSelect);
 
-        //select what move PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JComboBox<String> ability = new JComboBox<>(moveList);
-        attackerPanel.add(moveSelect);
+        /*final JComboBox<String> ability = new JComboBox<>(moveList);
+        attackerPanel.add(moveSelect);*/
 
         //select what attackBoost
         final JComboBox<String> attackBoost = new JComboBox<>(Constants.BOOSTS);
@@ -119,7 +115,7 @@ public class AttackOptimizer extends Database {
         defenderPanel.add(defenderTitleLabel);
 
         //image display for your pokemon
-        final File opponentIMGFile = getSpriteFile("0"); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
+        final File opponentIMGFile = getSpriteFile(oppName); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
         final ImageIcon opponentIcon = new ImageIcon(ImageIO.read(opponentIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel opponentDisplayLabel = new JLabel(opponentIcon);
@@ -132,18 +128,14 @@ public class AttackOptimizer extends Database {
         opponentPokemonSelect.addActionListener(_ ->{
             final String selected = Objects.requireNonNull(opponentPokemonSelect.getSelectedItem()).toString();
             final Pokemon selectedMon = getPokemon(selected);
-            try {opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(String.valueOf(selectedMon.dexNumber)))));
-            }catch(IOException e){
-                try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}
-                throw new RuntimeException(e);
-            }
+
+            try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(String.valueOf(selectedMon.dexNumber)))));
+            }catch(IOException e){try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}}
         });
 
-        //select what item PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
-        final JTextField oppLevelSelect = new JTextField();
+        final JTextField oppLevelSelect = new JTextField("100");
         defenderPanel.add(oppLevelSelect);
 
-        //select what nature PLACEHOLDER MAKE A LIST OF ALL THE ITEMS LATER
         final JComboBox<String> opponentNatureSelect = new JComboBox<>(Constants.NATURE);
         defenderPanel.add(opponentNatureSelect);
 
@@ -215,7 +207,7 @@ public class AttackOptimizer extends Database {
                 default -> 1;
             };
 
-            if(move.type.equals("SPECIAL")){
+            if(move.moveCategory==Constants.MOVE_CATS.Special){
                 yourBase = you.baseSpatk;
                 oppBase = opp.baseSpdef;
                 defenderEVSource = spdefEV;
@@ -250,15 +242,20 @@ public class AttackOptimizer extends Database {
             final int oppDefenseStat = Calculators.statCalculation(oppBase,31, oppDefense,yourNatureMultiplier,oppLevel,defBoostCount);
             final int oppHP = Calculators.calcHP(oppHP_EV,oppLevel,opp.baseHP);
 
-            int Min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather);
+            int min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 0.85);
 
-            String yourLevelForOutput = "";
-            if(yourLevel!=100&&yourLevel!=50){yourLevelForOutput = " level "+yourLevel;}
-
-            String oppLevelForOutput = "";
-            if(oppLevel!=100&&oppLevel!=50){oppLevelForOutput = " level "+oppLevel;}
-
-            System.out.printf("Minimum EVs needed for%s %s %s Nature %s %s to OHKO%s %s %s Nature %s with %s: %d",yourLevelForOutput,youBoost,yourNature,item,you.name,oppLevelForOutput,oppBoost,oppNature,opp.name,move.name,Min_OHKO_EV);
+            if(min_OHKO_EV!=-1){
+                System.out.printf("Minimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, min_OHKO_EV);
+                System.out.println("This calculations assumes the lowest possible roll to prevent matchups from being roll-dependant. (15% damage reduction)");
+            }
+            else{
+                int EV_HighRoll = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 1);
+                System.out.println("OHKO not possible with lowest possible roll, regardless of your EV spread. [Attempting to find OHKO range with highest possible roll...]\n");
+                if(EV_HighRoll!=-1){
+                    System.out.printf("Minimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, EV_HighRoll);
+                    System.out.println("THIS ABOVE CALCULATION ASSUMES YOU HAVE THE HIGHEST POSSIBLE DAMAGE ROLL, YOU WILL NOT ALWAYS OHKO SO BE AWARE MATCHUPS ARE RNG-DEPENDANT\n");
+                }else{System.out.println("OKHO not possible regardless of EV spread or damage roll.\n");}
+            }
         });
     }
 
@@ -279,7 +276,12 @@ public class AttackOptimizer extends Database {
     }
 
     private static File getSpriteFile(String name){
-        String file = "src/assets/"+name+".png";
-        return new File(file);
+        int dex = getPokemon(name).dexNumber;
+        File file = new File("src/assets/"+dex+".png");
+        if(!file.exists()){
+            ErrorPrinter.setDetails(file.toString(), false);
+            ErrorPrinter.handler("ABN_");
+        }
+        return file;
     }
 }
