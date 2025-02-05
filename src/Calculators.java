@@ -1,16 +1,17 @@
-import java.util.Objects;
-
 public class Calculators extends Database {
     //calculation for all stats (excluding HP)
     //more info: https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward
     //must be cast to double to prevent floating point error but has to be cast back to int because all pokemon calculations *always* round down
     public static int statCalculation(int baseStat, int IV, int EV, double nature, int level, int boostCount){
         EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
-        return (int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
+        int stat = -1;
+        try {stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
+        }catch (Exception e){ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
+        return stat;
     }
 
     //finds what stat boost you need to be at to be faster than a given stat
-    public static int findLeastStatBoosted(int IV, int EV, double nature, int level, int targetStat, int boostCount){
+    public static int findLeastSpeedStatBoosted(int IV, int EV, double nature, int level, int targetStat, int boostCount){
         for(int currentStat = 0; currentStat<255; currentStat++){
             final int stat = (int)(statCalculation(currentStat,IV,EV,nature,level,boostCount)*getBoostModifier(boostCount));
             if(stat>targetStat){return currentStat;}
@@ -44,16 +45,23 @@ public class Calculators extends Database {
 
     //"why do you cast to int so much?" everything rounds down. all calculations *always* round down.
     private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item, String weather){
-        attackerLevel=(int)(((2*attackerLevel)/5)+2);
+        try {
+            attackerLevel = (int)(((2*attackerLevel)/5)+2);
 
-        //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
-        double rawDamage = (int)(((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/50)+2);
+            //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
+            double rawDamage = (int)(((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/5)+2);
 
-        rawDamage*=other(you.types,opp.types, move, item, weather); //other factors such as stab/weather
+            rawDamage *= other(you.types, opp.types, move, item, weather); //other factors such as stab/weather
 
-        if(Constants.DEBUG_MODE){System.out.println("final damage: "+rawDamage);}
+            if (Constants.DEBUG_MODE) {
+                System.out.println("final damage: " + rawDamage);
+            }
 
-        return rawDamage;
+            return rawDamage;
+        }catch(Exception e){
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_DAMAGE_CALCULATION_ERROR, e);
+            return -1;
+        }
     }
 
     //get stat boost modifier

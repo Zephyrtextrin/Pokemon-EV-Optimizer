@@ -22,7 +22,18 @@ public class Database {
         return list;
     }
 
-    public static Pokemon getPokemon(String input){return natDex.get(input);}
+    public static Pokemon getPokemon(String input){
+        Pokemon result;
+        try{result=natDex.get(input);
+
+        }catch(Exception e){
+            ErrorPrinter.setDetails(input, false);
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_MISSINGNO, e);
+            return natDex.get("Gallade");
+        }
+
+        return result;
+    }
 
     public static Move getMove(String input){return moveList.get(input);}
 
@@ -47,6 +58,7 @@ public class Database {
 
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){
+        ErrorPrinter.init();
         Type.init();
         Items.init();
         Move.init();

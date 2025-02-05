@@ -40,7 +40,6 @@ public class AttackOptimizerUI extends Database {
 
         //image display for your pokemon
         final File yourIMGFile = getSpriteFile(yourName); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
-        System.out.println(yourIMGFile);
         final ImageIcon yourIcon = new ImageIcon(ImageIO.read(yourIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
         //the label that actually displays it
         final JLabel youDisplayLabel = new JLabel(yourIcon);
@@ -52,12 +51,11 @@ public class AttackOptimizerUI extends Database {
 
         pokemonSelect.addActionListener(_ ->{
             final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
-            final Pokemon selectedMon = getPokemon(selected);
-            try {youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(String.valueOf(selectedMon.dexNumber)))));
-            }catch(IOException e){
-                try{youDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}
-                throw new RuntimeException(e);
-            }
+            ImageIcon icon;
+            try{icon = new ImageIcon(ImageIO.read(getSpriteFile(selected)));
+            }catch(IOException e){throw new RuntimeException(e);}
+
+            youDisplayLabel.setIcon(icon);
         });
 
         final JTextField yourLevelSelect = new JTextField("100");
@@ -127,10 +125,12 @@ public class AttackOptimizerUI extends Database {
 
         opponentPokemonSelect.addActionListener(_ ->{
             final String selected = Objects.requireNonNull(opponentPokemonSelect.getSelectedItem()).toString();
-            final Pokemon selectedMon = getPokemon(selected);
 
-            try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile(String.valueOf(selectedMon.dexNumber)))));
-            }catch(IOException e){try{opponentDisplayLabel.setIcon(new ImageIcon(ImageIO.read(getSpriteFile("0"))));}catch(IOException ex){throw new RuntimeException(ex);}}
+            ImageIcon icon;
+            try{icon = new ImageIcon(ImageIO.read(getSpriteFile(selected)));
+            }catch(IOException e){throw new RuntimeException(e);}
+
+            opponentDisplayLabel.setIcon(icon);
         });
 
         final JTextField oppLevelSelect = new JTextField("100");
@@ -208,8 +208,18 @@ public class AttackOptimizerUI extends Database {
             };
 
             if(move.moveCategory==Constants.MOVE_CATS.Special){
-                yourBase = you.baseSpatk;
-                oppBase = opp.baseSpdef;
+                try{yourBase = you.baseSpatk;}catch(Exception e){
+                    ErrorPrinter.setDetails("[REQUESTED POKEMON]: "+you.name+"\n[REQUESTED STAT]: SPECIAL ATTACK", false);
+                    ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_STAT_DNE, e);
+                    return;
+                }
+                try{oppBase = opp.baseSpdef;
+                }catch (Exception e){
+                    ErrorPrinter.setDetails("[REQUESTED POKEMON]: "+opp.name+"\n[REQUESTED STAT]: SPECIAL DEFENSE", false);
+                    ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_STAT_DNE, e);
+                    return;
+                }
+
                 defenderEVSource = spdefEV;
                 boostSourceYou = specialAttackBoost;
                 boostSourceOpp = spdefBoosts;
@@ -246,7 +256,7 @@ public class AttackOptimizerUI extends Database {
 
             if(min_OHKO_EV!=-1){
                 System.out.printf("Minimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, min_OHKO_EV);
-                System.out.println("This calculations assumes the lowest possible roll to prevent matchups from being roll-dependant. (15% damage reduction)");
+                System.out.println("This calculations assumes the lowest possible roll to prevent matchups from being roll-dependant. (15% damage reduction)\n");
             }
             else{
                 int EV_HighRoll = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 1);
@@ -276,11 +286,25 @@ public class AttackOptimizerUI extends Database {
     }
 
     private static File getSpriteFile(String name){
-        int dex = getPokemon(name).dexNumber;
-        File file = new File("src/assets/"+dex+".png");
+        File file = new File("src/assets/0.png");
+        if(!Objects.equals(name, "0")){
+            int dex = Database.getPokemon(name).dexNumber;
+
+            try {file = new File("src/assets/" + dex + ".png");
+            }catch (Exception e){
+                ErrorPrinter.setDetails("src/assets/" + dex + ".png", false);
+                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, e);
+            }
+        }
         if(!file.exists()){
-            ErrorPrinter.setDetails(file.toString(), false);
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE,null);
+            if(Database.getPokemon(name).dexNumber>=906){
+                System.out.println("Nothing is broken. This is entirely a visual glitch.\nAll Paldea Pokemon don't have sprites available for bulk download.\nAlternate forms such as Regionals and Megas have sprites but it needs me to manually change the file name and the dex number in the codebase so its all still a work in progress.\nstay tuned.");
+            }else {
+                ErrorPrinter.setDetails(file.toString(), false);
+                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, null);
+            }
+            file=new File("src/assets/0.png");
+
         }
         return file;
     }

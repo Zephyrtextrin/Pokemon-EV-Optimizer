@@ -59,7 +59,7 @@ public class ErrorPrinter {
 
         if(error.isError){System.out.println("\n[a message from alex regarding errors]\n-this is automatically appended to all errors-\nso there's actually two types of issues in the error handler i wrote: abnormalities and errors\nabnormaities are just unintended issues i should probably fix\nand errors are active issues that impede the functioning of the game\nso it's really important you report errors to me\nthanks bro\n-alexander");}
 
-        boolean stackYN = true;
+        boolean stackYN = false;
         if(error.isError){stackYN = getYN("Would you like to print a stack-trace? (if you dont know what this is just say yes");}
             if(stackYN&&e!=null){
                 System.out.println(e.getMessage());
@@ -111,10 +111,12 @@ public class ErrorPrinter {
         return output;
     }
 
+    public static void init(){init.initialize();}
+
     private static class init{
-        final String genericError = "Unfortunately, this is a very generic error which can be applied to just about anything and if the stacktrace isn't useful there's just about nothing I can actually do about it :/\nbut for the love of god do print the stack trace if you're prompted for it";
+        static final String genericError = "Unfortunately, this is a very generic error which can be applied to just about anything and if the stacktrace isn't useful there's just about nothing I can actually do about it :/\nbut for the love of god do print the stack trace if you're prompted for it";
         //some of these errors have values that need updates so they are initialized in the updateValues method instead which is why some have placeholder details
-        private void initialize(){
+        private static void initialize(){
 
             //UI-related
             new Error(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, false, "The specified image does not exist!","[SPECIFIED IMAGE]: ", "All Paldea Pokemon do not have a sprite.\nSprites for all regional/Mega forms exist, but the filenames and the dex numbers have to be manually changed to align with each-other and omg its so much effort I don't fucking care");
@@ -139,7 +141,8 @@ public class ErrorPrinter {
 
         //refreshes values for any error that requires a variable
         private static void updateValues(){
-            errorDB.get(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE).details += additionalDetails;
+            //do not use += for this shit fix rest later idc
+            errorDB.get(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE).details = "[SPECIFIED FILE]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_MISSINGNO).details += additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_BIRDTYPE).details += additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_TERUSAMA).details += additionalDetails;
