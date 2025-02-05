@@ -47,11 +47,11 @@ public class Calculators extends Database {
             System.out.println("CURRENT EV: "+EV);
             final int damage = (int)(damageCalc(you.level,stat,defenderStat,move, you.base,opp.base,you.item, weather)*roll);
             if(damage>=opp.HPStat){
-                if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
+                //if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
                 return EV;
             }
         }
-        if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
+        //if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
         return -1;
     }
 
@@ -64,7 +64,7 @@ public class Calculators extends Database {
             final double AD = attackingMonAttack/targetDefenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
             System.out.println("STEP ONE: "+attackerLevel*move.baseDamage*AD);
             //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
-            double rawDamage = (((attackerLevel*move.baseDamage*AD)/50)+2); //raw damage before other factors are applied. this is kept seperate for debugging purposes
+            double rawDamage = (int)(((attackerLevel*move.baseDamage*AD)/50)+2); //raw damage before other factors are applied. this is kept seperate for debugging purposes
 
             final double finalDamage = rawDamage*other(you.types, opp.types, move, item, weather); //other factors such as stab/weather
 

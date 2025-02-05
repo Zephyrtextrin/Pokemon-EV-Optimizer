@@ -1933,7 +1933,6 @@ public class Database {
 
     public static class Nature{
         public String name;
-        public double baseHP;
         public double baseAttack;
         public double baseDefense;
         public double baseSpatk;

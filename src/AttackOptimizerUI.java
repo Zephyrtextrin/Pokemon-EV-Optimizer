@@ -111,12 +111,12 @@ public class AttackOptimizerUI extends Database {
             int max_OHKO_EV = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,Objects.requireNonNull(weather.getSelectedItem()).toString(), 1);
 
             System.out.println("-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-");
-            if(min_OHKO_EV!=-1){System.out.printf("\nMinimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, min_OHKO_EV);
-            }else{System.out.println("NOT POSSIBLE TO OHKO");}
+            if(min_OHKO_EV!=-1){System.out.printf("Minimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, min_OHKO_EV);
+            }else{System.out.println("NOT POSSIBLE TO OHKO\n");}
 
             System.out.println("-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-");
-            if(max_OHKO_EV!=-1){System.out.printf("\nMinimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, max_OHKO_EV);
-            }else{System.out.println("NOT POSSIBLE TO OHKO");}
+            if(max_OHKO_EV!=-1){System.out.printf("Minimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, max_OHKO_EV);
+            }else{System.out.println("NOT POSSIBLE TO OHKO\n");}
         });
     }
 
@@ -379,10 +379,10 @@ public class AttackOptimizerUI extends Database {
 
             HPStat = Calculators.calcHP(HP_EV,level,base.baseHP);
             atkStat = Calculators.statCalculation(base.baseAttack,31,atkEV,nature.baseAttack,level,atkBoost);
-            defStat = Calculators.statCalculation(base.baseAttack,31,defEV,nature.baseAttack,level,defBoost);
-            spAtkStat = Calculators.statCalculation(base.baseAttack,31,spAtkEV,nature.baseAttack,level,spAtkBoost);
-            spDefStat = Calculators.statCalculation(base.baseAttack,31,spDefEV,nature.baseAttack,level,spDefBoost);
-            speedStat = Calculators.statCalculation(base.baseAttack,31,speedEV,nature.baseAttack,level,speedBoost);
+            defStat = Calculators.statCalculation(base.baseDefense,31,defEV,nature.baseDefense,level,defBoost);
+            spAtkStat = Calculators.statCalculation(base.baseSpatk,31,spAtkEV,nature.baseSpatk,level,spAtkBoost);
+            spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.baseSpdef,level,spDefBoost);
+            speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.baseSpeed,level,speedBoost);
         }
     }
 }
