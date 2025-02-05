@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b7194a7-f0a6-455e-9670-d2aa7cc84aa3" name="Changes" comment="" />
+    <list default="true" id="5b7194a7-f0a6-455e-9670-d2aa7cc84aa3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/Calculators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Calculators.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Database.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,12 +29,12 @@
     &quot;assignee&quot;: &quot;Zephyrosickness&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Zephyrosickness/Pokemon-Speed-Calculator.git&quot;,
-    &quot;accountId&quot;: &quot;f74bdf36-e43c-4850-9360-a36f76c4e519&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Zephyrosickness/Pokemon-Speed-Calculator.git",
+    "accountId": "d7fffdeb-b127-4db7-bea3-5e2482b2f699"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>

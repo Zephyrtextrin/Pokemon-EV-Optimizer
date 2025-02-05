@@ -61,8 +61,8 @@ public class Calculators extends Database {
     private static double other(Type[] yourTypes, Type[] oppTypes, Move move, String item, String weather){
         double total = 1;
 
-        total*= Type.getMatchups(oppTypes,move.type);
-        System.out.println("type "+ Type.getMatchups(oppTypes,move.type));
+        total*= getMatchups(oppTypes,move.type);
+        System.out.println("type "+ getMatchups(oppTypes,move.type));
         
         total*=STAB(yourTypes,move);
         System.out.println("STAB: "+STAB(yourTypes,move));
@@ -77,7 +77,7 @@ public class Calculators extends Database {
     }
 
     private static double STAB(Type[] yourTypes, Move move){
-            if(containsType(yourTypes, Type.getType(move.type))){
+            if(containsType(yourTypes, getType(move.type))){
                 return 1.5;
             }else{
                 return 1;
@@ -101,16 +101,16 @@ public class Calculators extends Database {
                 default -> 1;
             };
             
-        }else if(weather.equals("Sand")&&containsType(opp, Type.getType("Rock"))&&move.moveCategory==Constants.MOVE_CATS.Special){return 0.5; //rocks get spdef boost
+        }else if(weather.equals("Sand")&&containsType(opp, getType("Rock"))&&move.moveCategory==Constants.MOVE_CATS.Special){return 0.5; //rocks get spdef boost
 
-        }else if(weather.equals("Snow")&&containsType(opp, Type.getType("Ice"))&&move.moveCategory==Constants.MOVE_CATS.Physical){return 0.5;}
+        }else if(weather.equals("Snow")&&containsType(opp, getType("Ice"))&&move.moveCategory==Constants.MOVE_CATS.Physical){return 0.5;}
 
         return 1;
     }
     
     private static boolean containsType(Type[] type, Type target){  
         Type secondType = type[0];
-        if(type[1]!=null){secondType=type[1];} //u have to do this because some pokemon arent dual type so u use the first type as a fallback
+        if(type.length!=1){secondType=type[1];} //u have to do this because some pokemon arent dual type so u use the first type as a fallback
         return type[0]==target||secondType==target;
     }
 }
