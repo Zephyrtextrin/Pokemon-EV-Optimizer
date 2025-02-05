@@ -6,17 +6,9 @@ public class Constants{
     public enum MOVE_CATS{
         Physical,
         Special,
-        Status;
     }
 
-    public enum STATS{
-        HP,
-        Attack,
-        Defense,
-        SpAtk,
-        SpDef,
-        Speed;
-    }
+    public static final String[] CAPABILITY_LIST = {"OHKO","Tank","Outspeed"};
 
     public static final String[] WEATHER_LIST = {"No Weather","Sun","Rain","Sand","Snow"};
 
