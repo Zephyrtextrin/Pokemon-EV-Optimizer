@@ -280,7 +280,7 @@ public class AttackOptimizerUI extends Database {
         File file = new File("src/assets/"+dex+".png");
         if(!file.exists()){
             ErrorPrinter.setDetails(file.toString(), false);
-            ErrorPrinter.handler("ABN_");
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE,null);
         }
         return file;
     }
