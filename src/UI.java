@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class AttackOptimizerUI extends Database {
+public class UI extends Database {
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
     static final HashMap<String, Component> componentMap = new HashMap<>();
 

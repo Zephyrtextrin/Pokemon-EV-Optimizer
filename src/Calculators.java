@@ -29,7 +29,7 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int findLeastAtkEVs(AttackOptimizerUI.CurrentPokemon you, AttackOptimizerUI.CurrentPokemon opp, Move move, String weather, double roll){
+    public static int findLeastAtkEVs(UI.CurrentPokemon you, UI.CurrentPokemon opp, Move move, String weather, double roll){
         int baseStat = you.base.baseAttack;
         double nature = you.nature.baseAttack;
         int boostCount = you.atkBoost;
