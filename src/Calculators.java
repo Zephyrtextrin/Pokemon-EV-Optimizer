@@ -29,16 +29,29 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int findLeastAtkEVs(int baseStat, double nature, int level, Move move, int defenderStat, int boostCount, int oppHP, Pokemon you, Pokemon opp, String item, String weather, double roll){
-        for(int EV = 0; EV<=252; EV++){
-            final int stat = statCalculation(baseStat,31,EV,nature,level,boostCount);
-            final int damage = (int)(damageCalc(level,stat,defenderStat,move, you,opp,item, weather)*roll);
-            if(damage>=oppHP){
-                if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,level,EV,stat,defenderStat);}
+    public static int findLeastAtkEVs(AttackOptimizerUI.CurrentPokemon you, AttackOptimizerUI.CurrentPokemon opp, Move move, String weather, double roll){
+        int baseStat = you.base.baseAttack;
+        double nature = you.nature.baseAttack;
+        int boostCount = you.atkBoost;
+        int defenderStat = opp.defStat;
+
+        if(move.moveCategory== Constants.MOVE_CATS.Special){
+            baseStat = you.base.baseSpatk;
+            nature = you.nature.baseSpatk;
+            boostCount = you.spAtkBoost;
+            defenderStat = opp.spDefStat;
+        }
+
+        for(int EV = 0; EV<=252; EV+=4){//ev goes up by 4 bc the stat only goes up every 4 evs
+            final int stat = statCalculation(baseStat,31,EV,nature,you.level,boostCount);
+            System.out.println("CURRENT EV: "+EV);
+            final int damage = (int)(damageCalc(you.level,stat,defenderStat,move, you.base,opp.base,you.item, weather)*roll);
+            if(damage>=opp.HPStat){
+                if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
                 return EV;
             }
         }
-        if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,level,statCalculation(baseStat,31,252,nature,level,boostCount),defenderStat);}
+        if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
         return -1;
     }
 
@@ -49,13 +62,13 @@ public class Calculators extends Database {
         try {
             attackerLevel = (((2*attackerLevel)/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
             final double AD = attackingMonAttack/targetDefenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
-
+            System.out.println("STEP ONE: "+attackerLevel*move.baseDamage*AD);
             //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
-            int rawDamage = (int)(((attackerLevel*move.baseDamage*AD)/50)+2); //raw damage before other factors are applied. this is kept seperate for debugging purposes
+            double rawDamage = (((attackerLevel*move.baseDamage*AD)/50)+2); //raw damage before other factors are applied. this is kept seperate for debugging purposes
 
-            final double finalDamage = (double)rawDamage*other(you.types, opp.types, move, item, weather); //other factors such as stab/weather
+            final double finalDamage = rawDamage*other(you.types, opp.types, move, item, weather); //other factors such as stab/weather
 
-            if(Constants.DEBUG_MODE){System.out.println("attacker level: "+attackerLevel+"\nmove bp: "+move.baseDamage+"\nmove category: "+move.moveCategory+"\nraw damage: "+rawDamage+"\nfinal damage: " + finalDamage+"\n------[END DAMAGE CALC]------\n");}
+            if(Constants.DEBUG_MODE){System.out.println("attacker stat: "+attackingMonAttack+"\ndefender stat:"+targetDefenseStat+"\nattacker level: "+attackerLevel+"\nmove bp: "+move.baseDamage+"\nmove category: "+move.moveCategory+"\nraw damage: "+rawDamage+"\nfinal damage: " + finalDamage+"\n------[END DAMAGE CALC]------\n");}
 
             return (int)finalDamage;
         }catch(Exception e){

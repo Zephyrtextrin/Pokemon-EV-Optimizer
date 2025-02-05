@@ -7,6 +7,7 @@ public class Database {
     private static final Map<String, Type> typeMap = new HashMap<>(); //allows u to sort by type name
     private static final ArrayList<String> itemList = new ArrayList<>();
     private static final ArrayList<String> abilities = new ArrayList<>();
+    private static final HashMap<String, Nature> natures = new HashMap<>();
 
     public static ArrayList<String> getNatDexAsArrayList(){
         final Set<String> set = natDex.keySet();
@@ -41,6 +42,8 @@ public class Database {
 
     public static ArrayList<String> getAbilities(){return abilities;}
 
+    public static Nature getNature(String name){return natures.get(name);}
+
     //this could technically only be one line but then it would be incredibly unreadable
     public static Type getType(String input){
         input = input.toUpperCase().charAt(0) + input.substring(1); //makes first letter capital
@@ -62,28 +65,8 @@ public class Database {
         Type.init();
         Items.init();
         Move.init();
+        Nature.init();
         Pokemon.init();
-    }
-
-    //holds data for each pokemon on the UI
-    static public class CurrentPokemon{
-        public Pokemon base;
-        public int level;
-        public String item;
-        public Move move;
-        public int HPStat;
-        public int atkStat;
-        public int defStat;
-        public int spatkStat;
-        public int spdefStat;
-        public int speedStat;
-
-        public CurrentPokemon(String name, int level, String item, Move move){
-            base = getPokemon(name);
-            this.level = level;
-            this.item = item;
-            this.move = move;
-        }
     }
 
     static public class Pokemon {
@@ -107,6 +90,7 @@ public class Database {
             baseSpatk = spatk;
             baseSpdef = spdef;
             baseSpeed = speed;
+
 
             natDex.put(name, this);
         }
@@ -1938,14 +1922,55 @@ public class Database {
         }
 
         private static void init(){
+            itemList.add("No Item/Other");
             itemList.add("Choice Band");
             itemList.add("Choice Specs");
             itemList.add("Choice Scarf"); //use when u make outspeed calc
             itemList.add("Life Orb");
-            itemList.add("Booster Energy [doesn't work rn]"); //use when u add abilities
+            //itemList.add("Booster Energy [doesn't work rn]");
         }
     }
 
+    public static class Nature{
+        public String name;
+        public double baseHP;
+        public double baseAttack;
+        public double baseDefense;
+        public double baseSpatk;
+        public double baseSpdef;
+        public double baseSpeed;
+
+        private Nature(String name, double attack, double defense, double spatk, double spdef, double speed) {
+            this.name = name;
+            baseAttack = attack;
+            baseDefense = defense;
+            baseSpatk = spatk;
+            baseSpdef = spdef;
+            baseSpeed = speed;
+
+            natures.put(name, this);
+        }
+
+        private static void init(){
+            natures.put("+Attack",new Nature("+Attack",1.1,1,1,1,1));
+            natures.put("-Attack",new Nature("-Attack",0.9,1,1,1,1));
+
+            natures.put("+Defense",new Nature("+Defense",1,1.1,1,1,1));
+            natures.put("-Defense",new Nature("-Defense",1,0.9,1,1,1));
+
+            natures.put("+SpAtk",new Nature("+SpAtk",1,1,1.1,1,1));
+            natures.put("-SpAtk",new Nature("-SpAtk",1,1,0.9,1,1));
+
+            natures.put("+SpDef",new Nature("+SpDef",1,1,1,1.1,1));
+            natures.put("-SpDef",new Nature("-SpDef",1,1,1,0.9,1));
+
+            natures.put("+Speed",new Nature("+Speed",1,1,1,1,1.1));
+            natures.put("-Speed",new Nature("-Speed",1,1,1,1,0.9));
+
+            natures.put("Neutral",new Nature("Neutral",1,1,1,1,1));
+
+        }
+    }
     public static class Abilities {
         private static void init() {
 

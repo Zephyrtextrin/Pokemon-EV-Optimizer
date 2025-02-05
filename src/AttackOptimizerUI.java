@@ -4,21 +4,23 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class AttackOptimizerUI extends Database {
     //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
+    static final HashMap<String, Component> componentMap = new HashMap<>();
+
     public static void initUI() throws IOException {
+
         final String[] WEATHER = Constants.WEATHER_LIST;
 
         final int SIZE = 1200;
         final JFrame frame = new JFrame();
-        frame.setSize(SIZE,SIZE);
+        frame.setSize(SIZE, SIZE);
 
-        frame.setLayout(new GridLayout(1,3));
+        frame.setLayout(new GridLayout(1, 3));
         frame.setVisible(true);
-
-        //gallade is placeholder rn i dont have the files for everyone else
 
 
         //left side (the pokemon who is using the move
@@ -26,18 +28,17 @@ public class AttackOptimizerUI extends Database {
         final JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
         frame.add(leftPanel);
+        createStatsPanel(leftPanel, "Left-Side");
 
-        createStatsPanel(leftPanel, "Pokemon 1");
+        leftPanel.getName();
 
+        //filler
 
         //select boosts for left side
         final JPanel leftBoostPanel = new JPanel();
         leftBoostPanel.setLayout(new BoxLayout(leftBoostPanel, BoxLayout.PAGE_AXIS));
         frame.add(leftBoostPanel);
-
-        leftBoostPanel.add(Box.createVerticalGlue()); //creates filler
-        makeBoostPanel(leftBoostPanel);
-
+        makeBoostPanel(leftBoostPanel, "Left-Side ");
 
 
         //other features like field conditions
@@ -70,7 +71,7 @@ public class AttackOptimizerUI extends Database {
         other.add(targetTitleLabel);
 
         //select what function
-        final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side","Pokemon 2 (Right Side"});
+        final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side)", "Pokemon 2 (Right Side"});
         other.add(target);
 
         final JButton run = new JButton("Run");
@@ -81,10 +82,7 @@ public class AttackOptimizerUI extends Database {
         final JPanel rightBoostPanel = new JPanel();
         rightBoostPanel.setLayout(new BoxLayout(rightBoostPanel, BoxLayout.PAGE_AXIS));
         frame.add(rightBoostPanel);
-
-        rightBoostPanel.add(Box.createVerticalGlue()); //creates filler
-        makeBoostPanel(rightBoostPanel);
-
+        makeBoostPanel(rightBoostPanel, "Right-Side ");
 
 
         //right side
@@ -92,130 +90,74 @@ public class AttackOptimizerUI extends Database {
         final JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
         frame.add(rightPanel);
-
-        createStatsPanel(rightPanel, "Pokemon 2");
+        createStatsPanel(rightPanel, "Right-Side");
 
         //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
         //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
-        /*run.addActionListener(_ ->{
-            final Move move = getMove((String)moveSelect.getSelectedItem());
-
-            final Pokemon you = getPokemon((String)pokemonSelect.getSelectedItem());
-            final Pokemon opp = getPokemon((String)opponentPokemonSelect.getSelectedItem());
-
-            assert you != null;
-            int yourBase = you.baseAttack;
-            assert opp != null;
-            int oppBase = opp.baseDefense;
-
-            JTextField defenderEVSource = defenseEV;
-
-            final String yourNature = (String)natureSelect.getSelectedItem();
-            final String oppNature = (String)opponentNatureSelect.getSelectedItem();
-            double yourNatureMultiplier;
-            double oppNatureMultiplier;
-
-            final int yourLevel = errorHandler(yourLevelSelect, 1,100);
-            final int oppLevel = errorHandler(oppLevelSelect, 1, 100);
-
-            JComboBox<String> boostSourceYou = attackBoost;
-            JComboBox<String> boostSourceOpp = defBoosts;
-
-            int atkBoostCount;
-            int defBoostCount;
-
-            final String selectedWeather = Objects.requireNonNull(weather.getSelectedItem()).toString();
-
-            final String item = Objects.requireNonNull(itemSelect.getSelectedItem()).toString();
-
-            assert yourNature != null;
-            yourNatureMultiplier = switch(yourNature){
-                case "+Attack" -> 1.1;
-                case "-Attack" -> 0.9;
-                default -> 1;
-            };
-
-            assert oppNature != null;
-            oppNatureMultiplier = switch(oppNature){
-                case "+Defense" -> 1.1;
-                case "-Defense" -> 0.9;
-                default -> 1;
-            };
-
-            if(move.moveCategory==Constants.MOVE_CATS.Special){
-                try{yourBase = you.baseSpatk;}catch(Exception e){
-                    ErrorPrinter.setDetails("[REQUESTED POKEMON]: "+you.name+"\n[REQUESTED STAT]: SPECIAL ATTACK", false);
-                    ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_STAT_DNE, e);
-                    return;
-                }
-                try{oppBase = opp.baseSpdef;
-                }catch (Exception e){
-                    ErrorPrinter.setDetails("[REQUESTED POKEMON]: "+opp.name+"\n[REQUESTED STAT]: SPECIAL DEFENSE", false);
-                    ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_STAT_DNE, e);
-                    return;
-                }
-
-                defenderEVSource = spdefEV;
-                boostSourceYou = specialAttackBoost;
-                boostSourceOpp = spdefBoosts;
-
-                yourNatureMultiplier = switch(yourNature){
-                    case "+SpAtk" -> 1.1;
-                    case "-SpAtk" -> 0.9;
-                    default -> 1;
-                };
-
-                oppNatureMultiplier = switch(oppNature){
-                    case "+Spdef" -> 1.1;
-                    case "-Spdef" -> 0.9;
-                    default -> 1;
-                };
+        run.addActionListener(_ ->{
+            CurrentPokemon[] allData = initCurrentPokemon();
+            CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
+            CurrentPokemon opponentMon = allData[0];
 
 
+            if(Objects.requireNonNull(target.getSelectedItem()).toString().equals("Pokemon 1 (Left Side)")){
+                subjectMon = allData[0];
+                opponentMon = allData[1];
             }
 
+            final Move moveUsed = subjectMon.move;
 
+            int min_OHKO_EV = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,Objects.requireNonNull(weather.getSelectedItem()).toString(), 0.85);
+            int max_OHKO_EV = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,Objects.requireNonNull(weather.getSelectedItem()).toString(), 1);
 
-            String youBoost = Objects.requireNonNull(boostSourceYou.getSelectedItem()).toString();
-            String oppBoost = Objects.requireNonNull(boostSourceOpp.getSelectedItem()).toString();
+            System.out.println("-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-");
+            if(min_OHKO_EV!=-1){System.out.printf("\nMinimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, min_OHKO_EV);
+            }else{System.out.println("NOT POSSIBLE TO OHKO");}
 
-            atkBoostCount = (int)Double.parseDouble(String.valueOf(youBoost.charAt(1)));
-            defBoostCount = (int)Double.parseDouble(String.valueOf(oppBoost.charAt(1)));
-
-
-            int oppHP_EV = errorHandler(HP_EV, 0,252);
-            final int oppDefense = errorHandler(defenderEVSource, 0,252);
-
-            final int oppDefenseStat = Calculators.statCalculation(oppBase,31, oppDefense,yourNatureMultiplier,oppLevel,defBoostCount);
-            final int oppHP = Calculators.calcHP(oppHP_EV,oppLevel,opp.baseHP);
-
-            int min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,yourNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 0.85);
-
-            if(Constants.DEBUG_MODE){System.out.println("your nature: "+yourNatureMultiplier+"\nopp nature: "+oppNatureMultiplier);}
-
-            if(min_OHKO_EV!=-1){
-                System.out.printf("\nMinimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, min_OHKO_EV);
-                System.out.println("This calculations assumes the lowest possible roll to prevent matchups from being roll-dependant. (15% damage reduction)\n");
-            }
-            else{
-                int EV_HighRoll = Calculators.findLeastAtkEVs(yourBase,yourNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 1);
-                System.out.println("OHKO not possible with lowest possible roll, regardless of your EV spread. [Attempting to find OHKO range with highest possible roll...]\n");
-                if(EV_HighRoll!=-1){
-                    System.out.printf("Minimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, EV_HighRoll);
-                    System.out.println("THIS ABOVE CALCULATION ASSUMES YOU HAVE THE HIGHEST POSSIBLE DAMAGE ROLL, YOU WILL NOT ALWAYS OHKO SO BE AWARE MATCHUPS ARE RNG-DEPENDANT\n");
-                }else{System.out.println("OKHO not possible regardless of EV spread or damage roll.\n");}
-            }
-        });*/
+            System.out.println("-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-");
+            if(max_OHKO_EV!=-1){System.out.printf("\nMinimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, max_OHKO_EV);
+            }else{System.out.println("NOT POSSIBLE TO OHKO");}
+        });
     }
 
-    private static void createStatsPanel(JPanel panel, String title) throws IOException{
+    private static CurrentPokemon[] initCurrentPokemon(){
+        final int[] leftEVs = new int[]{Integer.parseInt(getComponentValue("Left-Side HP EV")), Integer.parseInt(getComponentValue("Left-Side Atk EV")), Integer.parseInt(getComponentValue("Left-Side Def EV")), Integer.parseInt(getComponentValue("Left-Side SpAtk EV")), Integer.parseInt(getComponentValue("Left-Side SpDef EV")), Integer.parseInt(getComponentValue("Left-Side Speed EV"))};
+        final int[] leftBoosts = new int[]{Integer.parseInt(getComponentValue("Left-Side Atk Boost")), Integer.parseInt(getComponentValue("Left-Side Def Boost")), Integer.parseInt(getComponentValue("Left-Side SpAtk Boost")), Integer.parseInt(getComponentValue("Left-Side SpDef Boost")), Integer.parseInt(getComponentValue("Left-Side Speed Boost"))};
+
+        final int[] rightEVs = new int[]{Integer.parseInt(getComponentValue("Right-Side HP EV")), Integer.parseInt(getComponentValue("Right-Side Atk EV")), Integer.parseInt(getComponentValue("Right-Side Def EV")), Integer.parseInt(getComponentValue("Right-Side SpAtk EV")), Integer.parseInt(getComponentValue("Right-Side SpDef EV")), Integer.parseInt(getComponentValue("Right-Side Speed EV"))};
+        final int[] rightBoosts = new int[]{Integer.parseInt(getComponentValue("Right-Side Atk Boost")), Integer.parseInt(getComponentValue("Right-Side Def Boost")), Integer.parseInt(getComponentValue("Right-Side SpAtk Boost")), Integer.parseInt(getComponentValue("Right-Side SpDef Boost")), Integer.parseInt(getComponentValue("Right-Side Speed Boost"))};
+
+        CurrentPokemon leftSide = new CurrentPokemon(
+                getComponentValue("Left-Side Pokemon"),
+                Integer.parseInt(getComponentValue("Left-Side Level")),
+                getComponentValue("Left-Side Item"),
+                getMove(getComponentValue("Left-Side Move")),
+                getNature(getComponentValue("Left-Side Nature")),
+                leftEVs, leftBoosts
+
+        );
+
+        CurrentPokemon rightSide = new CurrentPokemon(
+                getComponentValue("Right-Side Pokemon"),
+                Integer.parseInt(getComponentValue("Right-Side Level")),
+                getComponentValue("Right-Side Item"),
+                getMove(getComponentValue("Right-Side Move")),
+                getNature(getComponentValue("Right-Side Nature")),
+                rightEVs, rightBoosts
+
+        );
+        return new CurrentPokemon[]{leftSide,rightSide};
+    }
+    private static void createStatsPanel(JPanel panel, String title) throws IOException {
+        String header = "Pokemon 2";
+        if(title.equals("Left-Side")){header = "Pokemon 1";}
         final String[] natDex = arrayListToArray(getNatDexAsArrayList());
         final String[] moveList = arrayListToArray(getMoveListAsArrayList());
         final String[] itemList = arrayListToArray(Database.getItemList());
         String pokemonName = natDex[0];
 
         //text to denote who is attacking
-        final JLabel attackerTitleLabel = new JLabel(title);
+        final JLabel attackerTitleLabel = new JLabel(header);
         panel.add(attackerTitleLabel);
 
         //image display for your pokemon
@@ -228,124 +170,219 @@ public class AttackOptimizerUI extends Database {
         //select what pokemonis attacking
         final JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
         panel.add(pokemonSelect);
+        componentMap.put(title+" Pokemon",pokemonSelect);
 
-        pokemonSelect.addActionListener(_ ->{
+        pokemonSelect.addActionListener(_ -> {
             final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
             ImageIcon icon;
-            try{icon = new ImageIcon(ImageIO.read(getSpriteFile(selected)));
-            }catch(IOException e){throw new RuntimeException(e);}
+            try {
+                icon = new ImageIcon(ImageIO.read(getSpriteFile(selected)));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             youDisplayLabel.setIcon(icon);
         });
 
         final JTextField yourLevelSelect = new JTextField("100");
         panel.add(yourLevelSelect);
+        componentMap.put(title+" Level",yourLevelSelect);
 
-        final JTextField leftHP_EV = new JTextField("HP EV");
-        panel.add(leftHP_EV);
+        final JTextField HP_EV = new JTextField("HP EV");
+        panel.add(HP_EV);
+        componentMap.put(title+" HP EV",HP_EV);
 
-        final JTextField leftAtkEV = new JTextField("Attack EV");
-        panel.add(leftAtkEV);
+        final JTextField atkEV = new JTextField("Attack EV");
+        panel.add(atkEV);
+        componentMap.put(title+" Atk EV",HP_EV);
 
-        final JTextField leftDefEV = new JTextField("Defense EV");
-        panel.add(leftDefEV);
+        final JTextField defEV = new JTextField("Defense EV");
+        panel.add(defEV);
+        componentMap.put(title+" Def EV",defEV);
 
-        final JTextField leftSpatkEV = new JTextField("Special Attack EV");
-        panel.add(leftSpatkEV);
+        final JTextField spatkEV = new JTextField("Special Attack EV");
+        panel.add(spatkEV);
+        componentMap.put(title+" SpAtk EV",spatkEV);
 
-        final JTextField leftSpdefEV = new JTextField("Special Defense EV");
-        panel.add(leftSpdefEV);
+        final JTextField spdefEV = new JTextField("Special Defense EV");
+        panel.add(spdefEV);
+        componentMap.put(title+" SpDef EV",spdefEV);
 
-        final JTextField leftSpeedEV = new JTextField("Speed EV");
-        panel.add(leftSpeedEV);
+        final JTextField speedEV = new JTextField("Speed EV");
+        panel.add(speedEV);
+        componentMap.put(title+" Speed EV",speedEV);
 
         final JComboBox<String> natureSelect = new JComboBox<>(Constants.NATURE);
         panel.add(natureSelect);
+        componentMap.put(title+" Nature",natureSelect);
 
         final JComboBox<String> itemSelect = new JComboBox<>(itemList);
         panel.add(itemSelect);
+        componentMap.put(title+" Item",itemSelect);
 
         final JComboBox<String> moveSelect = new JComboBox<>(moveList);
         panel.add(moveSelect);
+        componentMap.put(title+" Move",moveSelect);
 
         /*final JComboBox<String> ability = new JComboBox<>(moveList);
-        panel.add(moveSelect);*/
-
-
+        panel.add(moveSelect);
+        componentMap.put(title+" Ability",ability);
+        */
 
         panel.revalidate();
     }
 
-    private static void makeBoostPanel(JPanel panel){
+    private static void makeBoostPanel(JPanel panel, String panelTitleAppend) {
+
+        panel.add(Box.createVerticalGlue()); //creates filler
 
         //text to denote what the panel does
         panel.add(new JLabel("Attack Boosts"));
         //select what attackBoost
         final JComboBox<String> attackBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(attackBoost);
+        componentMap.put(panelTitleAppend+"Atk Boost",attackBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Defense Boosts"));
         //select what defBoost
-        final JComboBox<String> defensekBoost = new JComboBox<>(Constants.BOOSTS);
-        panel.add(defensekBoost);
+        final JComboBox<String> defenseBoost = new JComboBox<>(Constants.BOOSTS);
+        panel.add(defenseBoost);
+        componentMap.put(panelTitleAppend+"Def Boost",defenseBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Special Attack Boosts"));
         //select what spattackBoost
         final JComboBox<String> specialAttackBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(specialAttackBoost);
+        componentMap.put(panelTitleAppend+"SpAtk Boost",specialAttackBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Special Defense Boosts"));
         //select what spdefBoost
         final JComboBox<String> specialDefenseBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(specialDefenseBoost);
+        componentMap.put(panelTitleAppend+"SpDef Boost",specialDefenseBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Speed Boosts"));
         //select what speedBoost
         final JComboBox<String> speedBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(speedBoost);
+        componentMap.put(panelTitleAppend+"Speed Boost",speedBoost);
+
     }
-    
-    private static String[] arrayListToArray(ArrayList<String> arrayList){
+
+    private static String[] arrayListToArray(ArrayList<String> arrayList) {
         final int size = arrayList.size();
         final String[] array = new String[size];
 
-        for(int i =0;i<size;i++){array[i] = arrayList.get(i);}
+        for (int i = 0; i < size; i++) {
+            array[i] = arrayList.get(i);
+        }
         return array;
     }
 
-    private static int errorHandler(JTextField field, int min, int max){
-        int temp;
-        try{temp = Integer.parseInt(field.getText());}catch(Exception e){return 1;}
-        if(temp>max||temp<min){return 1;}
+    private static String getComponentValue(String name){
+        int max = 255;
+        if(name.equals("Left-Side Level")||name.equals("Right-Side Level")){max=100;}
+        final Component component = componentMap.get(name);
+        if(component==null){
+            System.out.println(name);
+        }
 
-        return temp;
+        String tempString;
+        if(component.getClass()==JComboBox.class){
+            tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();
+        }else{
+            tempString = ((JTextField) component).getText();
+            int toInt = 1;
+            try{
+                toInt = Integer.parseInt(tempString);
+                if(toInt>max||toInt<1){toInt = 1;}
+            }catch(Exception _){}
+            tempString = Integer.toString(toInt);
+        }
+        return tempString;
     }
 
-    private static File getSpriteFile(String name){
+    private static File getSpriteFile(String name) {
         File file = new File("src/assets/0.png");
-        if(!Objects.equals(name, "0")){
+        if (!Objects.equals(name, "0")) {
             int dex = Database.getPokemon(name).dexNumber;
 
-            try {file = new File("src/assets/" + dex + ".png");
-            }catch (Exception e){
+            try {
+                file = new File("src/assets/" + dex + ".png");
+            } catch (Exception e) {
                 ErrorPrinter.setDetails("src/assets/" + dex + ".png", false);
                 ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, e);
             }
         }
-        if(!file.exists()){
-            if(Database.getPokemon(name).dexNumber>=906){
+        if (!file.exists()) {
+            if (Database.getPokemon(name).dexNumber >= 906) {
                 System.out.println("Nothing is broken. This is entirely a visual glitch.\nAll Paldea Pokemon don't have sprites available for bulk download.\nAlternate forms such as Regionals and Megas have sprites but it needs me to manually change the file name and the dex number in the codebase so its all still a work in progress.\nstay tuned.");
-            }else {
+            } else {
                 ErrorPrinter.setDetails(file.toString(), false);
                 ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, null);
             }
-            file=new File("src/assets/0.png");
+            file = new File("src/assets/0.png");
 
         }
         return file;
+    }
+
+
+    //holds data for each pokemon on the UI
+    static public class CurrentPokemon{
+        public Pokemon base;
+        public int level;
+        public String item;
+        public Move move;
+        public Nature nature;
+        public int HPStat;
+        public int atkStat;
+        public int defStat;
+        public int spAtkStat;
+        public int spDefStat;
+        public int speedStat;
+        public int atkBoost;
+        public int defBoost;
+        public int spAtkBoost;
+        public int spDefBoost;
+        public int speedBoost;
+        public int HP_EV;
+        public int atkEV;
+        public int defEV;
+        public int spAtkEV;
+        public int spDefEV;
+        public int speedEV;
+
+
+        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts){
+            base = getPokemon(name);
+            this.nature = nature;
+            this.level = level;
+            this.item = item;
+            this.move = move;
+            this.atkBoost = boosts[0];
+            this.defBoost = boosts[1];
+            this.spAtkBoost = boosts[2];
+            this.spDefBoost = boosts[3];
+            this.speedBoost = boosts[4];
+            this.HP_EV = EVs[0];
+            this.atkEV = EVs[1];
+            this.defEV = EVs[2];
+            this.spAtkEV = EVs[3];
+            this.spDefEV = EVs[4];
+            this.speedEV = EVs[5];
+
+
+            HPStat = Calculators.calcHP(HP_EV,level,base.baseHP);
+            atkStat = Calculators.statCalculation(base.baseAttack,31,atkEV,nature.baseAttack,level,atkBoost);
+            defStat = Calculators.statCalculation(base.baseAttack,31,defEV,nature.baseAttack,level,defBoost);
+            spAtkStat = Calculators.statCalculation(base.baseAttack,31,spAtkEV,nature.baseAttack,level,spAtkBoost);
+            spDefStat = Calculators.statCalculation(base.baseAttack,31,spDefEV,nature.baseAttack,level,spDefBoost);
+            speedStat = Calculators.statCalculation(base.baseAttack,31,speedEV,nature.baseAttack,level,speedBoost);
+        }
     }
 }
