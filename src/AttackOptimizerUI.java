@@ -83,6 +83,7 @@ public class AttackOptimizerUI extends Database {
 
         attackerPanel.revalidate();
 
+
         //other features like weather
         final JPanel other = new JPanel();
         other.setBounds((int)((double)frame.getWidth()*((double)2/3)),0,frame.getWidth()/3,frame.getHeight()-BOUNDS);
@@ -161,7 +162,8 @@ public class AttackOptimizerUI extends Database {
 
         defenderPanel.revalidate();
 
-        //gathers all info on both sides and performs preliminary calcs needed for damage calcing
+        //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
+        //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
         run.addActionListener(_ ->{
             final Move move = getMove((String)moveSelect.getSelectedItem());
 
@@ -225,8 +227,8 @@ public class AttackOptimizerUI extends Database {
                 boostSourceOpp = spdefBoosts;
 
                 yourNatureMultiplier = switch(yourNature){
-                    case "+Spatk" -> 1.1;
-                    case "-Spatk" -> 0.9;
+                    case "+SpAtk" -> 1.1;
+                    case "-SpAtk" -> 0.9;
                     default -> 1;
                 };
 
@@ -238,6 +240,8 @@ public class AttackOptimizerUI extends Database {
 
 
             }
+
+
 
             String youBoost = Objects.requireNonNull(boostSourceYou.getSelectedItem()).toString();
             String oppBoost = Objects.requireNonNull(boostSourceOpp.getSelectedItem()).toString();
@@ -252,14 +256,16 @@ public class AttackOptimizerUI extends Database {
             final int oppDefenseStat = Calculators.statCalculation(oppBase,31, oppDefense,yourNatureMultiplier,oppLevel,defBoostCount);
             final int oppHP = Calculators.calcHP(oppHP_EV,oppLevel,opp.baseHP);
 
-            int min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 0.85);
+            int min_OHKO_EV = Calculators.findLeastAtkEVs(yourBase,yourNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 0.85);
+
+            if(Constants.DEBUG_MODE){System.out.println("your nature: "+yourNatureMultiplier+"\nopp nature: "+oppNatureMultiplier);}
 
             if(min_OHKO_EV!=-1){
-                System.out.printf("Minimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, min_OHKO_EV);
+                System.out.printf("\nMinimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, min_OHKO_EV);
                 System.out.println("This calculations assumes the lowest possible roll to prevent matchups from being roll-dependant. (15% damage reduction)\n");
             }
             else{
-                int EV_HighRoll = Calculators.findLeastAtkEVs(yourBase,oppNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 1);
+                int EV_HighRoll = Calculators.findLeastAtkEVs(yourBase,yourNatureMultiplier,yourLevel,move,oppDefenseStat,atkBoostCount,oppHP,you,opp, item, selectedWeather, 1);
                 System.out.println("OHKO not possible with lowest possible roll, regardless of your EV spread. [Attempting to find OHKO range with highest possible roll...]\n");
                 if(EV_HighRoll!=-1){
                     System.out.printf("Minimum EVs needed for %s %s Nature %s %s to OHKO %s %s Nature %d HP EV %d (Sp)Defense EV %s with %s: %d\n",youBoost,yourNature,item,you.name,oppBoost,oppNature,oppHP_EV,oppDefense,opp.name,move.name, EV_HighRoll);

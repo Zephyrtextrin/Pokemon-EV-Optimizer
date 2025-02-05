@@ -34,10 +34,11 @@ public class Calculators extends Database {
             final int stat = statCalculation(baseStat,31,EV,nature,level,boostCount);
             final int damage = (int)(damageCalc(level,stat,defenderStat,move, you,opp,item, weather)*roll);
             if(damage>=oppHP){
-                if(Constants.DEBUG_MODE){System.out.println("EV: "+EV);}
+                if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,level,EV,stat,defenderStat);}
                 return EV;
             }
         }
+        if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,level,statCalculation(baseStat,31,252,nature,level,boostCount),defenderStat);}
         return -1;
     }
 
@@ -46,18 +47,17 @@ public class Calculators extends Database {
     //"why do you cast to int so much?" everything rounds down. all calculations *always* round down.
     private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon you, Pokemon opp, String item, String weather){
         try {
-            attackerLevel = (int)(((2*attackerLevel)/5)+2);
+            attackerLevel = (((2*attackerLevel)/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
+            final double AD = attackingMonAttack/targetDefenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
 
             //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
-            double rawDamage = (int)(((attackerLevel*move.baseDamage*(attackingMonAttack/targetDefenseStat))/5)+2);
+            int rawDamage = (int)(((attackerLevel*move.baseDamage*AD)/50)+2); //raw damage before other factors are applied. this is kept seperate for debugging purposes
 
-            rawDamage *= other(you.types, opp.types, move, item, weather); //other factors such as stab/weather
+            final double finalDamage = (double)rawDamage*other(you.types, opp.types, move, item, weather); //other factors such as stab/weather
 
-            if (Constants.DEBUG_MODE) {
-                System.out.println("final damage: " + rawDamage);
-            }
+            if(Constants.DEBUG_MODE){System.out.println("attacker level: "+attackerLevel+"\nmove bp: "+move.baseDamage+"\nmove category: "+move.moveCategory+"\nraw damage: "+rawDamage+"\nfinal damage: " + finalDamage+"\n------[END DAMAGE CALC]------\n");}
 
-            return rawDamage;
+            return (int)finalDamage;
         }catch(Exception e){
             ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_DAMAGE_CALCULATION_ERROR, e);
             return -1;

@@ -65,6 +65,27 @@ public class Database {
         Pokemon.init();
     }
 
+    //holds data for each pokemon on the UI
+    static public class CurrentPokemon{
+        public Pokemon base;
+        public int level;
+        public String item;
+        public Move move;
+        public int HPStat;
+        public int atkStat;
+        public int defStat;
+        public int spatkStat;
+        public int spdefStat;
+        public int speedStat;
+
+        public CurrentPokemon(String name, int level, String item, Move move){
+            base = getPokemon(name);
+            this.level = level;
+            this.item = item;
+            this.move = move;
+        }
+    }
+
     static public class Pokemon {
         public int dexNumber;
         public String name;
@@ -1883,11 +1904,11 @@ public class Database {
             typeMap.get("Fighting").resistances = new String[]{"Rock", "Bug", "Dark"};
             typeMap.get("Flying").resistances = new String[]{"Fighting", "Bug", "Grass"};
             typeMap.get("Fire").resistances = new String[]{"Fighting"};
-            typeMap.get("Grass").resistances = new String[]{"Fire"};
-            typeMap.get("Water").resistances = new String[]{"Fighting"};
+            typeMap.get("Grass").resistances = new String[]{"Water","Electric","Grass","Ground"};
+            typeMap.get("Water").resistances = new String[]{"Fire","Water","Ice","Steel"};
             typeMap.get("Electric").resistances = new String[]{"Fighting"};
             typeMap.get("Ground").resistances = new String[]{"Fighting"};
-            typeMap.get("Rock").resistances = new String[]{"Fighting"};
+            typeMap.get("Rock").resistances = new String[]{"Normal","Fire","Poison","Flying"};
             typeMap.get("Dragon").resistances = new String[]{"Fighting"};
             typeMap.get("Poison").resistances = new String[]{"Fighting"};
             typeMap.get("Bug").resistances = new String[]{"Fighting"};
@@ -1896,7 +1917,7 @@ public class Database {
             typeMap.get("Ghost").resistances = new String[]{"Fighting"};
             typeMap.get("Fairy").resistances = new String[]{"Fighting"};
             typeMap.get("Psychic").resistances = new String[]{"Fighting"};
-            typeMap.get("Ice").resistances = new String[]{"Fire"};
+            typeMap.get("Ice").resistances = new String[]{"Ice"};
 
             //immunities
             typeMap.get("Normal").immunities = new String[]{"Ghost"};
@@ -1925,9 +1946,9 @@ public class Database {
         }
     }
 
-    public static class Abilities{
-        private static void init(){
-            
+    public static class Abilities {
+        private static void init() {
+
         }
     }
 }
