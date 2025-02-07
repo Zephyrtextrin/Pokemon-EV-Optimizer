@@ -15,7 +15,7 @@ public class UI extends Database {
 
         final String[] WEATHER = Constants.WEATHER_LIST;
 
-        final int SIZE = 1200;
+        final int SIZE = 1000;
         final JFrame frame = new JFrame();
         frame.setSize(SIZE, SIZE);
 
@@ -28,7 +28,7 @@ public class UI extends Database {
         final JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
         frame.add(leftPanel);
-        createStatsPanel(leftPanel, "Left-Side");
+        createStatsPanel(leftPanel, "Left-Side", frame);
 
         leftPanel.getName();
 
@@ -46,21 +46,21 @@ public class UI extends Database {
         other.setLayout(new BoxLayout(other, BoxLayout.PAGE_AXIS));
         frame.add(other);
 
-        //text to denote what the panel does
-        final JLabel otherTitleLabel = new JLabel("Other");
-        other.add(otherTitleLabel);
+        //filler
+        other.add(Box.createVerticalGlue());
 
         //text to denote what the panel does
-        final JLabel weatherTitleLabel = new JLabel("Weather");
-        other.add(weatherTitleLabel);
+        other.add(new JLabel("Other"));
+
+        //text to denote what the panel does
+        other.add(new JLabel("Weather"));
 
         //select what weather
         final JComboBox<String> weather = new JComboBox<>(WEATHER);
         other.add(weather);
 
         //text to denote what the panel does
-        final JLabel functionTitleLabel = new JLabel("Find Minimum EVs to:");
-        other.add(functionTitleLabel);
+        other.add(new JLabel("Find Minimum EVs to:"));
 
         //select what function
         final JComboBox<String> toDo = new JComboBox<>(Constants.CAPABILITY_LIST);
@@ -77,12 +77,12 @@ public class UI extends Database {
         final JButton run = new JButton("Run");
         other.add(run);
 
-
         //select boosts for right side
         final JPanel rightBoostPanel = new JPanel();
         rightBoostPanel.setLayout(new BoxLayout(rightBoostPanel, BoxLayout.PAGE_AXIS));
         frame.add(rightBoostPanel);
         makeBoostPanel(rightBoostPanel, "Right-Side ");
+        other.add(Box.createVerticalGlue());
 
 
         //right side
@@ -90,7 +90,7 @@ public class UI extends Database {
         final JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
         frame.add(rightPanel);
-        createStatsPanel(rightPanel, "Right-Side");
+        createStatsPanel(rightPanel, "Right-Side", frame);
 
         //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
         //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
@@ -148,13 +148,20 @@ public class UI extends Database {
         );
         return new CurrentPokemon[]{leftSide,rightSide};
     }
-    private static void createStatsPanel(JPanel panel, String title) throws IOException {
+
+    private static void createStatsPanel(JPanel panel, String title, JFrame frame) throws IOException {
         String header = "Pokemon 2";
         if(title.equals("Left-Side")){header = "Pokemon 1";}
         final String[] natDex = arrayListToArray(getNatDexAsArrayList());
         final String[] moveList = arrayListToArray(getMoveListAsArrayList());
         final String[] itemList = arrayListToArray(Database.getItemList());
         String pokemonName = natDex[0];
+
+        //set bounds for space filler sizes
+        final Dimension minFillerSize = new Dimension(frame.getWidth()/128, frame.getHeight()/128);
+        final Dimension prefFilerSize = new Dimension(frame.getWidth()/64, frame.getHeight()/64);
+        final Dimension maxFillerSize = new Dimension(frame.getWidth()/32, frame.getHeight()/32);
+        final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);
 
         //text to denote who is attacking
         panel.add(new JLabel(header));
@@ -181,6 +188,7 @@ public class UI extends Database {
         });
 
         final JTextField levelSelect = new JTextField("100");
+        levelSelect.setMaximumSize(maxSize);
         panel.add(levelSelect);
         componentMap.put(title+" Level",levelSelect);
 
@@ -283,11 +291,10 @@ public class UI extends Database {
         int max = 255;
         if(name.equals("Left-Side Level")||name.equals("Right-Side Level")){max=100;}
         final Component component = componentMap.get(name);
-        if(component==null){
-            System.out.println(name);
-        }
+        if(component==null){System.out.println("ur piece of shit component is null. make piece of shit error handler later "+name);}
 
         String tempString;
+        assert component!=null;
         if(component.getClass()==JComboBox.class){
             tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();
         }else{
