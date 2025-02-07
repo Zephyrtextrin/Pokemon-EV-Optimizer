@@ -157,15 +157,11 @@ public class UI extends Database {
         String pokemonName = natDex[0];
 
         //text to denote who is attacking
-        final JLabel attackerTitleLabel = new JLabel(header);
-        panel.add(attackerTitleLabel);
+        panel.add(new JLabel(header));
 
         //image display for your pokemon
-        final File yourIMGFile = getSpriteFile(pokemonName); //the opponentsPokemonIMGFile itself. (just the data the image isnt actually read)
-        final ImageIcon yourIcon = new ImageIcon(ImageIO.read(yourIMGFile)); //ImageIO actually reads the data from the image and then that data is set to an icon
-        //the label that actually displays it
-        final JLabel youDisplayLabel = new JLabel(yourIcon);
-        panel.add(youDisplayLabel);
+        final JLabel pokemonDisplayLabel = new JLabel(new ImageIcon(ImageIO.read(getSpriteFile(pokemonName))));
+        panel.add(pokemonDisplayLabel);
 
         //select what pokemonis attacking
         final JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
@@ -181,12 +177,12 @@ public class UI extends Database {
                 throw new RuntimeException(e);
             }
 
-            youDisplayLabel.setIcon(icon);
+            pokemonDisplayLabel.setIcon(icon);
         });
 
-        final JTextField yourLevelSelect = new JTextField("100");
-        panel.add(yourLevelSelect);
-        componentMap.put(title+" Level",yourLevelSelect);
+        final JTextField levelSelect = new JTextField("100");
+        panel.add(levelSelect);
+        componentMap.put(title+" Level",levelSelect);
 
         final JTextField HP_EV = new JTextField("HP EV");
         panel.add(HP_EV);
