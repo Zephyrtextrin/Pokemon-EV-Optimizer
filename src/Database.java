@@ -1286,6 +1286,7 @@ public class Database {
         int baseDamage;
         String type;
         Constants.MOVE_CATS moveCategory;
+        boolean isSpread;
 
         private Move(String name, int baseDamage, String type, Constants.MOVE_CATS moveCategory) {
             this.name = name;
@@ -1295,6 +1296,8 @@ public class Database {
 
             moveList.put(name, this);
         }
+
+        public void isSpread(boolean isSpread){this.isSpread = isSpread;}
 
         protected static void init(){
             new Move("Absorb", 20, "Grass", Constants.MOVE_CATS.Special);
@@ -1896,7 +1899,7 @@ public class Database {
             typeMap.get("Dragon").resistances = new String[]{"Fighting"};
             typeMap.get("Poison").resistances = new String[]{"Fighting"};
             typeMap.get("Bug").resistances = new String[]{"Fighting"};
-            typeMap.get("Dark").resistances = new String[]{"Fighting"};
+            typeMap.get("Dark").resistances = new String[]{"Ghost", "Dark"};
             typeMap.get("Steel").resistances = new String[]{"Fighting"};
             typeMap.get("Ghost").resistances = new String[]{"Fighting"};
             typeMap.get("Fairy").resistances = new String[]{"Fighting"};

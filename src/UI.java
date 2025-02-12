@@ -59,6 +59,9 @@ public class UI extends Database {
         final JComboBox<String> weather = new JComboBox<>(WEATHER);
         other.add(weather);
 
+        final JCheckBox spread = new JCheckBox("Is this a spread move?");
+        other.add(spread);
+
         //text to denote what the panel does
         other.add(new JLabel("Find Minimum EVs to:"));
 
@@ -67,7 +70,7 @@ public class UI extends Database {
         other.add(toDo);
 
         //text to denote what the panel does
-        final JLabel targetTitleLabel = new JLabel("Select which side is attacking/defending");
+        final JLabel targetTitleLabel = new JLabel("Select which side to find EVS for");
         other.add(targetTitleLabel);
 
         //select what function
@@ -105,17 +108,23 @@ public class UI extends Database {
                 opponentMon = allData[1];
             }
 
-            final Move moveUsed = subjectMon.move;
+            Move moveUsed = subjectMon.move;
 
-            int min_OHKO_EV = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,Objects.requireNonNull(weather.getSelectedItem()).toString(), 0.85);
-            int max_OHKO_EV = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,Objects.requireNonNull(weather.getSelectedItem()).toString(), 1);
+            int min_EV = Calculators.findLeastAtkEVs(subjectMon, opponentMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(),  spread.isSelected(), 0.85);
+            int max_EV = Calculators.findLeastAtkEVs(subjectMon, opponentMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected(),  1);
+
+            if(Objects.requireNonNull(toDo.getSelectedItem()).toString().equals("Tank")){
+                moveUsed = opponentMon.move;
+                min_EV = Calculators.findLeastHPEVs(opponentMon, subjectMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(), spread.isSelected(), 0.85);
+                max_EV = Calculators.findLeastHPEVs(opponentMon, subjectMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected(),  1);
+            }
 
             System.out.println("-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-");
-            if(min_OHKO_EV!=-1){System.out.printf("Minimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, min_OHKO_EV);
+            if(min_EV!=-1){System.out.printf("Minimum EVs needed for %s to %s %s with %s: %d\n",subjectMon.base.name,Objects.requireNonNull(toDo.getSelectedItem()),opponentMon.base.name,moveUsed.name, min_EV);
             }else{System.out.println("NOT POSSIBLE TO OHKO\n");}
 
             System.out.println("-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-");
-            if(max_OHKO_EV!=-1){System.out.printf("Minimum EVs needed for %s Nature %s %s to OHKO %s Nature %d HP EV %d Defense EV %d SpDef EV %s with %s: %d\n",subjectMon.nature.name,subjectMon.item,subjectMon.base.name,opponentMon.nature.name,opponentMon.HP_EV,opponentMon.defEV,opponentMon.spDefEV,opponentMon.base.name,moveUsed.name, max_OHKO_EV);
+            if(max_EV !=-1){System.out.printf("Minimum EVs needed for %s to %s %s with %s: %d\n",subjectMon.base.name,Objects.requireNonNull(toDo.getSelectedItem()),opponentMon.base.name,moveUsed.name, max_EV);
             }else{System.out.println("NOT POSSIBLE TO OHKO\n");}
         });
     }
