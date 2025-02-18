@@ -33,7 +33,6 @@ public class Calculators extends Database {
 
         for(int EV = 0; EV<=252; EV+=4){//ev goes up by 4 bc the stat only goes up every 4 evs
             final int defenderHP = calcHP(EV,defender.level,defenderBase);
-            System.out.println("CURRENT EV: "+EV);
             final int damage = (int)(damageCalc(attacker.level,attackerStat,defenderStat,move,attacker.base,defender.base,attacker.item,spread,weather)*roll);
             if(damage<defenderHP){
                 //if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
@@ -45,7 +44,7 @@ public class Calculators extends Database {
     }
 
     //"why do you cast to int so much?" everything rounds down. all calculations *always* round down.
-    private static double damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon attacker, Pokemon defender, String item, boolean spread,String weather){
+    private static int damageCalc(double attackerLevel, double attackingMonAttack, double targetDefenseStat, Move move, Pokemon attacker, Pokemon defender, String item, boolean spread,String weather){
         try {
             attackerLevel = (((2*attackerLevel)/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
             final double AD = attackingMonAttack/targetDefenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
@@ -85,14 +84,13 @@ public class Calculators extends Database {
 
         for(int EV = 0; EV<=252; EV+=4){//ev goes up by 4 bc the stat only goes up every 4 evs
             final int stat = statCalculation(baseStat,31,EV,nature,you.level,boostCount);
-            System.out.println("CURRENT EV: "+EV);
             final int damage = (int)(damageCalc(you.level,stat,defenderStat,move, you.base,opp.base,you.item, spread,weather)*roll);
             if(damage>=opp.HPStat){
-                //if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
+                if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
                 return EV;
             }
         }
-        //if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
+        if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nnature mod: %f\nyour calculated stat: %d (assumes 252 ev as placeholder)\nopp stat %d\n--------------------------------------------\n[END].\n\n",baseStat,you.level,nature,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
         return -1;
     }
 
@@ -100,12 +98,10 @@ public class Calculators extends Database {
 
     //other factors
     private static double other(double total, Type[] attackerType, Type[] defenderType, Move move, String item, boolean spread, String weather){
-        System.out.println(defenderType[0].name);
         total*= getMatchups(defenderType,move.type);
         total*=STAB(attackerType,move);
         total*= Items.getItemEffect(item, move.moveCategory);
         total*=getWeatherMultiplier(move, defenderType, weather);
-        System.out.println(move.isSpread);
         if(spread){total*=0.75;}
 
         if(Constants.DEBUG_MODE){System.out.println("type "+getMatchups(defenderType,move.type)+"\nSTAB: "+STAB(attackerType,move)+"\nItem: "+Items.getItemEffect(item,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defenderType, weather));}

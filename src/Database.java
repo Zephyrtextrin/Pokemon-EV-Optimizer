@@ -1944,32 +1944,32 @@ public class Database {
 
         private Nature(String name, double attack, double defense, double spatk, double spdef, double speed) {
             this.name = name;
-            attack = attack;
-            defense = defense;
-            spatk = spatk;
-            spdef = spdef;
-            speed = speed;
+            this.attack = attack;
+            this.defense = defense;
+            this.spatk = spatk;
+            this.spdef = spdef;
+            this.speed = speed;
 
             natures.put(name, this);
         }
 
         private static void init(){
-            natures.put("+Attack",new Nature("+Attack",1.1,1,1,1,1));
-            natures.put("-Attack",new Nature("-Attack",0.9,1,1,1,1));
+            new Nature("+Attack",1.1,1,1,1,1);
+            new Nature("-Attack",0.9,1,1,1,1);
 
-            natures.put("+Defense",new Nature("+Defense",1,1.1,1,1,1));
-            natures.put("-Defense",new Nature("-Defense",1,0.9,1,1,1));
+            new Nature("+Defense",1,1.1,1,1,1);
+            new Nature("-Defense",1,0.9,1,1,1);
 
-            natures.put("+SpAtk",new Nature("+SpAtk",1,1,1.1,1,1));
-            natures.put("-SpAtk",new Nature("-SpAtk",1,1,0.9,1,1));
+            new Nature("+SpAtk",1,1,1.1,1,1);
+            new Nature("-SpAtk",1,1,0.9,1,1);
 
-            natures.put("+SpDef",new Nature("+SpDef",1,1,1,1.1,1));
-            natures.put("-SpDef",new Nature("-SpDef",1,1,1,0.9,1));
+            new Nature("+SpDef",1,1,1,1.1,1);
+            new Nature("-SpDef",1,1,1,0.9,1);
 
-            natures.put("+Speed",new Nature("+Speed",1,1,1,1,1.1));
-            natures.put("-Speed",new Nature("-Speed",1,1,1,1,0.9));
+            new Nature("+Speed",1,1,1,1,1.1);
+            new Nature("-Speed",1,1,1,1,0.9);
 
-            natures.put("Neutral",new Nature("Neutral",1,1,1,1,1));
+            new Nature("Neutral",1,1,1,1,1);
 
         }
     }
