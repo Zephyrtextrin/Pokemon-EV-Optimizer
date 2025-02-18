@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -108,7 +109,7 @@ public class UI extends Database {
                 opponentMon = allData[1];
             }
 
-            output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());
+            if(!Constants.DEBUG_DISABLE_OUTPUT){output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());}
         });
     }
 
@@ -118,6 +119,16 @@ public class UI extends Database {
 
         final int[] rightEVs = new int[]{Integer.parseInt(getComponentValue("Right-Side HP EV")), Integer.parseInt(getComponentValue("Right-Side Atk EV")), Integer.parseInt(getComponentValue("Right-Side Def EV")), Integer.parseInt(getComponentValue("Right-Side SpAtk EV")), Integer.parseInt(getComponentValue("Right-Side SpDef EV")), Integer.parseInt(getComponentValue("Right-Side Speed EV"))};
         final int[] rightBoosts = new int[]{Integer.parseInt(getComponentValue("Right-Side Atk Boost")), Integer.parseInt(getComponentValue("Right-Side Def Boost")), Integer.parseInt(getComponentValue("Right-Side SpAtk Boost")), Integer.parseInt(getComponentValue("Right-Side SpDef Boost")), Integer.parseInt(getComponentValue("Right-Side Speed Boost"))};
+
+        if(Constants.DEBUG_UI_MODE){
+            System.out.println("\nLEFT SIDE EVS: "+ Arrays.toString(leftEVs));
+            System.out.println("LEFT SIDE BOOSTS: "+ Arrays.toString(leftBoosts));
+
+            System.out.println("RIGHT SIDE EVS: "+ Arrays.toString(rightEVs));
+            System.out.println("RIGHT SIDE BOOSTS: "+ Arrays.toString(rightBoosts));
+
+            System.out.println("\n");
+        }
 
         CurrentPokemon leftSide = new CurrentPokemon(
                 getComponentValue("Left-Side Pokemon"),
@@ -141,18 +152,65 @@ public class UI extends Database {
         return new CurrentPokemon[]{leftSide,rightSide};
     }
 
-    private static void createStatsPanel(JPanel panel, String title, JFrame frame) throws IOException {
+    private static void output(String process, CurrentPokemon subjectMon, CurrentPokemon opponentMon, String weather, boolean spread) {
+        Move moveUsed = subjectMon.move;
+        int[] EVrolls = {-1,-1,-1}; //0 is lowest roll, 1 is median roll, 2 is highest roll
+
+        if (process.equals("Tank")){
+            moveUsed = opponentMon.move;
+            EVrolls = Calculators.findLeastHPEVs(opponentMon,subjectMon,moveUsed,weather,spread);
+        }else if(process.equals("OHKO")){
+            EVrolls = Calculators.findLeastAtkEVs(opponentMon,subjectMon,moveUsed,weather,spread);
+
+        }else{ //for outspeeding
+            final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.speedStat, subjectMon.speedBoost)};
+            outputClean(process,subjectMon,opponentMon,EV,"");
+        }
+
+        if (!process.equals("Outspeed")){outputClean(process,subjectMon,opponentMon,EVrolls,moveUsed.name);}
+    }
+
+    private static void outputClean(String process, CurrentPokemon subjectMon, CurrentPokemon opponentMon, int[] EVrolls, String moveUsed){
+        if(!moveUsed.isEmpty()){moveUsed="with "+moveUsed;} //this means that a tank/ohko output will display "ev to whatever [pokemonname] with [movename] but an outspeed output will just say "evs to outspeed [pokemonname] since u have to input a move name no matter what but if ur looking to outspeed ur not using a move
+        int index = 0;
+        for(int EV:EVrolls){
+            String message = switch (index) {
+                case 0 -> "-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-";
+                case 1 -> "-[ASSUMING AVERAGE DAMAGE ROLL]-";
+                default -> "-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-";
+            };
+            if(!Objects.equals(process, "Outspeed")){System.out.println(message);}
+
+            if(EV != -1){System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
+            }else{System.out.println("NOT POSSIBLE TO " + process.toUpperCase() + "\n");}
+
+
+            if(index==2){
+                if(!process.equals("Outspeed")&&EVrolls[2]!=-1){System.out.println("Please remember that only OHKOing with the highest possible damage roll means there's about a 6% chance you actually ohko, and with an average (median) roll is only 50%- Please do keep in mind this will make matchups RNG-dependant.\nObviously, OHKOing with the lowest possible roll will not have to account for RNG.\n");}
+
+                System.out.println("-----------[END]-----------");
+            } //this is appended to the end of highrolls because the highroll typically goes last
+
+            index++;
+        }
+    }
+
+        private static void createStatsPanel(JPanel panel, String title, JFrame frame) throws IOException {
         String header = "Pokemon 2";
         if(title.equals("Left-Side")){header = "Pokemon 1";}
         final String[] natDex = arrayListToArray(getNatDexAsArrayList());
         final String[] moveList = arrayListToArray(getMoveListAsArrayList());
         final String[] itemList = arrayListToArray(Database.getItemList());
+        final String[] natureList = arrayListToArray(getNatureListAsArrayList());
         String pokemonName = natDex[0];
 
         //set bounds for space filler sizes
+        /*
         final Dimension minFillerSize = new Dimension(frame.getWidth()/128, frame.getHeight()/128);
         final Dimension prefFilerSize = new Dimension(frame.getWidth()/64, frame.getHeight()/64);
         final Dimension maxFillerSize = new Dimension(frame.getWidth()/32, frame.getHeight()/32);
+        */
+
         final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);
 
         //text to denote who is attacking
@@ -190,7 +248,7 @@ public class UI extends Database {
 
         final JTextField atkEV = new JTextField("Attack EV");
         panel.add(atkEV);
-        componentMap.put(title+" Atk EV",HP_EV);
+        componentMap.put(title+" Atk EV",atkEV);
 
         final JTextField defEV = new JTextField("Defense EV");
         panel.add(defEV);
@@ -208,7 +266,7 @@ public class UI extends Database {
         panel.add(speedEV);
         componentMap.put(title+" Speed EV",speedEV);
 
-        final JComboBox<String> natureSelect = new JComboBox<>(Constants.NATURE);
+        final JComboBox<String> natureSelect = new JComboBox<>(natureList);
         panel.add(natureSelect);
         componentMap.put(title+" Nature",natureSelect);
 

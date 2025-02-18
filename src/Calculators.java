@@ -19,28 +19,35 @@ public class Calculators extends Database {
         return -1;
     }
 
-
     //finds what stat boost you need to ohko
-    public static int findLeastHPEVs(UI.CurrentPokemon attacker, UI.CurrentPokemon defender, Move move, String weather, boolean spread, double roll){
-        int attackerStat = attacker.atkStat;
-        int defenderBase = defender.base.baseHP;
-        int defenderStat = defender.defStat;
+    public static int[] findLeastHPEVs(UI.CurrentPokemon opponentMon, UI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
+        int oppAtkStat = opponentMon.atkStat;
+        int targetBaseHP = targetMon.base.baseHP;
+        int targetDefStat = targetMon.defStat;
 
         if(move.moveCategory== Constants.MOVE_CATS.Special){
-            defenderStat = defender.spDefStat;
-            attackerStat = attacker.spAtkStat;
+            targetDefStat = targetMon.spDefStat;
+            oppAtkStat = opponentMon.spAtkStat;
         }
+        final int[] EVRolls = {-1,-1,-1};
 
-        for(int EV = 0; EV<=252; EV+=4){//ev goes up by 4 bc the stat only goes up every 4 evs
-            final int defenderHP = calcHP(EV,defender.level,defenderBase);
-            final int damage = (int)(damageCalc(attacker.level,attackerStat,defenderStat,move,attacker.base,defender.base,attacker.item,spread,weather)*roll);
-            if(damage<defenderHP){
-                //if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
-                return EV;
+        int index = 0;
+        final int damage = damageCalc(opponentMon.level, oppAtkStat, targetDefStat, move, opponentMon.base, targetMon.base, opponentMon.item, spread, weather);
+
+        for(double currentRoll:Constants.ROLLS){
+            if(Constants.DEBUG_CALC_MODE){System.out.println();}
+            for (int EV = 0; EV <= 252; EV += 4){//ev goes up by 4 bc the stat only goes up every 4 evs
+                final int targetCalcedHPStat = calcHP(EV, targetMon.level, targetBaseHP);
+
+                if((damage*currentRoll)<targetCalcedHPStat){
+                    if(Constants.DEBUG_CALC_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nyour def stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp atk stat %d\nopp atk ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, targetDefStat,EV, targetCalcedHPStat, oppAtkStat, opponentMon.atkEV,damage,currentRoll);}
+                    EVRolls[index] = EV;
+                    break;
+                }
             }
+            index++;
         }
-        //if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nEV: 252\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
-        return -1;
+        return EVRolls;
     }
 
     //"why do you cast to int so much?" everything rounds down. all calculations *always* round down.
@@ -53,7 +60,7 @@ public class Calculators extends Database {
 
             final double finalDamage = other(rawDamage, attacker.types, defender.types, move, item, spread, weather); //other factors such as stab/weather
 
-            if(Constants.DEBUG_MODE){System.out.println("attacker stat: "+attackingMonAttack+"\ndefender stat:"+targetDefenseStat+"\nmove bp: "+move.baseDamage+"\nmove category: "+move.moveCategory+"\nraw damage: "+rawDamage+"\nfinal damage: " + finalDamage+"\n------[END DAMAGE CALC]------\n");}
+            if(Constants.DEBUG_CALC_MODE){System.out.println("\nmove bp: "+move.baseDamage+"\nmove category: "+move.moveCategory+"\nraw damage: "+rawDamage+"\nfinal damage: " + finalDamage+"\n------[END DAMAGE CALC]------\n");}
 
             return (int)finalDamage;
         }catch(Exception e){
@@ -69,7 +76,7 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int findLeastAtkEVs(UI.CurrentPokemon you, UI.CurrentPokemon opp, Move move, String weather, boolean spread, double roll){
+    public static int[] findLeastAtkEVs(UI.CurrentPokemon you, UI.CurrentPokemon opp, Move move, String weather, boolean spread){
         int baseStat = you.base.baseAttack;
         double nature = you.nature.attack;
         int boostCount = you.atkBoost;
@@ -82,16 +89,21 @@ public class Calculators extends Database {
             defenderStat = opp.spDefStat;
         }
 
-        for(int EV = 0; EV<=252; EV+=4){//ev goes up by 4 bc the stat only goes up every 4 evs
-            final int stat = statCalculation(baseStat,31,EV,nature,you.level,boostCount);
-            final int damage = (int)(damageCalc(you.level,stat,defenderStat,move, you.base,opp.base,you.item, spread,weather)*roll);
-            if(damage>=opp.HPStat){
-                if(Constants.DEBUG_MODE){System.out.printf("\n[RESULT FOUND!]\nbase stat: %d\nlevel: %d\nEV: %d\nyour calculated stat: %d\nopp stat %d\n--------------------------------------------\n[END].\n",baseStat,you.level,EV,stat,defenderStat);}
-                return EV;
+        int index = 0;
+        final int[] EVrolls = {-1,-1,-1};
+        for(double currentRoll:Constants.ROLLS) {
+            for (int EV = 0; EV <= 252; EV += 4) {//ev goes up by 4 bc the stat only goes up every 4 evs
+                final int stat = statCalculation(baseStat, 31, EV, nature, you.level, boostCount);
+                final int damage = (int)(damageCalc(you.level, stat, defenderStat, move, you.base, opp.base, you.item, spread, weather) * currentRoll);
+
+                if(damage >= opp.HPStat){
+                    EVrolls[index] = EV;
+                    break;
+                }
             }
+            index++;
         }
-        if(Constants.DEBUG_MODE){System.out.printf("\n[NO RESULT!]\nbase stat: %d\nlevel: %d\nnature mod: %f\nyour calculated stat: %d (assumes 252 ev as placeholder)\nopp stat %d\n--------------------------------------------\n[END].\n\n",baseStat,you.level,nature,statCalculation(baseStat,31,252,nature,you.level,boostCount),defenderStat);}
-        return -1;
+        return EVrolls;
     }
 
     public static int calcHP(double EV, double level, double baseHP){return (int)((int)(((2*baseHP+31+(EV/4))*level)/100)+level+10);}
@@ -104,7 +116,7 @@ public class Calculators extends Database {
         total*=getWeatherMultiplier(move, defenderType, weather);
         if(spread){total*=0.75;}
 
-        if(Constants.DEBUG_MODE){System.out.println("type "+getMatchups(defenderType,move.type)+"\nSTAB: "+STAB(attackerType,move)+"\nItem: "+Items.getItemEffect(item,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defenderType, weather));}
+        if(Constants.DEBUG_CALC_MODE){System.out.println("type "+getMatchups(defenderType,move.type)+"\nSTAB: "+STAB(attackerType,move)+"\nItem: "+Items.getItemEffect(item,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defenderType, weather));}
 
         return total;
     }

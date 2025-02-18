@@ -23,6 +23,13 @@ public class Database {
         return list;
     }
 
+    public static ArrayList<String> getNatureListAsArrayList(){
+        final Set<String> set = natures.keySet();
+        final ArrayList<String> list = new ArrayList<>(set);
+        Collections.sort(list);
+        return list;
+    }
+
     public static Pokemon getPokemon(String input){
         Pokemon result;
         try{result=natDex.get(input);
@@ -1942,7 +1949,7 @@ public class Database {
         public double spdef;
         public double speed;
 
-        private Nature(String name, double attack, double defense, double spatk, double spdef, double speed) {
+        private Nature(String name, double attack, double defense, double spatk, double spdef, double speed){
             this.name = name;
             this.attack = attack;
             this.defense = defense;
