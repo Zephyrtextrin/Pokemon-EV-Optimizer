@@ -1936,19 +1936,19 @@ public class Database {
 
     public static class Nature{
         public String name;
-        public double baseAttack;
-        public double baseDefense;
-        public double baseSpatk;
-        public double baseSpdef;
-        public double baseSpeed;
+        public double attack;
+        public double defense;
+        public double spatk;
+        public double spdef;
+        public double speed;
 
         private Nature(String name, double attack, double defense, double spatk, double spdef, double speed) {
             this.name = name;
-            baseAttack = attack;
-            baseDefense = defense;
-            baseSpatk = spatk;
-            baseSpdef = spdef;
-            baseSpeed = speed;
+            attack = attack;
+            defense = defense;
+            spatk = spatk;
+            spdef = spdef;
+            speed = speed;
 
             natures.put(name, this);
         }

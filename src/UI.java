@@ -101,31 +101,14 @@ public class UI extends Database {
             CurrentPokemon[] allData = initCurrentPokemon();
             CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
             CurrentPokemon opponentMon = allData[0];
-
+            final String process = toDo.getSelectedItem().toString();
 
             if(Objects.requireNonNull(target.getSelectedItem()).toString().equals("Pokemon 1 (Left Side)")){
                 subjectMon = allData[0];
                 opponentMon = allData[1];
             }
 
-            Move moveUsed = subjectMon.move;
-
-            int min_EV = Calculators.findLeastAtkEVs(subjectMon, opponentMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(),  spread.isSelected(), 0.85);
-            int max_EV = Calculators.findLeastAtkEVs(subjectMon, opponentMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected(),  1);
-
-            if(Objects.requireNonNull(toDo.getSelectedItem()).toString().equals("Tank")){
-                moveUsed = opponentMon.move;
-                min_EV = Calculators.findLeastHPEVs(opponentMon, subjectMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(), spread.isSelected(), 0.85);
-                max_EV = Calculators.findLeastHPEVs(opponentMon, subjectMon, moveUsed, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected(),  1);
-            }
-
-            System.out.println("-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-");
-            if(min_EV!=-1){System.out.printf("Minimum EVs needed for %s to %s %s with %s: %d\n",subjectMon.base.name,Objects.requireNonNull(toDo.getSelectedItem()),opponentMon.base.name,moveUsed.name, min_EV);
-            }else{System.out.println("NOT POSSIBLE TO OHKO\n");}
-
-            System.out.println("-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-");
-            if(max_EV !=-1){System.out.printf("Minimum EVs needed for %s to %s %s with %s: %d\n",subjectMon.base.name,Objects.requireNonNull(toDo.getSelectedItem()),opponentMon.base.name,moveUsed.name, max_EV);
-            }else{System.out.println("NOT POSSIBLE TO OHKO\n");}
+            output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());
         });
     }
 
@@ -343,6 +326,41 @@ public class UI extends Database {
         return file;
     }
 
+    private static void output(String process, CurrentPokemon subjectMon, CurrentPokemon opponentMon, String weather, boolean spread){
+        Move moveUsed = subjectMon.move;
+
+        int min_EV = -1;
+        int max_EV = -1;
+
+            if(process.equals("Tank")){
+                moveUsed = opponentMon.move;
+                min_EV = Calculators.findLeastHPEVs(opponentMon, subjectMon, moveUsed, weather, spread, 0.85);
+                max_EV = Calculators.findLeastHPEVs(opponentMon, subjectMon, moveUsed, weather,spread,  1);
+            }else if(process.equals("Outspeed")){
+                int EV = Calculators.findLeastSpeedEVs(subjectMon,opponentMon.speedStat,subjectMon.speedBoost);
+                System.out.printf("MINIMUM EVS NEEDED FOR %s NATURE %s TO OUTSPEED %s AT %d BOOSTS: %d",subjectMon.nature.name,subjectMon.base.name,opponentMon.base.name,subjectMon.speedBoost,EV);
+            }else{
+                min_EV = Calculators.findLeastAtkEVs(subjectMon, opponentMon, moveUsed, weather,  spread, 0.85);
+                max_EV = Calculators.findLeastAtkEVs(subjectMon, opponentMon, moveUsed, weather,spread,  1);
+            }
+
+            if(process!="Outspeed") {
+                System.out.println("-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-");
+                if (min_EV != -1) {
+                    System.out.printf("Minimum EVs needed for %s to %s %s with %s: %d\n", subjectMon.base.name, process, opponentMon.base.name, moveUsed.name, min_EV);
+                } else {
+                    System.out.println("NOT POSSIBLE TO OHKO\n");
+                }
+
+                System.out.println("-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-");
+                if (max_EV != -1) {
+                    System.out.printf("Minimum EVs needed for %s to %s %s with %s: %d\n", subjectMon.base.name, process, opponentMon.base.name, moveUsed.name, max_EV);
+                } else {
+                    System.out.println("NOT POSSIBLE TO OHKO\n");
+                }
+            }
+
+    }
 
     //holds data for each pokemon on the UI
     static public class CurrentPokemon{
@@ -390,11 +408,11 @@ public class UI extends Database {
 
 
             HPStat = Calculators.calcHP(HP_EV,level,base.baseHP);
-            atkStat = Calculators.statCalculation(base.baseAttack,31,atkEV,nature.baseAttack,level,atkBoost);
-            defStat = Calculators.statCalculation(base.baseDefense,31,defEV,nature.baseDefense,level,defBoost);
-            spAtkStat = Calculators.statCalculation(base.baseSpatk,31,spAtkEV,nature.baseSpatk,level,spAtkBoost);
-            spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.baseSpdef,level,spDefBoost);
-            speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.baseSpeed,level,speedBoost);
+            atkStat = Calculators.statCalculation(base.baseAttack,31,atkEV,nature.attack,level,atkBoost);
+            defStat = Calculators.statCalculation(base.baseDefense,31,defEV,nature.defense,level,defBoost);
+            spAtkStat = Calculators.statCalculation(base.baseSpatk,31,spAtkEV,nature.spatk,level,spAtkBoost);
+            spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.spdef,level,spDefBoost);
+            speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.speed,level,speedBoost);
         }
     }
 }
