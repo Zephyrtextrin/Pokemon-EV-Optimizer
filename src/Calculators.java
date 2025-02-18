@@ -91,11 +91,13 @@ public class Calculators extends Database {
 
         int index = 0;
         final int[] EVrolls = {-1,-1,-1};
+
         for(double currentRoll:Constants.ROLLS) {
             for (int EV = 0; EV <= 252; EV += 4) {//ev goes up by 4 bc the stat only goes up every 4 evs
                 final int stat = statCalculation(baseStat, 31, EV, nature, you.level, boostCount);
                 final int damage = (int)(damageCalc(you.level, stat, defenderStat, move, you.base, opp.base, you.item, spread, weather) * currentRoll);
 
+                if(Constants.DEBUG_CALC_MODE){System.out.printf("\nyour calced atk: %d\nyour ev: %d\nyour base atk: %d\nopp hp: %d\nopp def: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.HPStat,defenderStat,damage,currentRoll,move.name);}
                 if(damage >= opp.HPStat){
                     EVrolls[index] = EV;
                     break;

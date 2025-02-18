@@ -160,7 +160,7 @@ public class UI extends Database {
             moveUsed = opponentMon.move;
             EVrolls = Calculators.findLeastHPEVs(opponentMon,subjectMon,moveUsed,weather,spread);
         }else if(process.equals("OHKO")){
-            EVrolls = Calculators.findLeastAtkEVs(opponentMon,subjectMon,moveUsed,weather,spread);
+            EVrolls = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,weather,spread);
 
         }else{ //for outspeeding
             final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.speedStat, subjectMon.speedBoost)};

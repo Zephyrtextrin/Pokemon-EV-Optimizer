@@ -1,6 +1,6 @@
 public class Constants{
     public static final String[] BOOSTS = {"+0","-6","-5","-4","-3","-2","-1","+1","+2","+3","+4","+5","+6"};
-    public static final boolean DEBUG_CALC_MODE = false;
+    public static final boolean DEBUG_CALC_MODE = true;
     public static final boolean DEBUG_UI_MODE = false;
     public static final boolean DEBUG_DISABLE_OUTPUT = false;
 
