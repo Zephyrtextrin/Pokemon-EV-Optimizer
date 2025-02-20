@@ -19,7 +19,7 @@ public class UI extends Database {
         final JFrame frame = new JFrame();
         frame.setSize(SIZE, SIZE);
 
-        frame.setLayout(new GridLayout(1, 3));
+        frame.setLayout(new GridLayout(1, 1)); //not good fix later
         frame.setVisible(true);
 
 
@@ -70,8 +70,7 @@ public class UI extends Database {
         other.add(toDo);
 
         //text to denote what the panel does
-        final JLabel targetTitleLabel = new JLabel("Select which side to find EVS for");
-        other.add(targetTitleLabel);
+        other.add(new JLabel("Select which side to find EVS for"));
 
         //select what function
         final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side)", "Pokemon 2 (Right Side"});
