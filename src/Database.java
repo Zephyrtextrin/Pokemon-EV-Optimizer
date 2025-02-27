@@ -1,3 +1,4 @@
+import java.sql.Array;
 import java.util.*;
 
 //this is very long bc it contains an entry for every pokemon and an entry for every paldea mon
@@ -1860,8 +1861,29 @@ public class Database {
         }
 
 
+        public static ArrayList<String>[] returnAllMatchups(Type[] defender){
+            ArrayList<String> neutral = new ArrayList<>();
+            ArrayList<String> superEffective = new ArrayList<>();
+            ArrayList<String> notVeryEffective = new ArrayList<>();
+            ArrayList<String> immune = new ArrayList<>();
+
+            for(String currentType:typeNames){
+                final double effectivenessOne = returnOneMatchup(defender[0], currentType);
+                final double effectivenessTwo = returnOneMatchup(defender[1], currentType);
+                final double finalEffectiveness = effectivenessOne*effectivenessTwo;
+
+                if(finalEffectiveness>1){superEffective.add(currentType);
+                }else if(finalEffectiveness<1&&finalEffectiveness!=0){notVeryEffective.add(currentType);
+                }else if(finalEffectiveness==0){immune.add(currentType);
+                }else{neutral.add(currentType);}
+            }
+
+            return new ArrayList[]{neutral,superEffective,notVeryEffective,immune};
+        }
 
         private static double returnOneMatchup(Type defendingType, String attackingType){
+            if(defendingType==null){return 1;}
+
             if(Arrays.asList(defendingType.weaknesses).contains(attackingType)) {return 2;
             }else if(Arrays.asList(defendingType.resistances).contains(attackingType)){return 0.5;
             }try{if(Arrays.asList(defendingType.immunities).contains(attackingType)) {return 0;}}catch(Exception _){}
