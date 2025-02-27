@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,9 +7,10 @@ public class PokemonDatabaseUI extends Database{
     //!!!!! fuck it bro just do the ui first and then make it not bad
     static final HashMap<String, Component> ComponentMap = new HashMap<>();
 
-    public static void initUI() throws IOException {
+    public static void initUI(){
 
         final String[] natDex = HelperMethods.arrayListToArray(getNatDexAsArrayList());
+        final String[] effectiveness = {"Type", "Neutral","Super Effective","Resisted"};
 
         final int SIZE = 500;
         final JFrame frame = new JFrame();
@@ -25,63 +25,29 @@ public class PokemonDatabaseUI extends Database{
         panel.add(pokemon);
         ComponentMap.put("Pokemon",pokemon);
 
-        JLabel HPLabel = new JLabel("HP: ");
-        panel.add(HPLabel);
-        ComponentMap.put("HP",HPLabel);
+        for(String currentStat:Constants.STATS){
+            final JLabel label = new JLabel(currentStat+": ");
+            panel.add(label);
+            ComponentMap.put(currentStat,label);
+        }
 
-        JLabel atkLabel = new JLabel("Attack: ");
-        panel.add(atkLabel);
-        ComponentMap.put("Attack",atkLabel);
-
-        JLabel defLabel = new JLabel("Defense: ");
-        panel.add(defLabel);
-        ComponentMap.put("Defense",defLabel);
-
-        JLabel spatkLabel = new JLabel("Special Attack: ");
-        panel.add(spatkLabel);
-        ComponentMap.put("Special Attack",spatkLabel);
-
-        JLabel spdefLabel = new JLabel("Special Defense: ");
-        panel.add(spdefLabel);
-        ComponentMap.put("Special Defense",spdefLabel);
-
-        JLabel speedLabel = new JLabel("Speed: ");
-        panel.add(speedLabel);
-        ComponentMap.put("Speed",speedLabel);
-
-        JLabel typeLabel = new JLabel("Type: ");
-        panel.add(typeLabel);
-        ComponentMap.put("Type",typeLabel);
-
-        JLabel neutralLabel = new JLabel("Neutral: ");
-        panel.add(neutralLabel);
-        ComponentMap.put("Neutral", neutralLabel);
-
-        JLabel superEffectiveLabel = new JLabel("Super Effective: ");
-        panel.add(superEffectiveLabel);
-        ComponentMap.put("Super Effective", superEffectiveLabel);
-
-        JLabel notEffectiveLabel = new JLabel("Not Very Effective: ");
-        panel.add(notEffectiveLabel);
-        ComponentMap.put("Not Very Effective", notEffectiveLabel);
-
-        JLabel immuneLabel = new JLabel("Immune: ");
-        panel.add(immuneLabel);
-        ComponentMap.put("Immune", immuneLabel);
+        for(String currentEntry :effectiveness){
+            final JLabel label = new JLabel(currentEntry +": ");
+            panel.add(label);
+            ComponentMap.put(currentEntry,label);
+        }
 
         refresh();
         panel.revalidate();
 
         pokemon.addActionListener(_ -> {
-            try {
-                refresh(); //ughhh i hate having to put try catches everywhere cause of the ioExceptionssssss
-                panel.repaint();
-                panel.revalidate();
-            }catch(IOException e){throw new RuntimeException(e);}
+            refresh(); //ughhh i hate having to put try catches everywhere cause of the ioExceptionssssss
+            panel.repaint();
+            panel.revalidate();
         });
     }
 
-    private static void refresh() throws IOException{
+    private static void refresh(){
         final Pokemon pokemon = getPokemon(HelperMethods.getComponentValue("Pokemon", false));
 
         //most definitely an easier way to do this. i just dont care rn

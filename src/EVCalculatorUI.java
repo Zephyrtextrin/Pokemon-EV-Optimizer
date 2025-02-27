@@ -16,7 +16,6 @@ public class EVCalculatorUI extends Database {
         final int SIZE = 1000;
         final JFrame frame = new JFrame();
         frame.setSize(SIZE, SIZE);
-
         frame.setLayout(new GridLayout(1, 1)); //not good fix later
         frame.setVisible(true);
 
@@ -203,13 +202,6 @@ public class EVCalculatorUI extends Database {
         final String[] natureList = HelperMethods.arrayListToArray(getNatureListAsArrayList());
         String pokemonName = natDex[0];
 
-        //set bounds for space filler sizes
-        /*
-        final Dimension minFillerSize = new Dimension(frame.getWidth()/128, frame.getHeight()/128);
-        final Dimension prefFilerSize = new Dimension(frame.getWidth()/64, frame.getHeight()/64);
-        final Dimension maxFillerSize = new Dimension(frame.getWidth()/32, frame.getHeight()/32);
-        */
-
         final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);
 
         //text to denote who is attacking
@@ -277,6 +269,7 @@ public class EVCalculatorUI extends Database {
         panel.add(moveSelect);
         ComponentMap.put(title+" Move",moveSelect);
 
+        //do later
         /*final JComboBox<String> ability = new JComboBox<>(moveList);
         panel.add(moveSelect);
         ComponentMap.put(title+" Ability",ability);
