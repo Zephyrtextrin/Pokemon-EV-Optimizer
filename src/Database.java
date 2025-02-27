@@ -87,6 +87,7 @@ public class Database {
         public int baseSpatk;
         public int baseSpdef;
         public int baseSpeed;
+        public int[] stats;
 
         private Pokemon(int dexNumber, String name, Type[] types, int HP, int attack, int defense, int spatk, int spdef, int speed) {
             this.dexNumber = dexNumber;
@@ -98,6 +99,7 @@ public class Database {
             baseSpatk = spatk;
             baseSpdef = spdef;
             baseSpeed = speed;
+            stats = new int[]{HP,attack,defense,spatk,spdef,speed};
 
 
             natDex.put(name, this);
@@ -1868,13 +1870,13 @@ public class Database {
             ArrayList<String> immune = new ArrayList<>();
 
             for(String currentType:typeNames){
-                final double effectivenessOne = returnOneMatchup(defender[0], currentType);
-                final double effectivenessTwo = returnOneMatchup(defender[1], currentType);
-                final double finalEffectiveness = effectivenessOne*effectivenessTwo;
+                double effectiveness = 1;
+            
+                for(Type i:defender){effectiveness*=returnOneMatchup(i, currentType);}
 
-                if(finalEffectiveness>1){superEffective.add(currentType);
-                }else if(finalEffectiveness<1&&finalEffectiveness!=0){notVeryEffective.add(currentType);
-                }else if(finalEffectiveness==0){immune.add(currentType);
+                if(effectiveness>1){superEffective.add(currentType);
+                }else if(effectiveness<1&&effectiveness!=0){notVeryEffective.add(currentType);
+                }else if(effectiveness==0){immune.add(currentType);
                 }else{neutral.add(currentType);}
             }
 
