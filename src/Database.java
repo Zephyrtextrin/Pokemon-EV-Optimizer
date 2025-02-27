@@ -99,7 +99,7 @@ public class Database {
             baseSpatk = spatk;
             baseSpdef = spdef;
             baseSpeed = speed;
-            stats = {HP,attack,defense,spatk,spdef,speed};
+            stats = new int[]{HP,attack,defense,spatk,spdef,speed};
 
 
             natDex.put(name, this);

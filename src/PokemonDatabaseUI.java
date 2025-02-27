@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PokemonDatabaseUI extends Database{
-    //!!!!! fuck it bro just do the ui first and then make it not bad
     static final HashMap<String, Component> ComponentMap = new HashMap<>();
 
     public static void initUI(){
 
         final String[] natDex = HelperMethods.arrayListToArray(getNatDexAsArrayList());
-        final String[] effectiveness = {"Type", "Neutral","Super Effective","Resisted"};
+        final String[] effectiveness = {"Type", "Neutral","Super Effective","Resisted","Immune"};
 
         final int SIZE = 500;
         final JFrame frame = new JFrame();
@@ -50,21 +49,15 @@ public class PokemonDatabaseUI extends Database{
     private static void refresh(){
         final Pokemon pokemon = getPokemon(HelperMethods.getComponentValue("Pokemon", false));
 
-        //most definitely an easier way to do this. i just dont care rn
-        ((JLabel)ComponentMap.get("HP")).setText("HP: "+pokemon.baseHP);
-        ((JLabel)ComponentMap.get("Attack")).setText("Attack: "+pokemon.baseAttack);
-        ((JLabel)ComponentMap.get("Defense")).setText("Defense: "+pokemon.baseDefense);
-        ((JLabel)ComponentMap.get("Special Attack")).setText("Special Attack: "+pokemon.baseSpatk);
-        ((JLabel)ComponentMap.get("Special Defense")).setText("Special Defense: "+pokemon.baseSpdef);
-        ((JLabel)ComponentMap.get("Speed")).setText("Speed: "+pokemon.baseSpeed);
+        //u use a regular forloop here instead of an enhanced one because u have to get the index of both the pokemon's stats array and the array from constants
+        for(int i =0;i<Constants.STATS.length;i++) {((JLabel) ComponentMap.get(Constants.STATS[i])).setText(Constants.STATS[i]+": " + pokemon.stats[i]);}
 
         ((JLabel)ComponentMap.get("Type")).setText("Type: "+typeConstruct(pokemon.types));
-
         ArrayList<String>[] typeMatchups = Type.returnAllMatchups(pokemon.types); //index 0 is neutral index 1 is super index 2 is not effective index 3 is immune
 
         ((JLabel)ComponentMap.get("Neutral")).setText("Neutral: "+typeMatchups[0]);
         ((JLabel)ComponentMap.get("Super Effective")).setText("Super Effective: "+typeMatchups[1]);
-        ((JLabel)ComponentMap.get("Not Very Effective")).setText("Resisted: "+typeMatchups[2]);
+        ((JLabel)ComponentMap.get("Resisted")).setText("Resisted: "+typeMatchups[2]);
         ((JLabel)ComponentMap.get("Immune")).setText("Immune: "+typeMatchups[3]);
 
     }
