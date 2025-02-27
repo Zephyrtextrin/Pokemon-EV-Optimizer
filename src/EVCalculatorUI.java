@@ -1,16 +1,13 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class UI extends Database {
-    //make the opponent a different panel and u a different panel cause im TIRED of resizing shit we are a layout manager household now
-    static final HashMap<String, Component> componentMap = new HashMap<>();
+public class EVCalculatorUI extends Database {
+    static final HashMap<String, Component> ComponentMap = new HashMap<>();
 
     public static void initUI() throws IOException {
 
@@ -29,7 +26,7 @@ public class UI extends Database {
         final JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
         frame.add(leftPanel);
-        createStatsPanel(leftPanel, "Left-Side", frame);
+        createStatsPanel(leftPanel, "Left-Side");
 
         leftPanel.getName();
 
@@ -93,7 +90,7 @@ public class UI extends Database {
         final JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
         frame.add(rightPanel);
-        createStatsPanel(rightPanel, "Right-Side", frame);
+        createStatsPanel(rightPanel, "Right-Side");
 
         //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
         //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
@@ -113,11 +110,11 @@ public class UI extends Database {
     }
 
     private static CurrentPokemon[] initCurrentPokemon(){
-        final int[] leftEVs = new int[]{Integer.parseInt(getComponentValue("Left-Side HP EV")), Integer.parseInt(getComponentValue("Left-Side Atk EV")), Integer.parseInt(getComponentValue("Left-Side Def EV")), Integer.parseInt(getComponentValue("Left-Side SpAtk EV")), Integer.parseInt(getComponentValue("Left-Side SpDef EV")), Integer.parseInt(getComponentValue("Left-Side Speed EV"))};
-        final int[] leftBoosts = new int[]{Integer.parseInt(getComponentValue("Left-Side Atk Boost")), Integer.parseInt(getComponentValue("Left-Side Def Boost")), Integer.parseInt(getComponentValue("Left-Side SpAtk Boost")), Integer.parseInt(getComponentValue("Left-Side SpDef Boost")), Integer.parseInt(getComponentValue("Left-Side Speed Boost"))};
+        final int[] leftEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Atk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Def EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpAtk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpDef EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed EV", true))};
+        final int[] leftBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side Atk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Def Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpAtk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpDef Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed Boost", true))};
 
-        final int[] rightEVs = new int[]{Integer.parseInt(getComponentValue("Right-Side HP EV")), Integer.parseInt(getComponentValue("Right-Side Atk EV")), Integer.parseInt(getComponentValue("Right-Side Def EV")), Integer.parseInt(getComponentValue("Right-Side SpAtk EV")), Integer.parseInt(getComponentValue("Right-Side SpDef EV")), Integer.parseInt(getComponentValue("Right-Side Speed EV"))};
-        final int[] rightBoosts = new int[]{Integer.parseInt(getComponentValue("Right-Side Atk Boost")), Integer.parseInt(getComponentValue("Right-Side Def Boost")), Integer.parseInt(getComponentValue("Right-Side SpAtk Boost")), Integer.parseInt(getComponentValue("Right-Side SpDef Boost")), Integer.parseInt(getComponentValue("Right-Side Speed Boost"))};
+        final int[] rightEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Atk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Def EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpAtk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpDef EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed EV", true))};
+        final int[] rightBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side Atk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Def Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpAtk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpDef Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed Boost", true))};
 
         if(Constants.DEBUG_UI_MODE){
             System.out.println("\nLEFT SIDE EVS: "+ Arrays.toString(leftEVs));
@@ -130,21 +127,21 @@ public class UI extends Database {
         }
 
         CurrentPokemon leftSide = new CurrentPokemon(
-                getComponentValue("Left-Side Pokemon"),
-                Integer.parseInt(getComponentValue("Left-Side Level")),
-                getComponentValue("Left-Side Item"),
-                getMove(getComponentValue("Left-Side Move")),
-                getNature(getComponentValue("Left-Side Nature")),
+                HelperMethods.getComponentValue("Left-Side Pokemon", true),
+                Integer.parseInt(HelperMethods.getComponentValue("Left-Side Level", true)),
+                HelperMethods.getComponentValue("Left-Side Item", true),
+                getMove(HelperMethods.getComponentValue("Left-Side Move", true)),
+                getNature(HelperMethods.getComponentValue("Left-Side Nature", true)),
                 leftEVs, leftBoosts
 
         );
 
         CurrentPokemon rightSide = new CurrentPokemon(
-                getComponentValue("Right-Side Pokemon"),
-                Integer.parseInt(getComponentValue("Right-Side Level")),
-                getComponentValue("Right-Side Item"),
-                getMove(getComponentValue("Right-Side Move")),
-                getNature(getComponentValue("Right-Side Nature")),
+                HelperMethods.getComponentValue("Right-Side Pokemon", true),
+                Integer.parseInt(HelperMethods.getComponentValue("Right-Side Level", true)),
+                HelperMethods.getComponentValue("Right-Side Item", true),
+                getMove(HelperMethods.getComponentValue("Right-Side Move", true)),
+                getNature(HelperMethods.getComponentValue("Right-Side Nature", true)),
                 rightEVs, rightBoosts
 
         );
@@ -180,7 +177,10 @@ public class UI extends Database {
             };
             if(!Objects.equals(process, "Outspeed")){System.out.println(message);}
 
-            if(EV != -1){System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
+            if(EV != -1){
+                if(!process.equals("Outspeed")) {System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
+                }else{System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d",subjectMon.speedBoost,subjectMon.base.name,opponentMon.nature.name,opponentMon.speedEV,opponentMon.base.name,EV);}
+
             }else{System.out.println("NOT POSSIBLE TO " + process.toUpperCase() + "\n");}
 
 
@@ -194,13 +194,13 @@ public class UI extends Database {
         }
     }
 
-        private static void createStatsPanel(JPanel panel, String title, JFrame frame) throws IOException {
+    private static void createStatsPanel(JPanel panel, String title) throws IOException {
         String header = "Pokemon 2";
         if(title.equals("Left-Side")){header = "Pokemon 1";}
-        final String[] natDex = arrayListToArray(getNatDexAsArrayList());
-        final String[] moveList = arrayListToArray(getMoveListAsArrayList());
-        final String[] itemList = arrayListToArray(Database.getItemList());
-        final String[] natureList = arrayListToArray(getNatureListAsArrayList());
+        final String[] natDex = HelperMethods.arrayListToArray(getNatDexAsArrayList());
+        final String[] moveList = HelperMethods.arrayListToArray(getMoveListAsArrayList());
+        final String[] itemList = HelperMethods.arrayListToArray(Database.getItemList());
+        final String[] natureList = HelperMethods.arrayListToArray(getNatureListAsArrayList());
         String pokemonName = natDex[0];
 
         //set bounds for space filler sizes
@@ -216,19 +216,19 @@ public class UI extends Database {
         panel.add(new JLabel(header));
 
         //image display for your pokemon
-        final JLabel pokemonDisplayLabel = new JLabel(new ImageIcon(ImageIO.read(getSpriteFile(pokemonName))));
+        final JLabel pokemonDisplayLabel = new JLabel(new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(pokemonName))));
         panel.add(pokemonDisplayLabel);
 
         //select what pokemonis attacking
         final JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
         panel.add(pokemonSelect);
-        componentMap.put(title+" Pokemon",pokemonSelect);
+        ComponentMap.put(title+" Pokemon",pokemonSelect);
 
         pokemonSelect.addActionListener(_ -> {
             final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
             ImageIcon icon;
             try {
-                icon = new ImageIcon(ImageIO.read(getSpriteFile(selected)));
+                icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -239,47 +239,47 @@ public class UI extends Database {
         final JTextField levelSelect = new JTextField("100");
         levelSelect.setMaximumSize(maxSize);
         panel.add(levelSelect);
-        componentMap.put(title+" Level",levelSelect);
+        ComponentMap.put(title+" Level",levelSelect);
 
         final JTextField HP_EV = new JTextField("HP EV");
         panel.add(HP_EV);
-        componentMap.put(title+" HP EV",HP_EV);
+        ComponentMap.put(title+" HP EV",HP_EV);
 
         final JTextField atkEV = new JTextField("Attack EV");
         panel.add(atkEV);
-        componentMap.put(title+" Atk EV",atkEV);
+        ComponentMap.put(title+" Atk EV",atkEV);
 
         final JTextField defEV = new JTextField("Defense EV");
         panel.add(defEV);
-        componentMap.put(title+" Def EV",defEV);
+        ComponentMap.put(title+" Def EV",defEV);
 
         final JTextField spatkEV = new JTextField("Special Attack EV");
         panel.add(spatkEV);
-        componentMap.put(title+" SpAtk EV",spatkEV);
+        ComponentMap.put(title+" SpAtk EV",spatkEV);
 
         final JTextField spdefEV = new JTextField("Special Defense EV");
         panel.add(spdefEV);
-        componentMap.put(title+" SpDef EV",spdefEV);
+        ComponentMap.put(title+" SpDef EV",spdefEV);
 
         final JTextField speedEV = new JTextField("Speed EV");
         panel.add(speedEV);
-        componentMap.put(title+" Speed EV",speedEV);
+        ComponentMap.put(title+" Speed EV",speedEV);
 
         final JComboBox<String> natureSelect = new JComboBox<>(natureList);
         panel.add(natureSelect);
-        componentMap.put(title+" Nature",natureSelect);
+        ComponentMap.put(title+" Nature",natureSelect);
 
         final JComboBox<String> itemSelect = new JComboBox<>(itemList);
         panel.add(itemSelect);
-        componentMap.put(title+" Item",itemSelect);
+        ComponentMap.put(title+" Item",itemSelect);
 
         final JComboBox<String> moveSelect = new JComboBox<>(moveList);
         panel.add(moveSelect);
-        componentMap.put(title+" Move",moveSelect);
+        ComponentMap.put(title+" Move",moveSelect);
 
         /*final JComboBox<String> ability = new JComboBox<>(moveList);
         panel.add(moveSelect);
-        componentMap.put(title+" Ability",ability);
+        ComponentMap.put(title+" Ability",ability);
         */
 
         panel.revalidate();
@@ -294,93 +294,36 @@ public class UI extends Database {
         //select what attackBoost
         final JComboBox<String> attackBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(attackBoost);
-        componentMap.put(panelTitleAppend+"Atk Boost",attackBoost);
+        ComponentMap.put(panelTitleAppend+"Atk Boost",attackBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Defense Boosts"));
         //select what defBoost
         final JComboBox<String> defenseBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(defenseBoost);
-        componentMap.put(panelTitleAppend+"Def Boost",defenseBoost);
+        ComponentMap.put(panelTitleAppend+"Def Boost",defenseBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Special Attack Boosts"));
         //select what spattackBoost
         final JComboBox<String> specialAttackBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(specialAttackBoost);
-        componentMap.put(panelTitleAppend+"SpAtk Boost",specialAttackBoost);
+        ComponentMap.put(panelTitleAppend+"SpAtk Boost",specialAttackBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Special Defense Boosts"));
         //select what spdefBoost
         final JComboBox<String> specialDefenseBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(specialDefenseBoost);
-        componentMap.put(panelTitleAppend+"SpDef Boost",specialDefenseBoost);
+        ComponentMap.put(panelTitleAppend+"SpDef Boost",specialDefenseBoost);
 
         //text to denote what the panel does
         panel.add(new JLabel("Speed Boosts"));
         //select what speedBoost
         final JComboBox<String> speedBoost = new JComboBox<>(Constants.BOOSTS);
         panel.add(speedBoost);
-        componentMap.put(panelTitleAppend+"Speed Boost",speedBoost);
+        ComponentMap.put(panelTitleAppend+"Speed Boost",speedBoost);
 
-    }
-
-    private static String[] arrayListToArray(ArrayList<String> arrayList) {
-        final int size = arrayList.size();
-        final String[] array = new String[size];
-
-        for (int i = 0; i < size; i++) {
-            array[i] = arrayList.get(i);
-        }
-        return array;
-    }
-
-    private static String getComponentValue(String name){
-        int max = 255;
-        if(name.equals("Left-Side Level")||name.equals("Right-Side Level")){max=100;}
-        final Component component = componentMap.get(name);
-        if(component==null){System.out.println("ur piece of shit component is null. make piece of shit error handler later "+name);}
-
-        String tempString;
-        assert component!=null;
-        if(component.getClass()==JComboBox.class){
-            tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();
-        }else{
-            tempString = ((JTextField) component).getText();
-            int toInt = 1;
-            try{
-                toInt = Integer.parseInt(tempString);
-                if(toInt>max||toInt<1){toInt = 1;}
-            }catch(Exception _){}
-            tempString = Integer.toString(toInt);
-        }
-        return tempString;
-    }
-
-    private static File getSpriteFile(String name) {
-        File file = new File("src/assets/0.png");
-        if (!Objects.equals(name, "0")) {
-            int dex = Database.getPokemon(name).dexNumber;
-
-            try {
-                file = new File("src/assets/" + dex + ".png");
-            } catch (Exception e) {
-                ErrorPrinter.setDetails("src/assets/" + dex + ".png", false);
-                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, e);
-            }
-        }
-        if (!file.exists()) {
-            if (Database.getPokemon(name).dexNumber >= 906) {
-                System.out.println("Nothing is broken. This is entirely a visual glitch.\nAll Paldea Pokemon don't have sprites available for bulk download.\nAlternate forms such as Regionals and Megas have sprites but it needs me to manually change the file name and the dex number in the codebase so its all still a work in progress.\nstay tuned.");
-            } else {
-                ErrorPrinter.setDetails(file.toString(), false);
-                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, null);
-            }
-            file = new File("src/assets/0.png");
-
-        }
-        return file;
     }
 
     //holds data for each pokemon on the UI

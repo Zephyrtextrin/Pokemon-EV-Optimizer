@@ -11,7 +11,7 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to be at to be faster than a given stat
-    public static int findLeastSpeedEVs(UI.CurrentPokemon you, int targetStat, int boostCount){
+    public static int findLeastSpeedEVs(EVCalculatorUI.CurrentPokemon you, int targetStat, int boostCount){
         for(int EV = 0; EV<=252; EV++){
             final int stat = statCalculation(you.base.baseSpeed,31,EV,you.nature.speed,you.level,boostCount);
             if(stat>targetStat){return EV;}
@@ -20,7 +20,7 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int[] findLeastHPEVs(UI.CurrentPokemon opponentMon, UI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
+    public static int[] findLeastHPEVs(EVCalculatorUI.CurrentPokemon opponentMon, EVCalculatorUI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
         int oppAtkStat = opponentMon.atkStat;
         int targetBaseHP = targetMon.base.baseHP;
         int targetDefStat = targetMon.defStat;
@@ -76,7 +76,7 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int[] findLeastAtkEVs(UI.CurrentPokemon you, UI.CurrentPokemon opp, Move move, String weather, boolean spread){
+    public static int[] findLeastAtkEVs(EVCalculatorUI.CurrentPokemon you, EVCalculatorUI.CurrentPokemon opp, Move move, String weather, boolean spread){
         int baseStat = you.base.baseAttack;
         double nature = you.nature.attack;
         int boostCount = you.atkBoost;

@@ -10,6 +10,7 @@ public class Constants{
     public static final double HIGHEST_ROLL = 1;
     public static final double[] ROLLS = {LOWEST_ROLL,MEDIAN_ROLL,HIGHEST_ROLL};
 
+    public static boolean isSpriteErrorPrinted = false;
 
     public enum MOVE_CATS{
         Physical,
