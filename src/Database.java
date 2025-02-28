@@ -1921,25 +1921,24 @@ public class Database {
             typeMap.get("Normal").resistances = new String[]{};
             typeMap.get("Fighting").resistances = new String[]{"Rock", "Bug", "Dark"};
             typeMap.get("Flying").resistances = new String[]{"Fighting", "Bug", "Grass"};
-            typeMap.get("Fire").resistances = new String[]{"Fighting"};
+            typeMap.get("Fire").resistances = new String[]{};
             typeMap.get("Grass").resistances = new String[]{"Water","Electric","Grass","Ground"};
             typeMap.get("Water").resistances = new String[]{"Fire","Water","Ice","Steel"};
-            typeMap.get("Electric").resistances = new String[]{"Fighting"};
-            typeMap.get("Ground").resistances = new String[]{"Fighting"};
+            typeMap.get("Electric").resistances = new String[]{};
+            typeMap.get("Ground").resistances = new String[]{};
             typeMap.get("Rock").resistances = new String[]{"Normal","Fire","Poison","Flying"};
-            typeMap.get("Dragon").resistances = new String[]{"Fighting"};
-            typeMap.get("Poison").resistances = new String[]{"Fighting"};
-            typeMap.get("Bug").resistances = new String[]{"Fighting"};
+            typeMap.get("Dragon").resistances = new String[]{};
+            typeMap.get("Poison").resistances = new String[]{};
+            typeMap.get("Bug").resistances = new String[]{};
             typeMap.get("Dark").resistances = new String[]{"Ghost", "Dark"};
-            typeMap.get("Steel").resistances = new String[]{"Fighting"};
-            typeMap.get("Ghost").resistances = new String[]{"Fighting"};
-            typeMap.get("Fairy").resistances = new String[]{"Fighting"};
-            typeMap.get("Psychic").resistances = new String[]{"Fighting"};
+            typeMap.get("Steel").resistances = new String[]{};
+            typeMap.get("Ghost").resistances = new String[]{};
+            typeMap.get("Fairy").resistances = new String[]{};
+            typeMap.get("Psychic").resistances = new String[]{};
             typeMap.get("Ice").resistances = new String[]{"Ice"};
 
             //immunities
             typeMap.get("Normal").immunities = new String[]{"Ghost"};
-            typeMap.get("Fighting").immunities = new String[]{"Ghost"};
             typeMap.get("Flying").immunities = new String[]{"Ground"};
             typeMap.get("Steel").immunities = new String[]{"Poison"};
             typeMap.get("Ghost").immunities = new String[]{"Normal", "Fighting"};
