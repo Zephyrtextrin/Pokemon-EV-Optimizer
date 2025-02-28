@@ -10,8 +10,8 @@ public class PokemonDatabaseUI extends Database{
 
         final String[] natDex = HelperMethods.arrayListToArray(getNatDexAsArrayList());
         final String[] effectiveness = {"Type", "Neutral","Super Effective","Resisted","Immune"};
-
         final int SIZE = 500;
+
         final JFrame frame = new JFrame();
         frame.setLayout(new GridLayout());
         frame.setSize(SIZE, SIZE);

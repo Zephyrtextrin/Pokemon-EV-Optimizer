@@ -5,10 +5,10 @@ import java.io.IOException;
 public class Main{
     public static void main(String[] args){
         Database.initialize(); //loads the pokedex
-
         final int SIZE = 200;
+
         final JFrame frame = new JFrame();
-        frame.setSize(SIZE, SIZE);
+        frame.setSize(SIZE*3, SIZE);
         frame.setLayout(new GridLayout());
         frame.setVisible(true);
 

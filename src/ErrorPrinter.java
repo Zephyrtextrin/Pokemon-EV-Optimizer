@@ -8,6 +8,7 @@ public class ErrorPrinter {
     public enum ERROR_CODE{
         //UI-related
         ABN_UI_MALFORMED_IMAGE_FILE,
+        ERR_UI_UNKNOWN_COMPONENT,
 
         //calc-related
         ERR_CC_DAMAGE_CALCULATION_ERROR,
@@ -54,13 +55,14 @@ public class ErrorPrinter {
             headerBuilder(error.isError, false,"ADDITIONAL-DETAILS");
             System.out.println(error.additional);
         }
+        if(error.code==ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT){EVCalculatorUI.printAllComponentNames();}
 
         System.out.println("------------------------------------------------------------------------------------------------");
 
-        if(error.isError){System.out.println("\n[a message from alex regarding errors]\n-this is automatically appended to all errors-\nso there's actually two types of issues in the error handler i wrote: abnormalities and errors\nabnormaities are just unintended issues i should probably fix\nand errors are active issues that impede the functioning of the game\nso it's really important you report errors to me\nthanks bro\n-alexander");}
+        if(error.isError){System.out.println("\n[a message from alex regarding errors]\n-this is automatically appended to all errors-\nso there's actually two types of issues in the error handler i wrote: abnormalities and errors\nabnormaities are just unintended issues i should probably fix\nand errors are active issues that completely impede the functioning of the program\nso it's really important you report errors to me\nthanks bro\n-alexander");}
 
         boolean stackYN = false;
-        if(error.isError){stackYN = getYN("Would you like to print a stack-trace? (if you dont know what this is just say yes");}
+        if(error.isError){stackYN = getYN("Would you like to print a stack-trace? (if you're reading this, and you arent me, you should probably say yes.");}
             if(stackYN&&e!=null){
                 System.out.println(e.getMessage());
                 e.printStackTrace();
@@ -120,6 +122,7 @@ public class ErrorPrinter {
 
             //UI-related
             new Error(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, false, "The specified image does not exist!","[SPECIFIED IMAGE]: ", "All Paldea Pokemon do not have a sprite.\nSprites for all regional/Mega forms exist, but the filenames and the dex numbers have to be manually changed to align with each-other and omg its so much effort I don't fucking care");
+            new Error(ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT, true, "The specified component does not exist!","[SPECIFIED COMPONENT]: ","Begin printing all Component names.\n");
 
             //calc related
             new Error(ERROR_CODE.ERR_CC_DAMAGE_CALCULATION_ERROR, true, "An error occurred during the damage calculation process!",null,genericError);
@@ -143,6 +146,7 @@ public class ErrorPrinter {
         private static void updateValues(){
             //do not use += for this shit fix rest later idc
             errorDB.get(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE).details = "[SPECIFIED FILE]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT).details = "[SPECIFIED COMPONENT]: "+ additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_MISSINGNO).details += additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_BIRDTYPE).details += additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_TERUSAMA).details += additionalDetails;

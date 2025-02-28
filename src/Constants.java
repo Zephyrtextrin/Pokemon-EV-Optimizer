@@ -1,7 +1,7 @@
 public class Constants{
-    public static final boolean DEBUG_CALC_MODE = true;
-    public static final boolean DEBUG_UI_MODE = false;
-    public static final boolean DEBUG_DISABLE_OUTPUT = false;
+    public static final boolean DEBUG_CALC_MODE = false; //enable/disable debug statements for calculations
+    public static final boolean DEBUG_UI_MODE = false; //enable/disable debug statements for the UI.
+    public static final boolean DEBUG_DISABLE_OUTPUT = false; //if true: disables all output intended for end users
 
     public static final String[] BOOSTS = {"+0","-6","-5","-4","-3","-2","-1","+1","+2","+3","+4","+5","+6"};
     public static final String[] STATS = {"HP","Attack","Defense","Special Attack","Special Defense","Speed"};

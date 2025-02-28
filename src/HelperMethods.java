@@ -25,7 +25,10 @@ public class HelperMethods {
         if(!isEV){ComponentMap = PokemonDatabaseUI.ComponentMap;}
 
         final Component component = ComponentMap.get(name);
-        if(component==null){System.out.println("ur piece of shit component is null. make piece of shit error handler later "+name);}
+        if(component==null){
+            ErrorPrinter.setDetails(name,false);
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT,new NullPointerException());
+        }
 
         String tempString;
         assert component!=null;

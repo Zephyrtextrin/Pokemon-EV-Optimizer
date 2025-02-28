@@ -21,18 +21,18 @@ public class Calculators extends Database {
 
     //finds what stat boost you need to ohko
     public static int[] findLeastHPEVs(EVCalculatorUI.CurrentPokemon opponentMon, EVCalculatorUI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
-        int oppAtkStat = opponentMon.atkStat;
+        int oppAttackStat = opponentMon.attackStat;
         int targetBaseHP = targetMon.base.baseHP;
         int targetDefStat = targetMon.defStat;
 
         if(move.moveCategory== Constants.MOVE_CATS.Special){
             targetDefStat = targetMon.spDefStat;
-            oppAtkStat = opponentMon.spAtkStat;
+            oppAttackStat = opponentMon.spAttackStat;
         }
         final int[] EVRolls = {-1,-1,-1};
 
         int index = 0;
-        final int damage = damageCalc(opponentMon.level, oppAtkStat, targetDefStat, move, opponentMon.base, targetMon.base, opponentMon.item, spread, weather);
+        final int damage = damageCalc(opponentMon.level, oppAttackStat, targetDefStat, move, opponentMon.base, targetMon.base, opponentMon.item, spread, weather);
 
         for(double currentRoll:Constants.ROLLS){
             if(Constants.DEBUG_CALC_MODE){System.out.println();}
@@ -40,7 +40,7 @@ public class Calculators extends Database {
                 final int targetCalcedHPStat = calcHP(EV, targetMon.level, targetBaseHP);
 
                 if((damage*currentRoll)<targetCalcedHPStat){
-                    if(Constants.DEBUG_CALC_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nyour def stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp atk stat %d\nopp atk ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, targetDefStat,EV, targetCalcedHPStat, oppAtkStat, opponentMon.atkEV,damage,currentRoll);}
+                    if(Constants.DEBUG_CALC_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nyour defense stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp attack stat %d\nopp attack ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, targetDefStat,EV, targetCalcedHPStat, oppAttackStat, opponentMon.attackEV,damage,currentRoll);}
                     EVRolls[index] = EV;
                     break;
                 }
@@ -76,16 +76,16 @@ public class Calculators extends Database {
     }
 
     //finds what stat boost you need to ohko
-    public static int[] findLeastAtkEVs(EVCalculatorUI.CurrentPokemon you, EVCalculatorUI.CurrentPokemon opp, Move move, String weather, boolean spread){
+    public static int[] findLeastAttackEVs(EVCalculatorUI.CurrentPokemon you, EVCalculatorUI.CurrentPokemon opp, Move move, String weather, boolean spread){
         int baseStat = you.base.baseAttack;
         double nature = you.nature.attack;
-        int boostCount = you.atkBoost;
+        int boostCount = you.attackBoost;
         int defenderStat = opp.defStat;
 
         if(move.moveCategory== Constants.MOVE_CATS.Special){
             baseStat = you.base.baseSpatk;
             nature = you.nature.spatk;
-            boostCount = you.spAtkBoost;
+            boostCount = you.spAttackBoost;
             defenderStat = opp.spDefStat;
         }
 
@@ -97,7 +97,7 @@ public class Calculators extends Database {
                 final int stat = statCalculation(baseStat, 31, EV, nature, you.level, boostCount);
                 final int damage = (int)(damageCalc(you.level, stat, defenderStat, move, you.base, opp.base, you.item, spread, weather) * currentRoll);
 
-                if(Constants.DEBUG_CALC_MODE){System.out.printf("\nyour calced atk: %d\nyour ev: %d\nyour base atk: %d\nopp hp: %d\nopp def: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.HPStat,defenderStat,damage,currentRoll,move.name);}
+                if(Constants.DEBUG_CALC_MODE){System.out.printf("\nyour calced attack: %d\nyour ev: %d\nyour base attack: %d\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.HPStat,defenderStat,damage,currentRoll,move.name);}
                 if(damage >= opp.HPStat){
                     EVrolls[index] = EV;
                     break;

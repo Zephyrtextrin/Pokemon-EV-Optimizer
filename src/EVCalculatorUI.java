@@ -109,11 +109,11 @@ public class EVCalculatorUI extends Database {
     }
 
     private static CurrentPokemon[] initCurrentPokemon(){
-        final int[] leftEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Atk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Def EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpAtk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpDef EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed EV", true))};
-        final int[] leftBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side Atk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Def Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpAtk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side SpDef Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed Boost", true))};
+        final int[] leftEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed EV", true))};
+        final int[] leftBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed Boost", true))};
 
-        final int[] rightEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Atk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Def EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpAtk EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpDef EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed EV", true))};
-        final int[] rightBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side Atk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Def Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpAtk Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side SpDef Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed Boost", true))};
+        final int[] rightEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed EV", true))};
+        final int[] rightBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed Boost", true))};
 
         if(Constants.DEBUG_UI_MODE){
             System.out.println("\nLEFT SIDE EVS: "+ Arrays.toString(leftEVs));
@@ -155,7 +155,7 @@ public class EVCalculatorUI extends Database {
             moveUsed = opponentMon.move;
             EVrolls = Calculators.findLeastHPEVs(opponentMon,subjectMon,moveUsed,weather,spread);
         }else if(process.equals("OHKO")){
-            EVrolls = Calculators.findLeastAtkEVs(subjectMon,opponentMon,moveUsed,weather,spread);
+            EVrolls = Calculators.findLeastAttackEVs(subjectMon,opponentMon,moveUsed,weather,spread);
 
         }else{ //for outspeeding
             final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.speedStat, subjectMon.speedBoost)};
@@ -233,29 +233,13 @@ public class EVCalculatorUI extends Database {
         panel.add(levelSelect);
         ComponentMap.put(title+" Level",levelSelect);
 
-        final JTextField HP_EV = new JTextField("HP EV");
-        panel.add(HP_EV);
-        ComponentMap.put(title+" HP EV",HP_EV);
-
-        final JTextField atkEV = new JTextField("Attack EV");
-        panel.add(atkEV);
-        ComponentMap.put(title+" Atk EV",atkEV);
-
-        final JTextField defEV = new JTextField("Defense EV");
-        panel.add(defEV);
-        ComponentMap.put(title+" Def EV",defEV);
-
-        final JTextField spatkEV = new JTextField("Special Attack EV");
-        panel.add(spatkEV);
-        ComponentMap.put(title+" SpAtk EV",spatkEV);
-
-        final JTextField spdefEV = new JTextField("Special Defense EV");
-        panel.add(spdefEV);
-        ComponentMap.put(title+" SpDef EV",spdefEV);
-
-        final JTextField speedEV = new JTextField("Speed EV");
-        panel.add(speedEV);
-        ComponentMap.put(title+" Speed EV",speedEV);
+        for(String currentStat:Constants.STATS){
+            final String name = title+" "+currentStat+" EV";
+            final JTextField field = new JTextField(currentStat+" EV");
+            panel.add(field);
+            ComponentMap.put(name, field);
+            if(Constants.DEBUG_UI_MODE){System.out.println("Component ["+name+"] has been created.");}
+        }
 
         final JComboBox<String> natureSelect = new JComboBox<>(natureList);
         panel.add(natureSelect);
@@ -282,40 +266,18 @@ public class EVCalculatorUI extends Database {
 
         panel.add(Box.createVerticalGlue()); //creates filler
 
-        //text to denote what the panel does
-        panel.add(new JLabel("Attack Boosts"));
-        //select what attackBoost
-        final JComboBox<String> attackBoost = new JComboBox<>(Constants.BOOSTS);
-        panel.add(attackBoost);
-        ComponentMap.put(panelTitleAppend+"Atk Boost",attackBoost);
+        for(String currentStat:Constants.STATS){
+            if(!currentStat.equals("HP")) {
+                panel.add(new JLabel(currentStat + " Boosts"));
 
-        //text to denote what the panel does
-        panel.add(new JLabel("Defense Boosts"));
-        //select what defBoost
-        final JComboBox<String> defenseBoost = new JComboBox<>(Constants.BOOSTS);
-        panel.add(defenseBoost);
-        ComponentMap.put(panelTitleAppend+"Def Boost",defenseBoost);
+                final String name = panelTitleAppend + currentStat + " Boost";
+                final JComboBox<String> boost = new JComboBox<>(Constants.BOOSTS);
+                panel.add(boost);
+                ComponentMap.put(name, boost);
 
-        //text to denote what the panel does
-        panel.add(new JLabel("Special Attack Boosts"));
-        //select what spattackBoost
-        final JComboBox<String> specialAttackBoost = new JComboBox<>(Constants.BOOSTS);
-        panel.add(specialAttackBoost);
-        ComponentMap.put(panelTitleAppend+"SpAtk Boost",specialAttackBoost);
-
-        //text to denote what the panel does
-        panel.add(new JLabel("Special Defense Boosts"));
-        //select what spdefBoost
-        final JComboBox<String> specialDefenseBoost = new JComboBox<>(Constants.BOOSTS);
-        panel.add(specialDefenseBoost);
-        ComponentMap.put(panelTitleAppend+"SpDef Boost",specialDefenseBoost);
-
-        //text to denote what the panel does
-        panel.add(new JLabel("Speed Boosts"));
-        //select what speedBoost
-        final JComboBox<String> speedBoost = new JComboBox<>(Constants.BOOSTS);
-        panel.add(speedBoost);
-        ComponentMap.put(panelTitleAppend+"Speed Boost",speedBoost);
+                if(Constants.DEBUG_UI_MODE) {System.out.println("Component [" + name + "] has been created.");}
+            }
+        }
 
     }
 
@@ -327,20 +289,20 @@ public class EVCalculatorUI extends Database {
         public Move move;
         public Nature nature;
         public int HPStat;
-        public int atkStat;
+        public int attackStat;
         public int defStat;
-        public int spAtkStat;
+        public int spAttackStat;
         public int spDefStat;
         public int speedStat;
-        public int atkBoost;
+        public int attackBoost;
         public int defBoost;
-        public int spAtkBoost;
+        public int spAttackBoost;
         public int spDefBoost;
         public int speedBoost;
         public int HP_EV;
-        public int atkEV;
+        public int attackEV;
         public int defEV;
-        public int spAtkEV;
+        public int spAttackEV;
         public int spDefEV;
         public int speedEV;
 
@@ -351,25 +313,27 @@ public class EVCalculatorUI extends Database {
             this.level = level;
             this.item = item;
             this.move = move;
-            this.atkBoost = boosts[0];
+            this.attackBoost = boosts[0];
             this.defBoost = boosts[1];
-            this.spAtkBoost = boosts[2];
+            this.spAttackBoost = boosts[2];
             this.spDefBoost = boosts[3];
             this.speedBoost = boosts[4];
             this.HP_EV = EVs[0];
-            this.atkEV = EVs[1];
+            this.attackEV = EVs[1];
             this.defEV = EVs[2];
-            this.spAtkEV = EVs[3];
+            this.spAttackEV = EVs[3];
             this.spDefEV = EVs[4];
             this.speedEV = EVs[5];
 
 
             HPStat = Calculators.calcHP(HP_EV,level,base.baseHP);
-            atkStat = Calculators.statCalculation(base.baseAttack,31,atkEV,nature.attack,level,atkBoost);
+            attackStat = Calculators.statCalculation(base.baseAttack,31,attackEV,nature.attack,level,attackBoost);
             defStat = Calculators.statCalculation(base.baseDefense,31,defEV,nature.defense,level,defBoost);
-            spAtkStat = Calculators.statCalculation(base.baseSpatk,31,spAtkEV,nature.spatk,level,spAtkBoost);
+            spAttackStat = Calculators.statCalculation(base.baseSpatk,31,spAttackEV,nature.spatk,level,spAttackBoost);
             spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.spdef,level,spDefBoost);
             speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.speed,level,speedBoost);
         }
     }
+
+    public static void printAllComponentNames(){for(String i:ComponentMap.keySet()){System.out.println(i);}}
 }
