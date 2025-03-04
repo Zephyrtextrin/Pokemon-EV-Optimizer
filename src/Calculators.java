@@ -112,10 +112,11 @@ public class Calculators extends Database {
 
     //other factors
     private static double other(double total, Type[] attackerType, Type[] defenderType, Move move, String item, boolean spread, String weather){
-        total*= getMatchups(defenderType,move.type);
+        total*=getMatchups(defenderType,move.type);
         total*=STAB(attackerType,move);
         total*= Items.getItemEffect(item, move.moveCategory);
         total*=getWeatherMultiplier(move, defenderType, weather);
+        total*=getAbilityMultiplierAttacker();
         if(spread){total*=0.75;}
 
         if(Constants.DEBUG_CALC_MODE){System.out.println("type "+getMatchups(defenderType,move.type)+"\nSTAB: "+STAB(attackerType,move)+"\nItem: "+Items.getItemEffect(item,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defenderType, weather));}
@@ -123,6 +124,7 @@ public class Calculators extends Database {
         return total;
     }
 
+    private static double getAbilityMultiplierAttacker(){return 1;}
     private static double STAB(Type[] yourTypes, Move move){
             if(containsType(yourTypes, getType(move.type))){
                 return 1.5;

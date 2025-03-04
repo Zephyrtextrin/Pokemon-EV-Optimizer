@@ -200,6 +200,7 @@ public class EVCalculatorUI extends Database {
         final String[] moveList = HelperMethods.arrayListToArray(getMoveListAsArrayList());
         final String[] itemList = HelperMethods.arrayListToArray(Database.getItemList());
         final String[] natureList = HelperMethods.arrayListToArray(getNatureListAsArrayList());
+        final String[] abilityList = HelperMethods.arrayListToArray(getAbilities());
         String pokemonName = natDex[0];
 
         final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);
@@ -245,6 +246,11 @@ public class EVCalculatorUI extends Database {
         panel.add(natureSelect);
         ComponentMap.put(title+" Nature",natureSelect);
 
+        //do later
+        final JComboBox<String> ability = new JComboBox<>(abilityList);
+        panel.add(ability);
+        ComponentMap.put(title+" Ability",ability);
+
         final JComboBox<String> itemSelect = new JComboBox<>(itemList);
         panel.add(itemSelect);
         ComponentMap.put(title+" Item",itemSelect);
@@ -253,11 +259,6 @@ public class EVCalculatorUI extends Database {
         panel.add(moveSelect);
         ComponentMap.put(title+" Move",moveSelect);
 
-        //do later
-        /*final JComboBox<String> ability = new JComboBox<>(moveList);
-        panel.add(moveSelect);
-        ComponentMap.put(title+" Ability",ability);
-        */
 
         panel.revalidate();
     }

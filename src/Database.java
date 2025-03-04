@@ -1306,9 +1306,7 @@ public class Database {
 
             moveList.put(name, this);
         }
-
-        public void isSpread(boolean isSpread){this.isSpread = isSpread;}
-
+        
         protected static void init(){
             new Move("Absorb", 20, "Grass", Constants.MOVE_CATS.Special);
             new Move("Accelerock", 40, "Rock", Constants.MOVE_CATS.Physical);
@@ -2003,9 +2001,9 @@ public class Database {
 
         }
     }
-    public static class Abilities {
-        private static void init() {
-
+    public static class Ability{
+        private static void init(){
+            abilities.add("");
         }
     }
 }
