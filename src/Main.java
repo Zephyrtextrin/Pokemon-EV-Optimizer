@@ -24,5 +24,8 @@ public class Main{
             try{EVCalculatorUI.initUI();
             }catch(IOException e) {throw new RuntimeException(e);}
         });
+
+        frame.repaint();
+        frame.revalidate();
     }
 }
