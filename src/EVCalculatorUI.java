@@ -159,6 +159,9 @@ public class EVCalculatorUI extends Database {
 
         }else{ //for outspeeding
             final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.speedStat, subjectMon.speedBoost)};
+            if(Constants.DEBUG_CALC_MODE){
+                System.out.println();
+            }
             outputClean(process,subjectMon,opponentMon,EV,"");
         }
 

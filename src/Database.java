@@ -8,6 +8,7 @@ public class Database {
     private static final ArrayList<String> abilityList = new ArrayList<>();
     private static final HashMap<String, Nature> natureList = new HashMap<>();
     private static final Map<String, Type> typeList = new HashMap<>(); //allows u to sort by type name
+    private static final Map<String,Pokemon> viableList = new HashMap<>();
 
     //ughhh repeated code.. u have to do the same thing for every method here cuz the parameters dont match up otherwise-----
     public static String[] getNatDexList(){return HelperMethods.getMapAsList(natDex.keySet());}
@@ -24,6 +25,17 @@ public class Database {
     public static Nature getNature(String name){return natureList.get(name);}
 
     public static Move getMove(String input){return moveList.get(input);}
+
+    public static Pokemon[] getViablePokemonList(){
+        final ArrayList<Pokemon> arrayList = new ArrayList<>(viableList.values());
+        final int size = arrayList.size();
+        final Pokemon[] array = new Pokemon[size];
+
+        for (int i = 0; i < size; i++) {
+            array[i] = arrayList.get(i);
+        }
+        return array;
+    }
 
     public static Pokemon getPokemon(String input){
         Pokemon result=natDex.get(input);
@@ -73,6 +85,7 @@ public class Database {
         Move.init();
         Nature.init();
         Pokemon.init();
+        Pokemon.initViable();
     }
 
     static public class Pokemon {
@@ -1286,6 +1299,112 @@ public class Database {
             new Pokemon(1023, "Iron Crown", new Type[]{typeList.get("Steel"),typeList.get("Psychic")},90,72,100,122,108,98);
             new Pokemon(1024, "Terapagos Normal Form", new Type[]{typeList.get("Normal")},90,65,85,65,85,60);
             new Pokemon(1025, "Pecharunt", new Type[]{typeList.get("Poison"),typeList.get("Ghost")},88,88,160,88,88,88);
+        }
+        private static void initViable(){
+            final String[] viableMons = new String[]{
+                    "Abomasnow",
+                    "Alolan Ninetales",
+                    "Amoonguss",
+                    "Araquanid",
+                    "Arcanine",
+                    "Armarouge",
+                    "Basculegion Female",
+                    "Bloodmoon Ursaluna",
+                    "Brute Bonnet",
+                    "Calyrex",
+                    "Chi-Yu",
+                    "Chien-Pao",
+                    "Clefairy",
+                    "Comfey",
+                    "Cresselia",
+                    "Dialga",
+                    "Dragapult",
+                    "Dragonite",
+                    "Eternatus",
+                    "Farigiraf",
+                    "Galarian Moltres",
+                    "Garchomp",
+                    "Garganacl",
+                    "Gholdengo",
+                    "Glimmora",
+                    "Gliscor",
+                    "Gouging Fire",
+                    "Grimmsnarl",
+                    "Groudon",
+                    "Gyarados",
+                    "Hatterene",
+                    "Heatran",
+                    "Hippowdon",
+                    "Hisuian Arcanine",
+                    "Hisuian Typhlosion",
+                    "Ho-Oh",
+                    "Houndstone",
+                    "Ice Rider Calyrex",
+                    "Incineroar",
+                    "Indeedee Female",
+                    "Iron Boulder",
+                    "Iron Bundle",
+                    "Iron Crown",
+                    "Iron Jugulis",
+                    "Kingambit",
+                    "Koraidon",
+                    "Kyogre",
+                    "Kyurem",
+                    "Black Kyurem",
+                    "White Kyurem",
+                    "Landorus Therian Forme",
+                    "Landorus Incarnate Forme",
+                    "Lugia",
+                    "Lunala",
+                    "Maushold",
+                    "Meowscarada",
+                    "Metagross",
+                    "Mewtwo",
+                    "Milotic",
+                    "Miraidon",
+                    "Murkrow",
+                    "Necrozma",
+                    "Dawn Wings Necrozma",
+                    "Dusk Mane Necrozma",
+                    "Ninetales",
+                    "Ogerpon",
+                    "Dialga Origin Forme",
+                    "Giratina Origin Forme",
+                    "Palkia Origin Forme",
+                    "Palkia",
+                    "Pelipper",
+                    "Politoed",
+                    "Porygon2",
+                    "Raging Bolt",
+                    "Rayquaza",
+                    "Regidrago",
+                    "Regieleki",
+                    "Reshiram",
+                    "Rillaboom",
+                    "Roaring Moon",
+                    "Sableye",
+                    "Scizor",
+                    "Shadow Rider Calyrex",
+                    "Sinistcha",
+                    "Sneasler",
+                    "Solgaleo",
+                    "Talonflame",
+                    "Terapagos Normal Form",
+                    "Thundurus Incarnate Forme",
+                    "Ting-Lu",
+                    "Torkoal",
+                    "Tornadus Incarnate Forme",
+                    "Tyranitar",
+                    "Ursaluna",
+                    "Volcanion",
+                    "Walking Wake",
+                    "Whimsicott",
+                    "Zacian Crowned Sword",
+                    "Zamazenta Crowned Shield",
+                    "Zekrom"
+            };
+
+            for(String currentMon:viableMons){viableList.put(currentMon,getPokemon(currentMon));}
         }
     }
 

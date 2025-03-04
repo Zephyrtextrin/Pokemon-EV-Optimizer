@@ -12,8 +12,10 @@ public class Calculators extends Database {
 
     //finds what stat boost you need to be at to be faster than a given stat
     public static int findLeastSpeedEVs(EVCalculatorUI.CurrentPokemon you, int targetStat, int boostCount){
+
         for(int EV = 0; EV<=252; EV++){
             final int stat = statCalculation(you.base.baseSpeed,31,EV,you.nature.speed,you.level,boostCount);
+            if(Constants.DEBUG_CALC_MODE){System.out.println("\nOPP SPEED STAT: "+targetStat+"\nYOUR SPEED STAT: "+stat+"\nYOUR SPEED EV: "+EV+"\nOPP SPPEED BOOST: "+HelperMethods.getComponentValue("Right-Side Speed Boost", true)+"\nOPP SPPED BOOST MODIFIER: "+getBoostModifier(Double.parseDouble(HelperMethods.getComponentValue("Right-Side Speed Boost", true))));}
             if(stat>targetStat){return EV;}
         }
         return -1;
@@ -70,9 +72,9 @@ public class Calculators extends Database {
     }
 
     //get stat boost modifier
-    private static double getBoostModifier(int boostCount){
-        if(boostCount<=-1){return (double)2/(2+boostCount);
-        }else{return (double)(boostCount+2)/2;}
+    private static double getBoostModifier(double boostCount){
+        if(boostCount<=-1){return 2/(2+Math.abs(boostCount));
+        }else{return (boostCount+2)/2;}
     }
 
     //finds what stat boost you need to ohko
@@ -161,5 +163,23 @@ public class Calculators extends Database {
         Type secondType = type[0];
         if(type.length!=1){secondType=type[1];} //u have to do this because some pokemon arent dual type so u use the first type as a fallback
         return type[0]==target||secondType==target;
+    }
+
+    //this is shit and a placeholder sorry
+    //takes calced speed not base speed
+    public static void findSpeedPercentage(int speedStat){
+        final Pokemon[] viableMons = getViablePokemonList();
+        final int total = viableMons.length*2; //*2 because +speed also exists
+        int outsped = 0;
+
+        for(Pokemon currentMon:viableMons){
+            int oppPlusSpeed = statCalculation(currentMon.baseSpeed,31,252,1.1,100,0);
+            int oppNeutral = statCalculation(currentMon.baseSpeed,31,252,1,100,0);
+
+            if(speedStat>oppPlusSpeed){outsped = outsped+2;
+            }else if(speedStat>oppNeutral){outsped++;}
+        }
+        double percentage = ((double)outsped/total)*100;
+        System.out.println("\nyour speed stat: "+speedStat+"total viable pokemon: "+total+"\noutsped: "+outsped+"\npercentage: "+percentage+"%");
     }
 }

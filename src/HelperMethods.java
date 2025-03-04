@@ -43,7 +43,7 @@ public class HelperMethods {
             int toInt = 1;
             try{
                 toInt = Integer.parseInt(tempString);
-                if(toInt>max||toInt<1){toInt = 1;}
+                if(toInt>max||toInt<-6){toInt = 1;}
             }catch(Exception _){}
             tempString = Integer.toString(toInt);
         }

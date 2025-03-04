@@ -6,10 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="5b7194a7-f0a6-455e-9670-d2aa7cc84aa3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Calculators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Calculators.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ErrorPrinter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ErrorPrinter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EVCalculatorUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/EVCalculatorUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HelperMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HelperMethods.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PokemonDatabaseUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PokemonDatabaseUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,17 +51,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "abils",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/zephyros/Desktop/prjects/code/snake-in-java",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Java"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;abils&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/zephyros/Desktop/prjects/code/snake-in-java&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.IDE.editor.colors.Java&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\612556\Documents\GitHub\Pokemon Speed Calculator\src\assets" />
