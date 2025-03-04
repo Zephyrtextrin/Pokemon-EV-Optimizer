@@ -1,4 +1,3 @@
-import java.sql.Array;
 import java.util.*;
 
 //this is very long bc it contains an entry for every pokemon and an entry for every paldea mon
@@ -27,12 +26,19 @@ public class Database {
     public static Move getMove(String input){return moveList.get(input);}
 
     public static Pokemon getPokemon(String input){
-        Pokemon result;
-        try{result=natDex.get(input);
+        Pokemon result=natDex.get(input);
 
-        }catch(Exception e){
+
+        if(result==null) {
             ErrorPrinter.setDetails(input, false);
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_MISSINGNO, e);
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_MISSINGNO, null);
+            return natDex.get("Gallade");
+        }
+
+        boolean secondTypeMalformed = result.types.length>1&&result.types[1]==null;
+        if(result.types[0]==null||secondTypeMalformed){
+            ErrorPrinter.setDetails(input, false);
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_BIRDTYPE, null);
             return natDex.get("Gallade");
         }
 
@@ -41,8 +47,13 @@ public class Database {
 
     //this could technically only be one line but then it would be incredibly unreadable
     public static Type getType(String input){
-        input = input.toUpperCase().charAt(0) + input.substring(1); //makes first letter capital
-        return typeList.get(input);
+        Type output = typeList.get(input);
+
+        if(output==null){
+            ErrorPrinter.setDetails(input,false);
+            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_TYPE_DNE, null);
+            return typeList.get("Normal");
+        }else{return output;}
     }
 
 
@@ -1283,7 +1294,6 @@ public class Database {
         int baseDamage;
         String type;
         Constants.MOVE_CATS moveCategory;
-        boolean isSpread;
 
         private Move(String name, int baseDamage, String type, Constants.MOVE_CATS moveCategory) {
             this.name = name;
@@ -1988,9 +1998,11 @@ public class Database {
 
         }
     }
+
+    //ughhh do this shit later
     public static class Ability{
         private static void init(){
-            abilityList.add("");
+            abilityList.add("Other Ability");
         }
     }
 }

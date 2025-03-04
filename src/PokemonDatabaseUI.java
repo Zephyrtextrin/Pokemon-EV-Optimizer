@@ -8,7 +8,7 @@ public class PokemonDatabaseUI extends Database{
 
     public static void initUI(){
 
-        final String[] natDex = HelperMethods.arrayListToArray(getNatDexAsArrayList());
+        final String[] natDex = getNatDexList();
         final String[] effectiveness = {"Type", "Neutral","Super Effective","Resisted","Immune"};
         final int SIZE = 500;
 

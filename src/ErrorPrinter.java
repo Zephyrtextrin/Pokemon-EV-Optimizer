@@ -131,7 +131,7 @@ public class ErrorPrinter {
             //database related
             new Error(ERROR_CODE.ABN_DB_MISSINGNO, false, "The requested Pokemon does not exist!","[SPECIFIED POKEMON]: ",null);
             new Error(ERROR_CODE.ABN_DB_TERUSAMA, false, "The requested item does not exist!","[SPECIFIED ITEM]: ",null);
-            new Error(ERROR_CODE.ABN_DB_BIRDTYPE, false, "The requested Type does not exist!","[SPECIFIED TYPE]: ","Be aware this error is *specifically* for referring to a type that is not in the type-database.\nAttempting to call a type of a Pokemon and getting an error (due to the Pokemon's type being invalid or null) is a different error with a different message.");
+            new Error(ERROR_CODE.ABN_DB_BIRDTYPE, false, "The requested Type does not exist!","[SPECIFIED POKEMON]: ","Be aware this error is *specifically* for referring to a type that is not in the type-database.\nAttempting to call a type of a Pokemon and getting an error (due to the Pokemon's type being invalid or null) is a different error with a different message.");
             new Error(ERROR_CODE.ABN_DB_CACOPHONY, false, "The requested Ability does not exist!","[SPECIFIED ABILITY]: ",null);
             new Error(ERROR_CODE.ABN_DB_TYPE_DNE, false, "The requested Pokemon's Type does not exist!","[REQUESTED POKEMON]: ","Be aware this error is *specifically* for Pokemon with an incorrectly formatted or otherwise malformed Type in their database.\nAttempting to call a Type that is not in the database at all is a different error with a different message.");
             new Error(ERROR_CODE.ABN_DB_STAT_DNE, false, "The requested Pokemon's Base Stat does not exist!","{placeholder. this shouldnt be seen. additionalDetails should pass requested pokemon and requested stat}",null);
@@ -144,15 +144,14 @@ public class ErrorPrinter {
 
         //refreshes values for any error that requires a variable
         private static void updateValues(){
-            //do not use += for this shit fix rest later idc
             errorDB.get(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE).details = "[SPECIFIED FILE]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT).details = "[SPECIFIED COMPONENT]: "+ additionalDetails;
-            errorDB.get(ERROR_CODE.ABN_DB_MISSINGNO).details += additionalDetails;
-            errorDB.get(ERROR_CODE.ABN_DB_BIRDTYPE).details += additionalDetails;
-            errorDB.get(ERROR_CODE.ABN_DB_TERUSAMA).details += additionalDetails;
-            errorDB.get(ERROR_CODE.ABN_DB_CACOPHONY).details += additionalDetails;
-            errorDB.get(ERROR_CODE.ABN_DB_TYPE_DNE).details += additionalDetails;
-            errorDB.get(ERROR_CODE.ABN_DB_STAT_DNE).details += additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DB_MISSINGNO).details = "[SPECIFIED POKEMON]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DB_BIRDTYPE).details = "[SPECIFIED POKEMON]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DB_TERUSAMA).details = "[SPECIFIED ITEM]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DB_CACOPHONY).details = "[SPECIFIED ABILITY]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DB_TYPE_DNE).details = "[SPECIFIED TYPE]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DB_STAT_DNE).details = "[SPECIFIED STAT]: "+additionalDetails;
         }
     }
 

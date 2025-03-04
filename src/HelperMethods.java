@@ -15,8 +15,7 @@ public class HelperMethods {
         return array;
     }
 
-    public static String[] getMapAsList(Set<String> map){
-        final Set<String> set = map.keySet();
+    public static String[] getMapAsList(Set<String> set){
         final ArrayList<String> list = new ArrayList<>(set);
         Collections.sort(list);
         return HelperMethods.arrayListToArray(list);
