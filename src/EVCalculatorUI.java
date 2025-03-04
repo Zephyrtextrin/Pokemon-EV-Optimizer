@@ -196,11 +196,11 @@ public class EVCalculatorUI extends Database {
     private static void createStatsPanel(JPanel panel, String title) throws IOException {
         String header = "Pokemon 2";
         if(title.equals("Left-Side")){header = "Pokemon 1";}
-        final String[] natDex = HelperMethods.arrayListToArray(getNatDexAsArrayList());
-        final String[] moveList = HelperMethods.arrayListToArray(getMoveListAsArrayList());
-        final String[] itemList = HelperMethods.arrayListToArray(Database.getItemList());
-        final String[] natureList = HelperMethods.arrayListToArray(getNatureListAsArrayList());
-        final String[] abilityList = HelperMethods.arrayListToArray(getAbilities());
+        final String[] natDex = getNatDexList();
+        final String[] moveList = getMoveList();
+        final String[] itemList = getItemList();
+        final String[] natureList = getNatureList();
+        final String[] abilityList = getAbilityList();
         String pokemonName = natDex[0];
 
         final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);

@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class HelperMethods {
 
@@ -15,6 +13,13 @@ public class HelperMethods {
             array[i] = arrayList.get(i);
         }
         return array;
+    }
+
+    public static String[] getMapAsList(Set<String> map){
+        final Set<String> set = map.keySet();
+        final ArrayList<String> list = new ArrayList<>(set);
+        Collections.sort(list);
+        return HelperMethods.arrayListToArray(list);
     }
 
     public static String getComponentValue(String name, boolean isEV){
