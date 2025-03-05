@@ -29,15 +29,19 @@ public class HelperMethods {
         if(!isEV){ComponentMap = PokemonDatabaseUI.ComponentMap;}
 
         final Component component = ComponentMap.get(name);
+
+        String tempString = "";
         if(component==null){
             ErrorPrinter.setDetails(name,false);
             ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT,new NullPointerException());
         }
 
-        String tempString;
-        assert component!=null;
+        assert component != null;
         if(component.getClass()== JComboBox.class){
-            tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();
+            try{tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();}catch(Exception e){
+                ErrorPrinter.setDetails(name,false);
+                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE, e);
+            }
         }else{
             tempString = ((JTextField) component).getText();
             int toInt = 1;

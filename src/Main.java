@@ -27,9 +27,5 @@ public class Main{
 
         frame.repaint();
         frame.revalidate();
-
-        //FOR DEBUG ONLY. REMOVE ASAP
-        int speed = Calculators.statCalculation(135,31,140,1.0,100,0);
-        Calculators.findSpeedPercentage(speed);
     }
 }

@@ -55,6 +55,8 @@ public class EVCalculatorUI extends Database {
         //select what weather
         final JComboBox<String> weather = new JComboBox<>(WEATHER);
         other.add(weather);
+        ComponentMap.put("Weather",weather);
+
 
         final JCheckBox spread = new JCheckBox("Is this a spread move?");
         other.add(spread);
@@ -97,6 +99,8 @@ public class EVCalculatorUI extends Database {
             CurrentPokemon[] allData = initCurrentPokemon();
             CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
             CurrentPokemon opponentMon = allData[0];
+            if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+subjectMon.base.name+"\n\nafter pokemon atk: "+subjectMon.attackStat+"\nafter pokemon def: "+subjectMon.defStat+"\nafter pokemon spatk: "+subjectMon.spAttackStat+"\nafter pokemon spdef: "+subjectMon.spDefStat+"\nafter pokemon speed: "+subjectMon.speedStat+"\n----------\n[END].");}
+
             final String process = Objects.requireNonNull(toDo.getSelectedItem()).toString();
 
             if(Objects.requireNonNull(target.getSelectedItem()).toString().equals("Pokemon 1 (Left Side)")){
@@ -131,7 +135,9 @@ public class EVCalculatorUI extends Database {
                 HelperMethods.getComponentValue("Left-Side Item", true),
                 getMove(HelperMethods.getComponentValue("Left-Side Move", true)),
                 getNature(HelperMethods.getComponentValue("Left-Side Nature", true)),
-                leftEVs, leftBoosts
+                leftEVs, leftBoosts,
+                HelperMethods.getComponentValue("Left-Side Ability", true),
+                HelperMethods.getComponentValue("Left-Side Status", true)
 
         );
 
@@ -141,7 +147,9 @@ public class EVCalculatorUI extends Database {
                 HelperMethods.getComponentValue("Right-Side Item", true),
                 getMove(HelperMethods.getComponentValue("Right-Side Move", true)),
                 getNature(HelperMethods.getComponentValue("Right-Side Nature", true)),
-                rightEVs, rightBoosts
+                rightEVs, rightBoosts,
+                HelperMethods.getComponentValue("Right-Side Ability", true),
+                HelperMethods.getComponentValue("Right-Side Status", true)
 
         );
         return new CurrentPokemon[]{leftSide,rightSide};
@@ -159,7 +167,7 @@ public class EVCalculatorUI extends Database {
 
         }else{ //for outspeeding
             final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.speedStat, subjectMon.speedBoost)};
-            if(Constants.DEBUG_CALC_MODE){
+            if(Constants.DEBUG_DAMAGE_MODE){
                 System.out.println();
             }
             outputClean(process,subjectMon,opponentMon,EV,"");
@@ -225,7 +233,7 @@ public class EVCalculatorUI extends Database {
             ImageIcon icon;
             try {
                 icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
-            } catch (IOException e) {
+            }catch (IOException e){
                 throw new RuntimeException(e);
             }
 
@@ -244,6 +252,10 @@ public class EVCalculatorUI extends Database {
             ComponentMap.put(name, field);
             if(Constants.DEBUG_UI_MODE){System.out.println("Component ["+name+"] has been created.");}
         }
+
+        final JComboBox<String> statusSelect = new JComboBox<>(Constants.STATUS_CONDITION_LIST);
+        panel.add(statusSelect);
+        ComponentMap.put(title+" Status",statusSelect);
 
         final JComboBox<String> natureSelect = new JComboBox<>(natureList);
         panel.add(natureSelect);
@@ -309,9 +321,11 @@ public class EVCalculatorUI extends Database {
         public int spAttackEV;
         public int spDefEV;
         public int speedEV;
+        public String status;
+        public String ability;
 
 
-        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts){
+        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status){
             base = getPokemon(name);
             this.nature = nature;
             this.level = level;
@@ -328,6 +342,8 @@ public class EVCalculatorUI extends Database {
             this.spAttackEV = EVs[3];
             this.spDefEV = EVs[4];
             this.speedEV = EVs[5];
+            this.status = status;
+            this.ability = ability;
 
 
             HPStat = Calculators.calcHP(HP_EV,level,base.baseHP);
@@ -336,7 +352,23 @@ public class EVCalculatorUI extends Database {
             spAttackStat = Calculators.statCalculation(base.baseSpatk,31,spAttackEV,nature.spatk,level,spAttackBoost);
             spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.spdef,level,spDefBoost);
             speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.speed,level,speedBoost);
+
+            this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true));
         }
+
+        //directly modifies pokemon's stats
+        private void abilityStatModifier(String weather){
+            if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[BEFORE ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+attackStat+"\nbefore pokemon def: "+defStat+"\nbefore pokemon spatk: "+spAttackStat+"\nbefore pokemon spdef: "+spDefStat+"\nbefore pokemon speed: "+speedStat+"\n----------\n[END].");}
+
+            switch(ability){
+                case "Swift Swim"->{if(weather.equals("Rain")){speedStat*=2;}}
+                case "Chlorophyll"->{if(weather.equals("Sun")){speedStat*=2;}}
+                case "Huge Power"->attackStat*=2;
+                case "Hustle"->attackStat*=1.5;
+                case "Solar Power"->{if(weather.equals("Sun")){spAttackStat*=1.5;}}
+            }
+        }
+
     }
 
     public static void printAllComponentNames(){for(String i:ComponentMap.keySet()){System.out.println(i);}}

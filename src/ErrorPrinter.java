@@ -9,6 +9,7 @@ public class ErrorPrinter {
         //UI-related
         ABN_UI_MALFORMED_IMAGE_FILE,
         ERR_UI_UNKNOWN_COMPONENT,
+        ERR_UI_COMPONENT_DATA_DNE,
 
         //calc-related
         ERR_CC_DAMAGE_CALCULATION_ERROR,
@@ -123,6 +124,7 @@ public class ErrorPrinter {
             //UI-related
             new Error(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, false, "The specified image does not exist!","[SPECIFIED IMAGE]: ", "All Paldea Pokemon do not have a sprite.\nSprites for all regional/Mega forms exist, but the filenames and the dex numbers have to be manually changed to align with each-other and omg its so much effort I don't fucking care");
             new Error(ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT, true, "The specified component does not exist!","[SPECIFIED COMPONENT]: ","Begin printing all Component names.\n");
+            new Error(ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE, true, "The specified component's data cannot be read!","[SPECIFIED COMPONENT]: ","Begin printing all Component names.\n");
 
             //calc related
             new Error(ERROR_CODE.ERR_CC_DAMAGE_CALCULATION_ERROR, true, "An error occurred during the damage calculation process!",null,genericError);
@@ -146,6 +148,7 @@ public class ErrorPrinter {
         private static void updateValues(){
             errorDB.get(ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE).details = "[SPECIFIED FILE]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT).details = "[SPECIFIED COMPONENT]: "+ additionalDetails;
+            errorDB.get(ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE).details = "[SPECIFIED COMPONENT]: "+ additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_MISSINGNO).details = "[SPECIFIED POKEMON]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_BIRDTYPE).details = "[SPECIFIED POKEMON]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_TERUSAMA).details = "[SPECIFIED ITEM]: "+additionalDetails;

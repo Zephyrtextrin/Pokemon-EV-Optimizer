@@ -1,5 +1,6 @@
 public class Constants{
-    public static final boolean DEBUG_CALC_MODE = true; //enable/disable debug statements for calculations
+    public static final boolean DEBUG_DAMAGE_MODE = true; //enable/disable debug statements for damage calculations (these are quite lengthy so they get their own)
+    public static final boolean DEBUG_CALC_MODE = false; //enable/disable debug statements for other calculations
     public static final boolean DEBUG_UI_MODE = false; //enable/disable debug statements for the UI.
     public static final boolean DEBUG_DISABLE_OUTPUT = false; //if true: disables all output intended for end users
 
@@ -18,9 +19,11 @@ public class Constants{
         Special,
     }
 
+    //these are too granular to put in the db tbh
+    //but actually u might wanna move weather/status to db later......
     public static final String[] CAPABILITY_LIST = {"OHKO","Tank","Outspeed"};
 
     public static final String[] WEATHER_LIST = {"No Weather","Sun","Rain","Sand","Snow"};
 
-
+    public static final String[] STATUS_CONDITION_LIST = {"None","Poison","Burn","Paralysis"};
 }

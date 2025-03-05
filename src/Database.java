@@ -81,6 +81,7 @@ public class Database {
     public static void initialize(){
         ErrorPrinter.init();
         Type.init();
+        Ability.init();
         Items.init();
         Move.init();
         Nature.init();
@@ -2133,12 +2134,10 @@ public class Database {
             abilityList.add("Heatproof");
             abilityList.add("Dry Skin");
             abilityList.add("Iron Fist");
-            abilityList.add("Poison Heal");
             abilityList.add("Adaptability");
             abilityList.add("Solar Power");
             abilityList.add("Quick Feet");
             abilityList.add("Technician");
-            abilityList.add("Unaware");
             abilityList.add("Tinted Lens");
             abilityList.add("Filter");
             abilityList.add("Scrappy");
