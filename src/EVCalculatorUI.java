@@ -137,7 +137,7 @@ public class EVCalculatorUI extends Database {
                 getNature(HelperMethods.getComponentValue("Left-Side Nature", true)),
                 leftEVs, leftBoosts,
                 HelperMethods.getComponentValue("Left-Side Ability", true),
-                HelperMethods.getComponentValue("Left-Side Status", true)
+                HelperMethods.getComponentValue("Left-Side Status", true), true
 
         );
 
@@ -149,7 +149,7 @@ public class EVCalculatorUI extends Database {
                 getNature(HelperMethods.getComponentValue("Right-Side Nature", true)),
                 rightEVs, rightBoosts,
                 HelperMethods.getComponentValue("Right-Side Ability", true),
-                HelperMethods.getComponentValue("Right-Side Status", true)
+                HelperMethods.getComponentValue("Right-Side Status", true), false
 
         );
         return new CurrentPokemon[]{leftSide,rightSide};
@@ -325,7 +325,7 @@ public class EVCalculatorUI extends Database {
         public String ability;
 
 
-        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status){
+        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status,boolean subject){
             base = getPokemon(name);
             this.nature = nature;
             this.level = level;
@@ -353,20 +353,23 @@ public class EVCalculatorUI extends Database {
             spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.spdef,level,spDefBoost);
             speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.speed,level,speedBoost);
 
-            this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true));
+            this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true),subject);
         }
 
         //directly modifies pokemon's stats
-        private void abilityStatModifier(String weather){
-            if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[BEFORE ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+attackStat+"\nbefore pokemon def: "+defStat+"\nbefore pokemon spatk: "+spAttackStat+"\nbefore pokemon spdef: "+spDefStat+"\nbefore pokemon speed: "+speedStat+"\n----------\n[END].");}
+        private void abilityStatModifier(String weather, boolean subject){
+            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[BEFORE ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+attackStat+"\nbefore pokemon def: "+defStat+"\nbefore pokemon spatk: "+spAttackStat+"\nbefore pokemon spdef: "+spDefStat+"\nbefore pokemon speed: "+speedStat+"\n[ABILITY]: "+ability+"\n----------\n[END].");}
 
             switch(ability){
                 case "Swift Swim"->{if(weather.equals("Rain")){speedStat*=2;}}
                 case "Chlorophyll"->{if(weather.equals("Sun")){speedStat*=2;}}
                 case "Huge Power"->attackStat*=2;
                 case "Hustle"->attackStat*=1.5;
+                case "Orichalcum Pulse"-> attackStat*=1.3;
+                case "Hadron Engine"-> spAttackStat*=1.3;
                 case "Solar Power"->{if(weather.equals("Sun")){spAttackStat*=1.5;}}
             }
+            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS, STILL IN THE SAME METHOD THO]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+attackStat+"\nbefore pokemon def: "+defStat+"\nbefore pokemon spatk: "+spAttackStat+"\nbefore pokemon spdef: "+spDefStat+"\nbefore pokemon speed: "+speedStat+"\n----------\n[END].");};
         }
 
     }
