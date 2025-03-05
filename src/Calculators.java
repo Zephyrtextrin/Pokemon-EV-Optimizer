@@ -127,6 +127,11 @@ public class Calculators extends Database {
     }
 
     private static double getAbilityMultiplierAttacker(){return 1;}
+
+    private static void abilityStatModifier(EVCalculatorUI.CurrentPokemon pokemon){
+
+    }
+
     private static double STAB(Type[] yourTypes, Move move){
             if(containsType(yourTypes, getType(move.type))){
                 return 1.5;
