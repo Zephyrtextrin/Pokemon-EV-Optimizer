@@ -1,4 +1,3 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -22,17 +21,20 @@ public class EVCalculatorUI extends Database {
 
         //left side (the pokemon who is using the move
 
-        final JPanel leftPanel = new JPanel();
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
-        frame.add(leftPanel);
-        createStatsPanel(leftPanel, "Left-Side");
+        JPanel pane = new JPanel(new GridBagLayout());
+        pane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        frame.add(pane);
 
-        leftPanel.getName();
+        //final StatsPanel leftPanel = new StatsPanel("Left-Side");
+        //frame.add(leftPanel);
+        createStatsPanel(pane, "Left-Side", c);
+
 
         //filler
 
         //select boosts for left side
-        final JPanel leftBoostPanel = new JPanel();
+        /*final JPanel leftBoostPanel = new JPanel();
         leftBoostPanel.setLayout(new BoxLayout(leftBoostPanel, BoxLayout.PAGE_AXIS));
         frame.add(leftBoostPanel);
         makeBoostPanel(leftBoostPanel, "Left-Side ");
@@ -91,7 +93,7 @@ public class EVCalculatorUI extends Database {
         final JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
         frame.add(rightPanel);
-        createStatsPanel(rightPanel, "Right-Side");
+        //createStatsPanel(rightPanel, "Right-Side");
 
         //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
         //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
@@ -110,6 +112,8 @@ public class EVCalculatorUI extends Database {
 
             if(!Constants.DEBUG_DISABLE_OUTPUT){output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());}
         });
+
+         */
     }
 
     private static CurrentPokemon[] initCurrentPokemon(){
@@ -204,7 +208,14 @@ public class EVCalculatorUI extends Database {
         }
     }
 
-    private static void createStatsPanel(JPanel panel, String title) throws IOException {
+    private static void createStatsPanel(JPanel pane, String title, GridBagConstraints c) throws IOException{
+        c.anchor = GridBagConstraints.LINE_START;
+        c.gridx = 0;
+        c.gridy = 0;
+
+        c.gridwidth = 0;
+        c.gridheight= 0;
+
         String header = "Pokemon 2";
         if(title.equals("Left-Side")){header = "Pokemon 1";}
         final String[] natDex = getNatDexList();
@@ -213,9 +224,35 @@ public class EVCalculatorUI extends Database {
         final String[] natureList = getNatureList();
         final String[] abilityList = getAbilityList();
         String pokemonName = natDex[0];
+        final String[] attributes = {"Status","Nature","Ability","Item","Move"};
 
-        final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);
+        /*final Dimension minSize = new Dimension(panel.getWidth(), panel.getHeight()/64);
+        final Dimension prefsize = new Dimension(panel.getWidth(), panel.getHeight()/32);
+        final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);*/
 
+        /*panel.addObject(new JLabel("test2"),"test2",1,1,3,maxSize,cons);
+        panel.addObject(new JLabel("test2"),"test2",1,2,3,maxSize,cons);*/
+
+
+        //bro just restart and make ts from scratch in a new project and then paste it in when its done
+        JButton button;
+        pane.setLayout(new GridBagLayout());
+
+        button = new JButton("Button 1");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 0;
+        pane.add(button, c);
+
+        /*JButton button2;
+        button2 = new JButton("Button 2");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        pane.add(button2, c);*/
+
+        /*
         //text to denote who is attacking
         panel.add(new JLabel(header));
 
@@ -228,29 +265,17 @@ public class EVCalculatorUI extends Database {
         panel.add(pokemonSelect);
         ComponentMap.put(title+" Pokemon",pokemonSelect);
 
-        pokemonSelect.addActionListener(_ -> {
-            final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
-            ImageIcon icon;
-            try {
-                icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
-            }catch (IOException e){
-                throw new RuntimeException(e);
-            }
-
-            pokemonDisplayLabel.setIcon(icon);
-        });
-
         final JTextField levelSelect = new JTextField("100");
+        levelSelect.setMinimumSize(minSize);
+        levelSelect.setPreferredSize(prefsize);
         levelSelect.setMaximumSize(maxSize);
         panel.add(levelSelect);
         ComponentMap.put(title+" Level",levelSelect);
 
+
         for(String currentStat:Constants.STATS){
-            final String name = title+" "+currentStat+" EV";
-            final JTextField field = new JTextField(currentStat+" EV");
-            panel.add(field);
-            ComponentMap.put(name, field);
-            if(Constants.DEBUG_UI_MODE){System.out.println("Component ["+name+"] has been created.");}
+
+
         }
 
         final JComboBox<String> statusSelect = new JComboBox<>(Constants.STATUS_CONDITION_LIST);
@@ -275,7 +300,24 @@ public class EVCalculatorUI extends Database {
         ComponentMap.put(title+" Move",moveSelect);
 
 
-        panel.revalidate();
+        pokemonSelect.addActionListener(_ -> {
+            final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
+            ImageIcon icon;
+            try {
+                icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+
+            pokemonDisplayLabel.setIcon(icon);
+        });
+
+        panel.add(Box.createVerticalGlue());
+
+
+         */
+        pane.repaint();
+        pane.revalidate();
     }
 
     private static void makeBoostPanel(JPanel panel, String panelTitleAppend) {
@@ -295,6 +337,39 @@ public class EVCalculatorUI extends Database {
             }
         }
 
+    }
+
+    public static class StatsPanel extends JPanel{
+        private final GridBagLayout layout = new GridBagLayout();
+        private String title;
+
+        private StatsPanel(String name){
+            this.setLayout(layout);
+            title = name;
+        }
+
+        private void initPanel(){
+
+        }
+
+        public String returnTitle(){return title;}
+
+        public void addObject(Component component, String componentName, int gridx, int gridy, int gridheight, Dimension componentSize, GridBagConstraints cons){
+
+
+
+
+
+            /*ComponentMap.put(componentName, component);
+            if (Constants.DEBUG_UI_MODE) {System.out.println("\nComponent [" + componentName + "] has been created.\n[IS VALID?]" + component.isValid() + "\n[IS SHOWING?]" + component.isShowing());}
+
+
+            /*Box.Filler filler = new Box.Filler(minSize, minSize, minSize);
+            this.add(filler);*/
+
+            this.repaint();
+            this.revalidate();
+        }
     }
 
     //holds data for each pokemon on the UI
