@@ -26,7 +26,7 @@ public class EVCalculatorUI extends Database{
 
         //final StatsPanel leftPanel = new StatsPanel("Left-Side");
         //frame.add(leftPanel);
-        createStatsPanel(pane, "Left-Side");
+        createStatsPanel(pane, "Left-Side ");
 
 
         //filler
@@ -217,92 +217,11 @@ public class EVCalculatorUI extends Database{
         final String[] attributes = {"Status","Nature","Ability","Item","Move"};
         final Dimension maxSize = new Dimension(pane.getWidth(), pane.getHeight()/16);
 
-        /*panel.addObject(new JLabel("test2"),"test2",1,1,3,maxSize,cons);
-        panel.addObject(new JLabel("test2"),"test2",1,2,3,maxSize,cons);*/
+        final Dimension maxSize = new Dimension(pane.getWidth(), pane.getHeight()/16);
+        pane.addObject(new JButton("test1"),"test",0,0,maxSize,false);
+        pane.addObject(new JButton("test2"),"test",1,0,maxSize,false);
 
-
-        //bro just restart and make ts from scratch in a new project and then paste it in when its done
-        pane.setLayout(new GridBagLayout());
-
-        JButton button = new JButton("test");
-        JButton button2 = new JButton("2");
-
-        pane.addObject(button,"test",0,0,maxSize,false);
-        pane.addObject(button2,"test",1,0,maxSize,false);
-
-
-
-        /*JButton button2;
-        button2 = new JButton("Button 2");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridy = 1;
-        pane.add(button2, c);*/
-
-        /*
-        //text to denote who is attacking
-        panel.add(new JLabel(header));
-
-        //image display for your pokemon
-        final JLabel pokemonDisplayLabel = new JLabel(new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(pokemonName))));
-        panel.add(pokemonDisplayLabel);
-
-        //select what pokemonis attacking
-        final JComboBox<String> pokemonSelect = new JComboBox<>(natDex);
-        panel.add(pokemonSelect);
-        ComponentMap.put(title+" Pokemon",pokemonSelect);
-
-        final JTextField levelSelect = new JTextField("100");
-        levelSelect.setMinimumSize(minSize);
-        levelSelect.setPreferredSize(prefsize);
-        levelSelect.setMaximumSize(maxSize);
-        panel.add(levelSelect);
-        ComponentMap.put(title+" Level",levelSelect);
-
-
-        for(String currentStat:Constants.STATS){
-
-
-        }
-
-        final JComboBox<String> statusSelect = new JComboBox<>(Constants.STATUS_CONDITION_LIST);
-        panel.add(statusSelect);
-        ComponentMap.put(title+" Status",statusSelect);
-
-        final JComboBox<String> natureSelect = new JComboBox<>(natureList);
-        panel.add(natureSelect);
-        ComponentMap.put(title+" Nature",natureSelect);
-
-        //do later
-        final JComboBox<String> ability = new JComboBox<>(abilityList);
-        panel.add(ability);
-        ComponentMap.put(title+" Ability",ability);
-
-        final JComboBox<String> itemSelect = new JComboBox<>(itemList);
-        panel.add(itemSelect);
-        ComponentMap.put(title+" Item",itemSelect);
-
-        final JComboBox<String> moveSelect = new JComboBox<>(moveList);
-        panel.add(moveSelect);
-        ComponentMap.put(title+" Move",moveSelect);
-
-
-        pokemonSelect.addActionListener(_ -> {
-            final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
-            ImageIcon icon;
-            try {
-                icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
-            }catch (IOException e){
-                throw new RuntimeException(e);
-            }
-
-            pokemonDisplayLabel.setIcon(icon);
-        });
-
-        panel.add(Box.createVerticalGlue());
-
-
-         */
+        
         pane.repaint();
         pane.revalidate();
     }
@@ -328,6 +247,7 @@ public class EVCalculatorUI extends Database{
 
     public static class StatsPanel extends JPanel{
         private String title;
+        private int currentY = 0;
         final GridBagConstraints c = new GridBagConstraints();
 
 
@@ -340,21 +260,17 @@ public class EVCalculatorUI extends Database{
             c.weightx = 0.5;
         }
 
-        private void initPanel(){
-
-        }
-
         public String returnTitle(){return title;}
 
-        public void addObject(Component component, String componentName, int gridx, int gridy, Dimension componentSize, boolean addToMap){
+        public void addObject(Component component, String componentName, boolean addToMap){
 
 
             c.fill = GridBagConstraints.HORIZONTAL;
-            component.setSize(componentSize);
-            c.gridx = gridx;
-            c.gridy = gridy;
+            component.setSize(new Dimension(500,500));
+            c.gridy = currentY;
             this.add(component, c);
-            if(addToMap){ComponentMap.put(componentName, this);}
+            if(addToMap){ComponentMap.put(this.title+componentName, this);}
+            currentY++;
 
 
             /*ComponentMap.put(componentName, component);
@@ -366,7 +282,61 @@ public class EVCalculatorUI extends Database{
 
             this.repaint();
             this.revalidate();
+        }   
+
+        public void createStatsPanel(){            
+            String header = "Pokemon 1";
+            if(this.title.equals("Right-Side "){header="Pokemon 2";}
+
+            
+        //text to denote who is attacking
+        this.addObject(new Jlabel(header),"Header",false);
+
+        //your pokemon image
+        this.addObject(new JLabel(new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(pokemonName)))),"Image",true);
+
+        //select what pokemonis attacking
+        this.addObject(new JComboBox<>(natDex),"Pokemon",true);
+
+        //level select
+        this.addObject(new JTextField("100"),"Level",true);
+
+        //evs
+        for(String currentStat:Constants.STATS){
+            final String name = currentStat+" EV";
+            this.addObject(new JTextField(name),name,true);
         }
+
+        //status conditions
+        this.addObject(new JComboBox<>(Constants.STATUS_CONDITION_LIST),"Status",true);
+
+        //nature list
+        this.addObject(new JComboBox<>(natureList),"Nature",true);
+
+
+        //ability
+        this.addObject(new JComboBox<>(abilityList),"Ability",true);
+
+        //item
+        this.addObject(JComboBox<>(itemList),"Item",true);
+
+        //move
+        this.addObject(new JComboBox<>(moveList),"Move",true);
+
+
+        HelperMethods.getComponent(this.title+"Pokemon").addActionListener(_ -> {
+            final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
+            ImageIcon icon;
+            try {
+                icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+
+            pokemonDisplayLabel.setIcon(icon);
+        });
+
+        panel.add(Box.createVerticalGlue());
     }
 
     //holds data for each pokemon on the UI
