@@ -25,7 +25,7 @@ public class HelperMethods {
         int max = 255;
         if(name.equals("Left-Side Level")||name.equals("Right-Side Level")){max=100;}
 
-        HashMap<String,Component> ComponentMap = EVCalculatorUI.ComponentMap;
+        HashMap<String,Component> ComponentMap = EVCalculatorUI.componentMap;
         if(!isEV){ComponentMap = PokemonDatabaseUI.ComponentMap;}
 
         final Component component = ComponentMap.get(name);
@@ -37,13 +37,13 @@ public class HelperMethods {
         }
 
         assert component != null;
-        if(component.getClass()== JComboBox.class){
+        if(component.getClass()==JComboBox.class){
             try{tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();}catch(Exception e){
                 ErrorPrinter.setDetails(name,false);
                 ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE, e);
             }
         }else{
-            tempString = ((JTextField) component).getText();
+            tempString = ((JTextField)component).getText();
             int toInt = 1;
             try{
                 toInt = Integer.parseInt(tempString);

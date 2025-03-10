@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Constants{
     public static final boolean DEBUG_DAMAGE_MODE = false; //enable/disable debug statements for damage calculations (these are quite lengthy so they get their own)
     public static final boolean DEBUG_CALC_MODE = false; //enable/disable debug statements for other calculations
@@ -12,6 +15,7 @@ public class Constants{
     public static final double HIGHEST_ROLL = 1;
     public static final double[] ROLLS = {LOWEST_ROLL,MEDIAN_ROLL,HIGHEST_ROLL};
 
+    public static final List<String[]> ATTRIBUTES = new ArrayList<>();
     public static boolean isSpriteErrorPrinted = false;
 
     public enum MOVE_CATS{
@@ -26,4 +30,19 @@ public class Constants{
     public static final String[] WEATHER_LIST = {"No Weather","Sun","Rain","Sand","Snow"};
 
     public static final String[] STATUS_CONDITION_LIST = {"None","Poison","Burn","Paralysis"};
+
+    public static class Attribute{
+        String name;
+        String[] items;
+
+        public Attribute(String name, String[] items){
+            this.name = name;
+            this.items = items;
+
+        }
+
+        public static void init(){
+            new Attribute("Status",STATUS_CONDITION_LIST);
+        }
+    }
 }

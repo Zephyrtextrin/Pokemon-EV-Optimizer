@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -6,110 +7,18 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class EVCalculatorUI extends Database{
-    static final HashMap<String, Component> ComponentMap = new HashMap<>();
+    static final HashMap<String, Component> componentMap = new HashMap<>();
 
     public static void initUI() throws IOException{
-
-        final String[] WEATHER = Constants.WEATHER_LIST;
-
         final int SIZE = 1000;
         final JFrame frame = new JFrame();
         frame.setSize(SIZE, SIZE);
         frame.setLayout(new GridLayout(1, 1)); //not good fix later
         frame.setVisible(true);
 
-
-        //left side (the pokemon who is using the move
-
-        StatsPanel pane = new StatsPanel("leftpanel");
-        frame.add(pane);
-
-        //final StatsPanel leftPanel = new StatsPanel("Left-Side");
-        //frame.add(leftPanel);
-        createStatsPanel(pane, "Left-Side ");
-
-
-        //filler
-
-        //select boosts for left side
-        /*final JPanel leftBoostPanel = new JPanel();
-        leftBoostPanel.setLayout(new BoxLayout(leftBoostPanel, BoxLayout.PAGE_AXIS));
-        frame.add(leftBoostPanel);
-        makeBoostPanel(leftBoostPanel, "Left-Side ");
-
-
-        //other features like field conditions
-        final JPanel other = new JPanel();
-        other.setLayout(new BoxLayout(other, BoxLayout.PAGE_AXIS));
-        frame.add(other);
-
-        //filler
-        other.add(Box.createVerticalGlue());
-
-        //text to denote what the panel does
-        other.add(new JLabel("Other"));
-
-        //text to denote what the panel does
-        other.add(new JLabel("Weather"));
-
-        //select what weather
-        final JComboBox<String> weather = new JComboBox<>(WEATHER);
-        other.add(weather);
-        ComponentMap.put("Weather",weather);
-
-
-        final JCheckBox spread = new JCheckBox("Is this a spread move?");
-        other.add(spread);
-
-        //text to denote what the panel does
-        other.add(new JLabel("Find Minimum EVs to:"));
-
-        //select what function
-        final JComboBox<String> toDo = new JComboBox<>(Constants.CAPABILITY_LIST);
-        other.add(toDo);
-
-        //text to denote what the panel does
-        other.add(new JLabel("Select which side to find EVS for"));
-
-        //select what function
-        final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side)", "Pokemon 2 (Right Side"});
-        other.add(target);
-
-        final JButton run = new JButton("Run");
-        other.add(run);
-
-        //select boosts for right side
-        final JPanel rightBoostPanel = new JPanel();
-        rightBoostPanel.setLayout(new BoxLayout(rightBoostPanel, BoxLayout.PAGE_AXIS));
-        frame.add(rightBoostPanel);
-        makeBoostPanel(rightBoostPanel, "Right-Side ");
-        other.add(Box.createVerticalGlue());
-
-
-        //right side
-
-        final JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
-        frame.add(rightPanel);
-        //createStatsPanel(rightPanel, "Right-Side");
-
-        //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
-        //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
-        run.addActionListener(_ ->{
-            CurrentPokemon[] allData = initCurrentPokemon();
-            CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
-            CurrentPokemon opponentMon = allData[0];
-            if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+subjectMon.base.name+"\n\nafter pokemon atk: "+subjectMon.attackStat+"\nafter pokemon def: "+subjectMon.defStat+"\nafter pokemon spatk: "+subjectMon.spAttackStat+"\nafter pokemon spdef: "+subjectMon.spDefStat+"\nafter pokemon speed: "+subjectMon.speedStat+"\n----------\n[END].");}
-
-            final String process = Objects.requireNonNull(toDo.getSelectedItem()).toString();
-
-            if(Objects.requireNonNull(target.getSelectedItem()).toString().equals("Pokemon 1 (Left Side)")){
-                subjectMon = allData[0];
-                opponentMon = allData[1];
-            }
-
-            if(!Constants.DEBUG_DISABLE_OUTPUT){output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());}
-        });*/
+        frame.add(new StatsPanel("Left-Side "));
+        frame.add(new StatsPanel(""));
+        frame.add(new StatsPanel("Right-Side "));
 
     }
 
@@ -205,138 +114,178 @@ public class EVCalculatorUI extends Database{
         }
     }
 
-    private static void createStatsPanel(StatsPanel pane, String title) throws IOException{
-        String header = "Pokemon 2";
-        if(title.equals("Left-Side")){header = "Pokemon 1";}
-        final String[] natDex = getNatDexList();
-        final String[] moveList = getMoveList();
-        final String[] itemList = getItemList();
-        final String[] natureList = getNatureList();
-        final String[] abilityList = getAbilityList();
-        String pokemonName = natDex[0];
-        final String[] attributes = {"Status","Nature","Ability","Item","Move"};
-        final Dimension maxSize = new Dimension(pane.getWidth(), pane.getHeight()/16);
-
-        final Dimension maxSize = new Dimension(pane.getWidth(), pane.getHeight()/16);
-        pane.addObject(new JButton("test1"),"test",0,0,maxSize,false);
-        pane.addObject(new JButton("test2"),"test",1,0,maxSize,false);
-
-        
-        pane.repaint();
-        pane.revalidate();
-    }
-
-    private static void makeBoostPanel(JPanel panel, String panelTitleAppend) {
-
-        panel.add(Box.createVerticalGlue()); //creates filler
-
-        for(String currentStat:Constants.STATS){
-            if(!currentStat.equals("HP")) {
-                panel.add(new JLabel(currentStat + " Boosts"));
-
-                final String name = panelTitleAppend + currentStat + " Boost";
-                final JComboBox<String> boost = new JComboBox<>(Constants.BOOSTS);
-                panel.add(boost);
-                ComponentMap.put(name, boost);
-
-                if(Constants.DEBUG_UI_MODE) {System.out.println("Component [" + name + "] has been created.");}
-            }
-        }
-
-    }
-
     public static class StatsPanel extends JPanel{
-        private String title;
+        private final String title;
         private int currentY = 0;
         final GridBagConstraints c = new GridBagConstraints();
 
 
-        private StatsPanel(String name){
+        private StatsPanel(String name) throws IOException{
             this.setLayout(new GridBagLayout());
             title = name;
             c.anchor = GridBagConstraints.LINE_START;
             c.gridx = 0;
             c.gridy = 0;
             c.weightx = 0.5;
+
+            if(!name.isEmpty()){
+                this.createStatsPanel();
+                this.makeBoostPanel();
+            }else{this.otherPanel();}
         }
 
         public String returnTitle(){return title;}
 
-        public void addObject(Component component, String componentName, boolean addToMap){
+        /*public void addObject(Component component, String componentName, boolean addToMap, String headerLabel){
+            if(!headerLabel.isEmpty()){this.addOneObject(new JLabel(headerLabel),headerLabel,false);}
+            this.addOneObject(component,componentName,addToMap);
+        }  */
+
+        private void addObject(Component component, String componentName, boolean addToMap){
 
 
             c.fill = GridBagConstraints.HORIZONTAL;
             component.setSize(new Dimension(500,500));
             c.gridy = currentY;
             this.add(component, c);
-            if(addToMap){ComponentMap.put(this.title+componentName, this);}
+            if(addToMap){componentMap.put(this.title+componentName, this);}
             currentY++;
-
-
-            /*ComponentMap.put(componentName, component);
-            if (Constants.DEBUG_UI_MODE) {System.out.println("\nComponent [" + componentName + "] has been created.\n[IS VALID?]" + component.isValid() + "\n[IS SHOWING?]" + component.isShowing());}
-
-
-            /*Box.Filler filler = new Box.Filler(minSize, minSize, minSize);
-            this.add(filler);*/
 
             this.repaint();
             this.revalidate();
-        }   
-
-        public void createStatsPanel(){            
-            String header = "Pokemon 1";
-            if(this.title.equals("Right-Side "){header="Pokemon 2";}
-
-            
-        //text to denote who is attacking
-        this.addObject(new Jlabel(header),"Header",false);
-
-        //your pokemon image
-        this.addObject(new JLabel(new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(pokemonName)))),"Image",true);
-
-        //select what pokemonis attacking
-        this.addObject(new JComboBox<>(natDex),"Pokemon",true);
-
-        //level select
-        this.addObject(new JTextField("100"),"Level",true);
-
-        //evs
-        for(String currentStat:Constants.STATS){
-            final String name = currentStat+" EV";
-            this.addObject(new JTextField(name),name,true);
         }
 
-        //status conditions
-        this.addObject(new JComboBox<>(Constants.STATUS_CONDITION_LIST),"Status",true);
+        public void createStatsPanel() throws IOException {
+            String header = "Pokemon 1";
+            if(this.title.equals("Right-Side ")){header="Pokemon 2";}
+            final String[] natDex = getNatDexList();
+            final String[] moveList = getMoveList();
+            final String[] itemList = getItemList();
+            final String[] natureList = getNatureList();
+            final String[] abilityList = getAbilityList();
+            String pokemonName = natDex[0];
 
-        //nature list
-        this.addObject(new JComboBox<>(natureList),"Nature",true);
+            //text to denote who is attacking
+            this.addObject(new JLabel(header),"Header",false);
 
+            //your pokemon image
+            JLabel iconLabel = new JLabel(new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(pokemonName))));
+            this.addObject(iconLabel,"Image",true);
 
-        //ability
-        this.addObject(new JComboBox<>(abilityList),"Ability",true);
+            //select what pokemonis attacking
+            final JComboBox<String> selectedPokemon = new JComboBox<>(natDex);
+            this.addObject(selectedPokemon,"Pokemon",true);
 
-        //item
-        this.addObject(JComboBox<>(itemList),"Item",true);
+            //level select
+            this.addObject(new JTextField("100"),"Level",true);
 
-        //move
-        this.addObject(new JComboBox<>(moveList),"Move",true);
-
-
-        HelperMethods.getComponent(this.title+"Pokemon").addActionListener(_ -> {
-            final String selected = Objects.requireNonNull(pokemonSelect.getSelectedItem()).toString();
-            ImageIcon icon;
-            try {
-                icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
-            }catch (IOException e){
-                throw new RuntimeException(e);
+            //evs
+            for(String currentStat:Constants.STATS){
+                final String name = currentStat+" EV";
+                this.addObject(new JTextField(name),name,true);
             }
 
-            pokemonDisplayLabel.setIcon(icon);
-        });
+            //status conditions
+            this.addObject(new JComboBox<>(Constants.STATUS_CONDITION_LIST),"Status",true);
 
-        panel.add(Box.createVerticalGlue());
+            //nature list
+            this.addObject(new JComboBox<>(natureList),"Nature",true);
+
+
+            //ability
+            this.addObject(new JComboBox<>(abilityList),"Ability",true);
+
+            //item
+            this.addObject(new JComboBox<>(itemList),"Item",true);
+
+            //move
+            this.addObject(new JComboBox<>(moveList),"Move",true);
+
+            selectedPokemon.addActionListener(_ -> {
+                final String selected = Objects.requireNonNull(selectedPokemon.getSelectedItem()).toString();
+                ImageIcon icon;
+                try{icon = new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(selected)));
+                }catch (IOException e){throw new RuntimeException(e);}
+
+                iconLabel.setIcon(icon);
+            });
+            this.add(Box.createVerticalGlue());
+        }
+
+
+        public void makeBoostPanel() {
+
+            for(String currentStat:Constants.STATS){
+                if(!currentStat.equals("HP")) {
+                    this.addObject(new JLabel(currentStat + " Boosts"),currentStat + " Boosts",false);
+
+                    final String name = this.title + currentStat + " Boost";
+                    final JComboBox<String> boost = new JComboBox<>(Constants.BOOSTS);
+                    this.addObject(boost,name,true);
+
+                    if(Constants.DEBUG_UI_MODE){System.out.println("Component [" + name + "] has been created.");}
+                }
+            }
+        }
+
+        //other features like field conditions
+        public void otherPanel(){
+            final String[] WEATHER = Constants.WEATHER_LIST;
+
+            //text to denote what the panel does
+            this.addObject(new JLabel("Other"),"Title",false);
+
+            //filler
+            this.add(Box.createVerticalGlue());
+
+            //text to denote what the panel does
+            this.addObject(new JLabel("Weather"),"Weather Label",false);
+
+            //select what weather
+            final JComboBox<String> weather = new JComboBox<>(WEATHER);
+            this.addObject(weather,"Weather",true);
+
+            //select if spread
+            final JCheckBox spread = new JCheckBox("Is this a spread move?");
+            this.addObject(spread,"Spread",true);
+
+            //text to denote what the panel does
+            this.addObject(new JLabel("Find Minimum EVs to:"),"minEVs",false);
+
+            //select what function
+            final JComboBox<String> toDo = new JComboBox<>(Constants.CAPABILITY_LIST);
+            this.addObject(toDo,"Todo",false);
+
+            //text to denote what the panel does
+            this.addObject(new JLabel("Select which side to find EVS for"),"minEVs",false);
+
+            //select what function
+            final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side)", "Pokemon 2 (Right Side"});
+            this.addObject(target,"Target",false);
+
+
+            final JButton run = new JButton("Run");
+            this.addObject(run,"Run",true);
+
+
+            //gathers all info on both sides and performs preliminary calcs needed for the real damage calc
+            //i would make this into a method but tbh the sheer amount of fucking params it would need is SO INSANELY FUCKING COMICAL
+            run.addActionListener(_ ->{
+                CurrentPokemon[] allData = initCurrentPokemon();
+                CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
+                CurrentPokemon opponentMon = allData[0];
+                if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+subjectMon.base.name+"\n\nafter pokemon atk: "+subjectMon.attackStat+"\nafter pokemon def: "+subjectMon.defStat+"\nafter pokemon spatk: "+subjectMon.spAttackStat+"\nafter pokemon spdef: "+subjectMon.spDefStat+"\nafter pokemon speed: "+subjectMon.speedStat+"\n----------\n[END].");}
+
+                final String process = Objects.requireNonNull(toDo.getSelectedItem()).toString();
+
+                if(Objects.requireNonNull(target.getSelectedItem()).toString().equals("Pokemon 1 (Left Side)")){
+                    subjectMon = allData[0];
+                    opponentMon = allData[1];
+                }
+
+                if(!Constants.DEBUG_DISABLE_OUTPUT){output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());}
+            });
+        }
     }
 
     //holds data for each pokemon on the UI
@@ -416,5 +365,5 @@ public class EVCalculatorUI extends Database{
 
     }
 
-    public static void printAllComponentNames(){for(String i:ComponentMap.keySet()){System.out.println(i);}}
+    public static void printAllComponentNames(){for(String i:componentMap.keySet()){System.out.println(i);}}
 }
