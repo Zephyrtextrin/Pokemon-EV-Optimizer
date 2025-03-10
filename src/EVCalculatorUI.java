@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class EVCalculatorUI extends Database {
+public class EVCalculatorUI extends Database{
     static final HashMap<String, Component> ComponentMap = new HashMap<>();
 
-    public static void initUI() throws IOException {
+    public static void initUI() throws IOException{
 
         final String[] WEATHER = Constants.WEATHER_LIST;
 
@@ -21,14 +21,12 @@ public class EVCalculatorUI extends Database {
 
         //left side (the pokemon who is using the move
 
-        JPanel pane = new JPanel(new GridBagLayout());
-        pane.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        StatsPanel pane = new StatsPanel("leftpanel");
         frame.add(pane);
 
         //final StatsPanel leftPanel = new StatsPanel("Left-Side");
         //frame.add(leftPanel);
-        createStatsPanel(pane, "Left-Side", c);
+        createStatsPanel(pane, "Left-Side");
 
 
         //filler
@@ -111,9 +109,8 @@ public class EVCalculatorUI extends Database {
             }
 
             if(!Constants.DEBUG_DISABLE_OUTPUT){output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());}
-        });
+        });*/
 
-         */
     }
 
     private static CurrentPokemon[] initCurrentPokemon(){
@@ -208,14 +205,7 @@ public class EVCalculatorUI extends Database {
         }
     }
 
-    private static void createStatsPanel(JPanel pane, String title, GridBagConstraints c) throws IOException{
-        c.anchor = GridBagConstraints.LINE_START;
-        c.gridx = 0;
-        c.gridy = 0;
-
-        c.gridwidth = 0;
-        c.gridheight= 0;
-
+    private static void createStatsPanel(StatsPanel pane, String title) throws IOException{
         String header = "Pokemon 2";
         if(title.equals("Left-Side")){header = "Pokemon 1";}
         final String[] natDex = getNatDexList();
@@ -225,25 +215,22 @@ public class EVCalculatorUI extends Database {
         final String[] abilityList = getAbilityList();
         String pokemonName = natDex[0];
         final String[] attributes = {"Status","Nature","Ability","Item","Move"};
-
-        /*final Dimension minSize = new Dimension(panel.getWidth(), panel.getHeight()/64);
-        final Dimension prefsize = new Dimension(panel.getWidth(), panel.getHeight()/32);
-        final Dimension maxSize = new Dimension(panel.getWidth(), panel.getHeight()/16);*/
+        final Dimension maxSize = new Dimension(pane.getWidth(), pane.getHeight()/16);
 
         /*panel.addObject(new JLabel("test2"),"test2",1,1,3,maxSize,cons);
         panel.addObject(new JLabel("test2"),"test2",1,2,3,maxSize,cons);*/
 
 
         //bro just restart and make ts from scratch in a new project and then paste it in when its done
-        JButton button;
         pane.setLayout(new GridBagLayout());
 
-        button = new JButton("Button 1");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 0;
-        c.gridy = 0;
-        pane.add(button, c);
+        JButton button = new JButton("test");
+        JButton button2 = new JButton("2");
+
+        pane.addObject(button,"test",0,0,maxSize,false);
+        pane.addObject(button2,"test",1,0,maxSize,false);
+
+
 
         /*JButton button2;
         button2 = new JButton("Button 2");
@@ -340,12 +327,17 @@ public class EVCalculatorUI extends Database {
     }
 
     public static class StatsPanel extends JPanel{
-        private final GridBagLayout layout = new GridBagLayout();
         private String title;
+        final GridBagConstraints c = new GridBagConstraints();
+
 
         private StatsPanel(String name){
-            this.setLayout(layout);
+            this.setLayout(new GridBagLayout());
             title = name;
+            c.anchor = GridBagConstraints.LINE_START;
+            c.gridx = 0;
+            c.gridy = 0;
+            c.weightx = 0.5;
         }
 
         private void initPanel(){
@@ -354,10 +346,15 @@ public class EVCalculatorUI extends Database {
 
         public String returnTitle(){return title;}
 
-        public void addObject(Component component, String componentName, int gridx, int gridy, int gridheight, Dimension componentSize, GridBagConstraints cons){
+        public void addObject(Component component, String componentName, int gridx, int gridy, Dimension componentSize, boolean addToMap){
 
 
-
+            c.fill = GridBagConstraints.HORIZONTAL;
+            component.setSize(componentSize);
+            c.gridx = gridx;
+            c.gridy = gridy;
+            this.add(component, c);
+            if(addToMap){ComponentMap.put(componentName, this);}
 
 
             /*ComponentMap.put(componentName, component);
