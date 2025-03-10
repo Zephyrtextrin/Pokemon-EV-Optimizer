@@ -51,7 +51,7 @@ public class HelperMethods {
             }catch(Exception _){}
             tempString = Integer.toString(toInt);
         }else{
-            System.out.println("error!\nspecified component: "+name+"\nclass: "+component.getClass().toString());
+            System.out.println("error!\nspecified component: "+name+"\nclass: "+component.getClass());
         }
         return tempString;
     }

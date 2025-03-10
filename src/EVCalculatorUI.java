@@ -142,14 +142,16 @@ public class EVCalculatorUI extends Database{
         }  */
 
         private void addObject(Component component, String componentName, boolean addToMap){
-
+            componentName = this.title+componentName;
 
             c.fill = GridBagConstraints.HORIZONTAL;
             component.setSize(new Dimension(500,500));
             c.gridy = currentY;
             this.add(component, c);
-            if(addToMap){componentMap.put(this.title+componentName, this);}
+            if(addToMap){componentMap.put(componentName, this);}
             currentY++;
+
+            if(Constants.DEBUG_UI_MODE&&addToMap){System.out.println("Component ["+componentName+"] has been created.\nClass: "+component.getClass()+"\n");}
 
             this.repaint();
             this.revalidate();
@@ -223,7 +225,6 @@ public class EVCalculatorUI extends Database{
                     final JComboBox<String> boost = new JComboBox<>(Constants.BOOSTS);
                     this.addObject(boost,name,true);
 
-                    if(Constants.DEBUG_UI_MODE){System.out.println("Component [" + name + "] has been created.");}
                 }
             }
         }
