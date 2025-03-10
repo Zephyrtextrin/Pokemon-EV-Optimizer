@@ -42,7 +42,7 @@ public class HelperMethods {
                 ErrorPrinter.setDetails(name,false);
                 ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE, e);
             }
-        }else{
+        }else if(component.getClass()==JTextField.class){
             tempString = ((JTextField)component).getText();
             int toInt = 1;
             try{
@@ -50,6 +50,8 @@ public class HelperMethods {
                 if(toInt>max||toInt<-6){toInt = 1;}
             }catch(Exception _){}
             tempString = Integer.toString(toInt);
+        }else{
+            System.out.println("error!\nspecified component: "+name+"\nclass: "+component.getClass().toString());
         }
         return tempString;
     }
