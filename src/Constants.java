@@ -23,6 +23,16 @@ public class Constants{
         Special,
     }
 
+    public enum Stats{
+        HP,
+        Attack,
+        Defense,
+        Spatk,
+        Spdef,
+        Speed,
+        ELSE
+    }
+
     //these are too granular to put in the db tbh
     //but actually u might wanna move weather/status to db later......
     public static final String[] CAPABILITY_LIST = {"OHKO","Tank","Outspeed"};

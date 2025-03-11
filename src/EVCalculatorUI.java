@@ -13,6 +13,7 @@ public class EVCalculatorUI extends Database{
 
     public static void initUI() throws IOException{
         final int SIZE = 1000;
+
         final JFrame frame = new JFrame();
         frame.setSize(SIZE, SIZE);
         frame.setLayout(new GridLayout(1, 1)); //not good fix later
@@ -78,7 +79,7 @@ public class EVCalculatorUI extends Database{
             EVrolls = Calculators.findLeastAttackEVs(subjectMon,opponentMon,moveUsed,weather,spread);
 
         }else{ //for outspeeding
-            final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.speedStat, subjectMon.speedBoost)};
+            final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.stats[5], subjectMon.speedBoost)};
             if(Constants.DEBUG_DAMAGE_MODE){
                 System.out.println();
             }
@@ -135,8 +136,6 @@ public class EVCalculatorUI extends Database{
                 this.makeBoostPanel();
             }else{this.otherPanel();}
         }
-
-        public String returnTitle(){return title;}
 
         /*public void addObject(Component component, String componentName, boolean addToMap, String headerLabel){
             if(!headerLabel.isEmpty()){this.addOneObject(new JLabel(headerLabel),headerLabel,false);}
@@ -260,6 +259,7 @@ public class EVCalculatorUI extends Database{
             //select what function
             final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side)", "Pokemon 2 (Right Side"});
             this.addObject(target,"Target");
+            componentMap.put(this.title+"Target",target);
 
 
             final JButton run = new JButton("Run");
@@ -272,7 +272,7 @@ public class EVCalculatorUI extends Database{
                 CurrentPokemon[] allData = initCurrentPokemon();
                 CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
                 CurrentPokemon opponentMon = allData[0];
-                if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+subjectMon.base.name+"\n\nafter pokemon atk: "+subjectMon.attackStat+"\nafter pokemon def: "+subjectMon.defStat+"\nafter pokemon spatk: "+subjectMon.spAttackStat+"\nafter pokemon spdef: "+subjectMon.spDefStat+"\nafter pokemon speed: "+subjectMon.speedStat+"\n----------\n[END].");}
+                if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+subjectMon.base.name+"\n\nafter pokemon atk: "+subjectMon.stats[1]+"\nafter pokemon def: "+subjectMon.stats[2]+"\nafter pokemon spatk: "+subjectMon.stats[3]+"\nafter pokemon spdef: "+subjectMon.stats[4]+"\nafter pokemon speed: "+subjectMon.stats[5]+"\n----------\n[END].");}
 
                 final String process = Objects.requireNonNull(toDo.getSelectedItem()).toString();
 
@@ -288,28 +288,27 @@ public class EVCalculatorUI extends Database{
 
     //holds data for each pokemon on the UI
     static public class CurrentPokemon{
+        public enum Attributes{
+            basePKMN,
+            level,
+            item,
+            move,
+            nature,
+            stats,
+            boosts,
+            EV,
+            status,
+            ability
+        }
+
         public Pokemon base;
         public int level;
         public String item;
         public Move move;
         public Nature nature;
-        public int HPStat;
-        public int attackStat;
-        public int defStat;
-        public int spAttackStat;
-        public int spDefStat;
-        public int speedStat;
-        public int attackBoost;
-        public int defBoost;
-        public int spAttackBoost;
-        public int spDefBoost;
-        public int speedBoost;
-        public int HP_EV;
-        public int attackEV;
-        public int defEV;
-        public int spAttackEV;
-        public int spDefEV;
-        public int speedEV;
+        private int[] stats;
+        public int[] boosts;
+        public int[] EVs;
         public String status;
         public String ability;
 
@@ -320,45 +319,52 @@ public class EVCalculatorUI extends Database{
             this.level = level;
             this.item = item;
             this.move = move;
-            this.attackBoost = boosts[0];
-            this.defBoost = boosts[1];
-            this.spAttackBoost = boosts[2];
-            this.spDefBoost = boosts[3];
-            this.speedBoost = boosts[4];
-            this.HP_EV = EVs[0];
-            this.attackEV = EVs[1];
-            this.defEV = EVs[2];
-            this.spAttackEV = EVs[3];
-            this.spDefEV = EVs[4];
-            this.speedEV = EVs[5];
+            this.EVs = EVs;
+            this.boosts = boosts;
             this.status = status;
             this.ability = ability;
 
 
-            HPStat = Calculators.calcHP(HP_EV,level,base.baseHP);
-            attackStat = Calculators.statCalculation(base.baseAttack,31,attackEV,nature.attack,level,attackBoost);
-            defStat = Calculators.statCalculation(base.baseDefense,31,defEV,nature.defense,level,defBoost);
-            spAttackStat = Calculators.statCalculation(base.baseSpatk,31,spAttackEV,nature.spatk,level,spAttackBoost);
-            spDefStat = Calculators.statCalculation(base.baseSpdef,31,spDefEV,nature.spdef,level,spDefBoost);
-            speedStat = Calculators.statCalculation(base.baseSpeed,31,speedEV,nature.speed,level,speedBoost);
+            stats[0] = Calculators.calcHP(EVs[0],level,base.baseHP);
+            stats[1] = Calculators.statCalculation(base.baseAttack,31,EVs[1],nature.attack,level,boosts[0]);
+            stats[2] = Calculators.statCalculation(base.baseDefense,31,EVs[2],nature.defense,level,boosts[1]);
+            stats[3] = Calculators.statCalculation(base.baseSpatk,31,EVs[3],nature.spatk,level,boosts[2]);
+            stats[4] = Calculators.statCalculation(base.baseSpdef,31,EVs[4],nature.spdef,level,boosts[3]);
+            stats[5] = Calculators.statCalculation(base.baseSpeed,31,EVs[5],nature.speed,level,boosts[4]);
 
             this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true),subject);
         }
 
         //directly modifies pokemon's stats
         private void abilityStatModifier(String weather, boolean subject){
-            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[BEFORE ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+attackStat+"\nbefore pokemon def: "+defStat+"\nbefore pokemon spatk: "+spAttackStat+"\nbefore pokemon spdef: "+spDefStat+"\nbefore pokemon speed: "+speedStat+"\n[ABILITY]: "+ability+"\n----------\n[END].");}
+            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[BEFORE ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+stats[1]+"\nbefore pokemon def: "+stats[2]+"\nbefore pokemon spatk: "+stats[3]+"\nbefore pokemon spdef: "+stats[4]+"\nbefore pokemon speed: "+stats[5]+"\n[ABILITY]: "+ability+"\n----------\n[END].");}
 
             switch(ability){
-                case "Swift Swim"->{if(weather.equals("Rain")){speedStat*=2;}}
-                case "Chlorophyll"->{if(weather.equals("Sun")){speedStat*=2;}}
-                case "Huge Power"->attackStat*=2;
-                case "Hustle"->attackStat*=1.5;
-                case "Orichalcum Pulse"-> attackStat*=1.3;
-                case "Hadron Engine"-> spAttackStat*=1.3;
-                case "Solar Power"->{if(weather.equals("Sun")){spAttackStat*=1.5;}}
+                case "Swift Swim"->{if(weather.equals("Rain")){stats[5]*=2;}}
+                case "Chlorophyll"->{if(weather.equals("Sun")){stats[5]*=2;}}
+                case "Huge Power"->stats[1]*=2;
+                case "Hustle"->stats[1]*=1.5;
+                case "Orichalcum Pulse"-> stats[1]*=1.3;
+                case "Hadron Engine"-> stats[3]*=1.3;
+                case "Solar Power"->{if(weather.equals("Sun")){stats[3]*=1.5;}}
             }
-            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS, STILL IN THE SAME METHOD THO]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+attackStat+"\nbefore pokemon def: "+defStat+"\nbefore pokemon spatk: "+spAttackStat+"\nbefore pokemon spdef: "+spDefStat+"\nbefore pokemon speed: "+speedStat+"\n----------\n[END].");};
+            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS, STILL IN THE SAME METHOD THO]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+stats[1]+"\nbefore pokemon def: "+stats[2]+"\nbefore pokemon spatk: "+stats[3]+"\nbefore pokemon spdef: "+stats[4]+"\nbefore pokemon speed: "+stats[5]+"\n----------\n[END].");};
+        }
+
+        public int getValue(Constants.Stats stat, Attributes att){
+
+            return switch(att){
+                case stats -> switch(stat){
+                    case HP -> stats[0];
+                    case Attack -> stats[1];
+                    case Defense -> stats[2];
+                    case Spatk -> stats[3];
+                    case Spdef -> stats[4];
+                    case Speed -> stats[5];
+                    case ELSE -> throw new NullPointerException("oops. wrong stat buddy");
+                };
+            };
+
         }
 
     }
