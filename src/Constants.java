@@ -30,7 +30,16 @@ public class Constants{
         Spatk,
         Spdef,
         Speed,
-        ELSE
+    }
+
+    public enum Attributes{
+        stats,
+        boost,
+        EV,
+        level,
+        item,
+        status,
+        ability,
     }
 
     //these are too granular to put in the db tbh

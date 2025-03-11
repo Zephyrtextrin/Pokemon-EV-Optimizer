@@ -14,7 +14,7 @@ public class Calculators extends Database {
     public static int findLeastSpeedEVs(EVCalculatorUI.CurrentPokemon you, int targetStat, int boostCount){
 
         for(int EV = 0; EV<=252; EV++){
-            final int stat = statCalculation(you.base.baseSpeed,31,EV,you.nature.speed,you.level,boostCount);
+            final int stat = statCalculation(you.getBase().baseSpeed,31,EV,you.getNature().speed,you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
             if(Constants.DEBUG_DAMAGE_MODE){System.out.println("\nOPP SPEED STAT: "+targetStat+"\nYOUR SPEED STAT: "+stat+"\nYOUR SPEED EV: "+EV+"\nOPP SPPEED BOOST: "+HelperMethods.getComponentValue("Right-Side Speed Boost", true)+"\nOPP SPPED BOOST MODIFIER: "+getBoostModifier(Double.parseDouble(HelperMethods.getComponentValue("Right-Side Speed Boost", true))));}
             if(stat>targetStat){return EV;}
         }
@@ -23,13 +23,13 @@ public class Calculators extends Database {
 
     //finds what stat boost you need to ohko
     public static int[] findLeastHPEVs(EVCalculatorUI.CurrentPokemon opponentMon, EVCalculatorUI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
-        int oppAttackStat = opponentMon.attackStat;
-        int targetBaseHP = targetMon.base.baseHP;
-        int targetDefStat = targetMon.defStat;
+        int oppAttackStat = opponentMon.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
+        int targetBaseHP = targetMon.getBase().baseHP;
+        int targetDefStat = targetMon.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
         if(move.moveCategory== Constants.MOVE_CATS.Special){
-            targetDefStat = targetMon.spDefStat;
-            oppAttackStat = opponentMon.spAttackStat;
+            targetDefStat = targetMon.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
+            oppAttackStat = opponentMon.getInt(Constants.Stats.Spatk, Constants.Attributes.stats);
         }
         final int[] EVRolls = {-1,-1,-1};
 
@@ -39,10 +39,10 @@ public class Calculators extends Database {
         for(double currentRoll:Constants.ROLLS){
             if(Constants.DEBUG_DAMAGE_MODE){System.out.println();}
             for (int EV = 0; EV <= 252; EV += 4){//ev goes up by 4 bc the stat only goes up every 4 evs
-                final int targetCalcedHPStat = calcHP(EV, targetMon.level, targetBaseHP);
+                final int targetCalcedHPStat = calcHP(EV, targetMon.getInt(Constants.Stats.HP, Constants.Attributes.level), targetBaseHP);
 
                 if((damage*currentRoll)<targetCalcedHPStat){
-                    if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nyour defense stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp attack stat %d\nopp attack ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, targetDefStat,EV, targetCalcedHPStat, oppAttackStat, opponentMon.attackEV,damage,currentRoll);}
+                    if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nyour defense stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp attack stat %d\nopp attack ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, targetDefStat,EV, targetCalcedHPStat, oppAttackStat, opponentMon.getInt(Constants.Stats.Attack, Constants.Attributes.EV),damage,currentRoll);}
                     EVRolls[index] = EV;
                     break;
                 }
@@ -70,8 +70,8 @@ public class Calculators extends Database {
 
     //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
     private static double getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move) {
-        double attackerLevel = (((double)(2* attacker.level)/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
-        final double AD = (double) attacker.attackStat/ defender.defStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
+        double attackerLevel = (((double)(2* attacker.getInt(Constants.Stats.HP, Constants.Attributes.level))/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
+        final double AD = (double) attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats)/ defender.getInt(Constants.Stats.Defense, Constants.Attributes.stats); //attack divided by defense. this is done in a seperate variable to decrease verbosity.
         return (int)(((attackerLevel* move.baseDamage*AD)/50)+2);
     }
 
@@ -83,16 +83,16 @@ public class Calculators extends Database {
 
     //finds what stat boost you need to ohko
     public static int[] findLeastAttackEVs(EVCalculatorUI.CurrentPokemon you, EVCalculatorUI.CurrentPokemon opp, Move move, String weather, boolean spread){
-        int baseStat = you.base.baseAttack;
-        double nature = you.nature.attack;
-        int boostCount = you.attackBoost;
-        int defenderStat = opp.defStat;
+        int baseStat = you.getBase().baseAttack;
+        double nature = you.getNature().attack;
+        int boostCount = you.getInt(Constants.Stats.Attack, Constants.Attributes.boost);
+        int defenderStat = opp.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
-        if(move.moveCategory== Constants.MOVE_CATS.Special){
-            baseStat = you.base.baseSpatk;
-            nature = you.nature.spatk;
-            boostCount = you.spAttackBoost;
-            defenderStat = opp.spDefStat;
+        if(move.moveCategory==Constants.MOVE_CATS.Special){
+            baseStat = you.getBase().baseSpatk;
+            nature = you.getNature().spatk;
+            boostCount = you.getInt(Constants.Stats.Spatk, Constants.Attributes.boost);
+            defenderStat = opp.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
         }
 
         int index = 0;
@@ -100,11 +100,11 @@ public class Calculators extends Database {
 
         for(double currentRoll:Constants.ROLLS) {
             for (int EV = 0; EV <= 252; EV += 4) {//ev goes up by 4 bc the stat only goes up every 4 evs
-                final int stat = statCalculation(baseStat, 31, EV, nature, you.level, boostCount);
+                final int stat = statCalculation(baseStat, 31, EV, nature, you.getInt(Constants.Stats.HP, Constants.Attributes.level), boostCount);
                 final int damage = (int)(damageCalc(you,opp,move,spread,weather) * currentRoll);
 
-                if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\nyour calced attack: %d\nyour ev: %d\nyour base attack: %d\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.HPStat,defenderStat,damage,currentRoll,move.name);}
-                if(damage >= opp.HPStat){
+                if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\nyour calced attack: %d\nyour ev: %d\nyour base attack: %d\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name);}
+                if(damage >= opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)){
                     EVrolls[index] = EV;
                     break;
                 }
@@ -118,14 +118,14 @@ public class Calculators extends Database {
 
     //other factors
     private static double other(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, double total, Move move, boolean spread, String weather){
-        total*=getMatchups(defender.base.types,move.type);
+        total*=getMatchups(defender.getBase().types,move.type);
         total*=STAB(attacker,move);
-        total*= Items.getItemEffect(attacker.item, move.moveCategory);
-        total*=getWeatherMultiplier(move, defender.base.types, weather);
+        total*= Items.getItemEffect(attacker.getString(Constants.Attributes.item), move.moveCategory);
+        total*=getWeatherMultiplier(move, defender.getBase().types, weather);
         total*=getAbilityMultiplierAttacker();
         if(spread){total*=0.75;}
 
-        if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.base.types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.item,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.base.types, weather));}
+        if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.getBase().types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.getBase().types, weather));}
 
         return total;
     }
@@ -139,7 +139,7 @@ public class Calculators extends Database {
 
         if(isAttacking){
             return switch(ability){
-                case "Guts"->{if(!currentPokemon.status.equals("None")){yield 1.5;}else{yield 1;}}
+                case "Guts"->{if(!currentPokemon.getString(Constants.Attributes.status).equals("None")){yield 1.5;}else{yield 1;}}
                 case "Iron Fist"->{if(move.moveCategory.equals(Constants.MOVE_CATS.Physical)){yield 1.2;}else{yield 1;}}
                 case "Tough Claws"->{if(move.moveCategory.equals(Constants.MOVE_CATS.Physical)){yield 1.3;}else{yield 1;}}
                 
@@ -148,7 +148,7 @@ public class Calculators extends Database {
         }else{
             return switch(ability){
                 case "Thick Fat"->{if(type.equals("Fire")||type.equals("Ice")){yield 0.5;}else{yield 1;}}
-                case "Marvel Scale"->{if(!currentPokemon.status.equals("None")){yield 0.5;}else{yield 1;}}
+                case "Marvel Scale"->{if(!currentPokemon.getString(Constants.Attributes.status).equals("None")){yield 0.5;}else{yield 1;}}
                 case "Heatproof"->{if(type.equals("Fire")){yield 0.5;}else{yield 1;}}
                 case "Dry Skin"->{if(type.equals("Fire")){yield 1.25;}else if(type.equals("Water")) {yield 0;}else{yield 1;}}
 
@@ -159,8 +159,8 @@ public class Calculators extends Database {
     }
 
     private static double STAB(EVCalculatorUI.CurrentPokemon you, Move move){
-            if(containsType(you.base.types, getType(move.type))){
-                if(you.ability.equals("Adaptability")){return 2;}
+            if(containsType(you.getBase().types, getType(move.type))){
+                if(you.getString(Constants.Attributes.ability).equals("Adaptability")){return 2;}
                 else{return 1.5;}
             }else{
                 return 1;

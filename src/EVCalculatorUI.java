@@ -1,5 +1,3 @@
-import org.w3c.dom.Attr;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -26,11 +24,21 @@ public class EVCalculatorUI extends Database{
     }
 
     private static CurrentPokemon[] initCurrentPokemon(){
-        final int[] leftEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed EV", true))};
-        final int[] leftBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Left-Side Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Special Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Left-Side Speed Boost", true))};
+        int[] leftEVs = new int[6];
+        int[] leftBoosts = new int[5];
+        int[] rightEVs = new int[6];
+        int[] rightBoosts = new int[5];
 
-        final int[] rightEVs = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side HP EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Attack EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Defense EV", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed EV", true))};
-        final int[] rightBoosts = new int[]{Integer.parseInt(HelperMethods.getComponentValue("Right-Side Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Attack Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Special Defense Boost", true)), Integer.parseInt(HelperMethods.getComponentValue("Right-Side Speed Boost", true))};
+        for(int i=0; i<6;i++){
+            String currentStat = Constants.STATS[i];
+            leftEVs[i] = Integer.parseInt(HelperMethods.getComponentValue("Left-Side "+currentStat+" EV", true));
+            rightEVs[i] = Integer.parseInt(HelperMethods.getComponentValue("Right-Side "+currentStat+" EV", true));
+
+            if(!currentStat.equals("HP")){
+                leftBoosts[i-1] = Integer.parseInt(HelperMethods.getComponentValue("Left-Side "+currentStat+" Boost", true));
+                rightBoosts[i-1] = Integer.parseInt(HelperMethods.getComponentValue("Right-Side "+currentStat+" Boost", true));
+            }
+        }
 
         if(Constants.DEBUG_UI_MODE){
             System.out.println("\nLEFT SIDE EVS: "+ Arrays.toString(leftEVs));
@@ -69,17 +77,17 @@ public class EVCalculatorUI extends Database{
     }
 
     private static void output(String process, CurrentPokemon subjectMon, CurrentPokemon opponentMon, String weather, boolean spread) {
-        Move moveUsed = subjectMon.move;
+        Move moveUsed = subjectMon.getMove();
         int[] EVrolls = {-1,-1,-1}; //0 is lowest roll, 1 is median roll, 2 is highest roll
 
         if (process.equals("Tank")){
-            moveUsed = opponentMon.move;
+            moveUsed = opponentMon.getMove();
             EVrolls = Calculators.findLeastHPEVs(opponentMon,subjectMon,moveUsed,weather,spread);
         }else if(process.equals("OHKO")){
             EVrolls = Calculators.findLeastAttackEVs(subjectMon,opponentMon,moveUsed,weather,spread);
 
         }else{ //for outspeeding
-            final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.stats[5], subjectMon.speedBoost)};
+            final int[] EV = {Calculators.findLeastSpeedEVs(subjectMon, opponentMon.stats[5], subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost))};
             if(Constants.DEBUG_DAMAGE_MODE){
                 System.out.println();
             }
@@ -102,7 +110,7 @@ public class EVCalculatorUI extends Database{
 
             if(EV != -1){
                 if(!process.equals("Outspeed")) {System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
-                }else{System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d",subjectMon.speedBoost,subjectMon.base.name,opponentMon.nature.name,opponentMon.speedEV,opponentMon.base.name,EV);}
+                }else{System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d",subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost),subjectMon.base.name,opponentMon.nature.name,opponentMon.getInt(Constants.Stats.Speed,Constants.Attributes.EV),opponentMon.base.name,EV);}
 
             }else{System.out.println("NOT POSSIBLE TO " + process.toUpperCase() + "\n");}
 
@@ -136,11 +144,6 @@ public class EVCalculatorUI extends Database{
                 this.makeBoostPanel();
             }else{this.otherPanel();}
         }
-
-        /*public void addObject(Component component, String componentName, boolean addToMap, String headerLabel){
-            if(!headerLabel.isEmpty()){this.addOneObject(new JLabel(headerLabel),headerLabel,false);}
-            this.addOneObject(component,componentName,addToMap);
-        }  */
 
         private void addObject(Component component, String componentName){
             componentName = this.title+componentName;
@@ -286,32 +289,20 @@ public class EVCalculatorUI extends Database{
         }
     }
 
+    public static void printAllComponentNames(){for(String i:componentMap.keySet()){System.out.println(i);}}
+
     //holds data for each pokemon on the UI
     static public class CurrentPokemon{
-        public enum Attributes{
-            basePKMN,
-            level,
-            item,
-            move,
-            nature,
-            stats,
-            boosts,
-            EV,
-            status,
-            ability
-        }
-
-        public Pokemon base;
-        public int level;
-        public String item;
-        public Move move;
-        public Nature nature;
-        private int[] stats;
-        public int[] boosts;
-        public int[] EVs;
-        public String status;
-        public String ability;
-
+        private final Pokemon base;
+        private final int level;
+        private final String item;
+        private final Move move;
+        private final Nature nature;
+        private final int[] stats = new int[6];
+        private final int[] boosts;
+        private final int[] EVs;
+        private final String status;
+        private final String ability;
 
         public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status,boolean subject){
             base = getPokemon(name);
@@ -325,12 +316,12 @@ public class EVCalculatorUI extends Database{
             this.ability = ability;
 
 
-            stats[0] = Calculators.calcHP(EVs[0],level,base.baseHP);
-            stats[1] = Calculators.statCalculation(base.baseAttack,31,EVs[1],nature.attack,level,boosts[0]);
-            stats[2] = Calculators.statCalculation(base.baseDefense,31,EVs[2],nature.defense,level,boosts[1]);
-            stats[3] = Calculators.statCalculation(base.baseSpatk,31,EVs[3],nature.spatk,level,boosts[2]);
-            stats[4] = Calculators.statCalculation(base.baseSpdef,31,EVs[4],nature.spdef,level,boosts[3]);
-            stats[5] = Calculators.statCalculation(base.baseSpeed,31,EVs[5],nature.speed,level,boosts[4]);
+            this.stats[0] = Calculators.calcHP(EVs[0],level,base.baseHP);
+            this.stats[1] = Calculators.statCalculation(base.baseAttack,31,EVs[1],nature.attack,level,boosts[0]);
+            this.stats[2] = Calculators.statCalculation(base.baseDefense,31,EVs[2],nature.defense,level,boosts[1]);
+            this.stats[3] = Calculators.statCalculation(base.baseSpatk,31,EVs[3],nature.spatk,level,boosts[2]);
+            this.stats[4] = Calculators.statCalculation(base.baseSpdef,31,EVs[4],nature.spdef,level,boosts[3]);
+            this.stats[5] = Calculators.statCalculation(base.baseSpeed,31,EVs[5],nature.speed,level,boosts[4]);
 
             this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true),subject);
         }
@@ -348,26 +339,42 @@ public class EVCalculatorUI extends Database{
                 case "Hadron Engine"-> stats[3]*=1.3;
                 case "Solar Power"->{if(weather.equals("Sun")){stats[3]*=1.5;}}
             }
-            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS, STILL IN THE SAME METHOD THO]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+stats[1]+"\nbefore pokemon def: "+stats[2]+"\nbefore pokemon spatk: "+stats[3]+"\nbefore pokemon spdef: "+stats[4]+"\nbefore pokemon speed: "+stats[5]+"\n----------\n[END].");};
+            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS, STILL IN THE SAME METHOD THO]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+stats[1]+"\nbefore pokemon def: "+stats[2]+"\nbefore pokemon spatk: "+stats[3]+"\nbefore pokemon spdef: "+stats[4]+"\nbefore pokemon speed: "+stats[5]+"\n----------\n[END].");}
         }
 
-        public int getValue(Constants.Stats stat, Attributes att){
+        public int getInt(Constants.Stats stat, Constants.Attributes att){
+            int mod = 0;
+            if(att==Constants.Attributes.boost){mod = 1;} //used bc the boost array has no value for hp so the indexes r different
 
-            return switch(att){
-                case stats -> switch(stat){
-                    case HP -> stats[0];
-                    case Attack -> stats[1];
-                    case Defense -> stats[2];
-                    case Spatk -> stats[3];
-                    case Spdef -> stats[4];
-                    case Speed -> stats[5];
-                    case ELSE -> throw new NullPointerException("oops. wrong stat buddy");
-                };
+            int[] list = switch(att){
+                case stats -> this.stats;
+                case EV -> this.EVs;
+                case boost -> this.boosts;
+                default -> new int[]{};
             };
 
+            if(att==Constants.Attributes.level){return this.level;}
+            return switch(stat){
+                case HP -> list[0];
+                case Attack -> list[1-mod];
+                case Defense -> list[2-mod];
+                case Spatk -> list[3-mod];
+                case Spdef -> list[4-mod];
+                case Speed -> list[5-mod];
+            };
         }
 
-    }
+        public Pokemon getBase(){return base;}
+        public Nature getNature(){return nature;}
+        public Move getMove(){return move;}
 
-    public static void printAllComponentNames(){for(String i:componentMap.keySet()){System.out.println(i);}}
+        public String getString(Constants.Attributes att) {
+            return switch (att) {
+                case item -> this.item;
+                case status -> this.status;
+                case ability -> this.ability;
+                default -> "yo wrong one " + att;
+            };
+        }
+    }
 }
