@@ -1,3 +1,5 @@
+import org.w3c.dom.Attr;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -141,17 +143,16 @@ public class EVCalculatorUI extends Database{
             this.addOneObject(component,componentName,addToMap);
         }  */
 
-        private void addObject(Component component, String componentName, boolean addToMap){
+        private void addObject(Component component, String componentName){
             componentName = this.title+componentName;
 
             c.fill = GridBagConstraints.HORIZONTAL;
             component.setSize(new Dimension(500,500));
             c.gridy = currentY;
             this.add(component, c);
-            if(addToMap){componentMap.put(componentName, this);}
             currentY++;
 
-            if(Constants.DEBUG_UI_MODE&&addToMap){System.out.println("Component ["+componentName+"] has been created.\nClass: "+component.getClass()+"\n");}
+            if(Constants.DEBUG_UI_MODE){System.out.println("Component ["+componentName+"] has been created.\nClass: "+component.getClass()+"\n");}
 
             this.repaint();
             this.revalidate();
@@ -161,47 +162,40 @@ public class EVCalculatorUI extends Database{
             String header = "Pokemon 1";
             if(this.title.equals("Right-Side ")){header="Pokemon 2";}
             final String[] natDex = getNatDexList();
-            final String[] moveList = getMoveList();
-            final String[] itemList = getItemList();
-            final String[] natureList = getNatureList();
-            final String[] abilityList = getAbilityList();
             String pokemonName = natDex[0];
 
             //text to denote who is attacking
-            this.addObject(new JLabel(header),"Header",false);
+            this.addObject(new JLabel(header),"Header");
 
             //your pokemon image
             JLabel iconLabel = new JLabel(new ImageIcon(ImageIO.read(HelperMethods.getSpriteFile(pokemonName))));
-            this.addObject(iconLabel,"Image",true);
+            this.addObject(iconLabel,"Image");
 
             //select what pokemonis attacking
             final JComboBox<String> selectedPokemon = new JComboBox<>(natDex);
-            this.addObject(selectedPokemon,"Pokemon",true);
+            this.addObject(selectedPokemon,"Pokemon");
+            componentMap.put(this.title+"Pokemon",selectedPokemon);
 
             //level select
-            this.addObject(new JTextField("100"),"Level",true);
+            JTextField level = new JTextField("100");
+            this.addObject(level,"Level");
+            componentMap.put(this.title+"Level",level);
+
 
             //evs
             for(String currentStat:Constants.STATS){
                 final String name = currentStat+" EV";
-                this.addObject(new JTextField(name),name,true);
+                final JTextField EV = new JTextField(name);
+                this.addObject(EV,name);
+                componentMap.put(this.title+name,EV);
             }
 
-            //status conditions
-            this.addObject(new JComboBox<>(Constants.STATUS_CONDITION_LIST),"Status",true);
-
-            //nature list
-            this.addObject(new JComboBox<>(natureList),"Nature",true);
-
-
-            //ability
-            this.addObject(new JComboBox<>(abilityList),"Ability",true);
-
-            //item
-            this.addObject(new JComboBox<>(itemList),"Item",true);
-
-            //move
-            this.addObject(new JComboBox<>(moveList),"Move",true);
+            for(Constants.Attribute att:Constants.ATTRIBUTES){
+                final String name = this.title+att.name;
+                final JComboBox<String> field = new JComboBox<>(att.items);
+                this.addObject(field,name);
+                componentMap.put(name,field);
+            }
 
             selectedPokemon.addActionListener(_ -> {
                 final String selected = Objects.requireNonNull(selectedPokemon.getSelectedItem()).toString();
@@ -219,11 +213,12 @@ public class EVCalculatorUI extends Database{
 
             for(String currentStat:Constants.STATS){
                 if(!currentStat.equals("HP")) {
-                    this.addObject(new JLabel(currentStat + " Boosts"),currentStat + " Boosts",false);
+                    this.addObject(new JLabel(currentStat + " Boosts"),currentStat + " Boosts");
 
                     final String name = this.title + currentStat + " Boost";
                     final JComboBox<String> boost = new JComboBox<>(Constants.BOOSTS);
-                    this.addObject(boost,name,true);
+                    this.addObject(boost,name);
+                    componentMap.put(name,boost);
 
                 }
             }
@@ -234,39 +229,41 @@ public class EVCalculatorUI extends Database{
             final String[] WEATHER = Constants.WEATHER_LIST;
 
             //text to denote what the panel does
-            this.addObject(new JLabel("Other"),"Title",false);
+            this.addObject(new JLabel("Other"),"Title");
 
             //filler
             this.add(Box.createVerticalGlue());
 
             //text to denote what the panel does
-            this.addObject(new JLabel("Weather"),"Weather Label",false);
+            this.addObject(new JLabel("Weather"),"Weather Label");
 
             //select what weather
             final JComboBox<String> weather = new JComboBox<>(WEATHER);
-            this.addObject(weather,"Weather",true);
+            this.addObject(weather,"Weather");
+            componentMap.put("Weather",weather);
 
             //select if spread
             final JCheckBox spread = new JCheckBox("Is this a spread move?");
-            this.addObject(spread,"Spread",true);
+            this.addObject(spread,"Spread");
+            componentMap.put("Spread",spread);
 
             //text to denote what the panel does
-            this.addObject(new JLabel("Find Minimum EVs to:"),"minEVs",false);
+            this.addObject(new JLabel("Find Minimum EVs to:"),"minEVs");
 
             //select what function
             final JComboBox<String> toDo = new JComboBox<>(Constants.CAPABILITY_LIST);
-            this.addObject(toDo,"Todo",false);
+            this.addObject(toDo,"Todo");
 
             //text to denote what the panel does
-            this.addObject(new JLabel("Select which side to find EVS for"),"minEVs",false);
+            this.addObject(new JLabel("Select which side to find EVS for"),"minEVs");
 
             //select what function
             final JComboBox<String> target = new JComboBox<>(new String[]{"Pokemon 1 (Left Side)", "Pokemon 2 (Right Side"});
-            this.addObject(target,"Target",false);
+            this.addObject(target,"Target");
 
 
             final JButton run = new JButton("Run");
-            this.addObject(run,"Run",true);
+            this.addObject(run,"Run");
 
 
             //gathers all info on both sides and performs preliminary calcs needed for the real damage calc

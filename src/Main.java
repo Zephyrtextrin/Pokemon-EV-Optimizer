@@ -5,6 +5,7 @@ import java.io.IOException;
 public class Main{
     public static void main(String[] args){
         Database.initialize(); //loads the pokedex
+        Constants.Attribute.init();
         final int SIZE = 200;
 
         final JFrame frame = new JFrame();

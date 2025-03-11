@@ -15,7 +15,7 @@ public class Constants{
     public static final double HIGHEST_ROLL = 1;
     public static final double[] ROLLS = {LOWEST_ROLL,MEDIAN_ROLL,HIGHEST_ROLL};
 
-    public static final List<String[]> ATTRIBUTES = new ArrayList<>();
+    public static final List<Attribute> ATTRIBUTES = new ArrayList<>();
     public static boolean isSpriteErrorPrinted = false;
 
     public enum MOVE_CATS{
@@ -39,10 +39,15 @@ public class Constants{
             this.name = name;
             this.items = items;
 
+            ATTRIBUTES.add(this);
         }
 
         public static void init(){
             new Attribute("Status",STATUS_CONDITION_LIST);
+            new Attribute("Nature",Database.getNatureList());
+            new Attribute("Ability",Database.getAbilityList());
+            new Attribute("Item",Database.getItemList());
+            new Attribute("Move",Database.getMoveList());
         }
     }
 }
