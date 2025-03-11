@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Constants{
-    public static final boolean DEBUG_DAMAGE_MODE = false; //enable/disable debug statements for damage calculations (these are quite lengthy so they get their own)
+    public static final boolean DEBUG_DAMAGE_MODE = true; //enable/disable debug statements for damage calculations (these are quite lengthy so they get their own)
     public static final boolean DEBUG_CALC_MODE = false; //enable/disable debug statements for other calculations
     public static final boolean DEBUG_UI_MODE = false; //enable/disable debug statements for the UI.
     public static final boolean DEBUG_DISABLE_OUTPUT = false; //if true: disables all output intended for end users

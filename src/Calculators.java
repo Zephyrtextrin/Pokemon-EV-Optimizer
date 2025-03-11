@@ -101,6 +101,7 @@ public class Calculators extends Database {
         for(double currentRoll:Constants.ROLLS) {
             for (int EV = 0; EV <= 252; EV += 4) {//ev goes up by 4 bc the stat only goes up every 4 evs
                 final int stat = statCalculation(baseStat, 31, EV, nature, you.getInt(Constants.Stats.HP, Constants.Attributes.level), boostCount);
+                secondaryAbilModifierYou(stat,Constants.Stats.Attack,you.getString(Constants.Attributes.ability));
                 final int damage = (int)(damageCalc(you,opp,move,spread,weather) * currentRoll);
 
                 if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\nyour calced attack: %d\nyour ev: %d\nyour base attack: %d\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name);}
@@ -122,7 +123,6 @@ public class Calculators extends Database {
         total*=STAB(attacker,move);
         total*= Items.getItemEffect(attacker.getString(Constants.Attributes.item), move.moveCategory);
         total*=getWeatherMultiplier(move, defender.getBase().types, weather);
-        total*=getAbilityMultiplierAttacker();
         if(spread){total*=0.75;}
 
         if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.getBase().types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.getBase().types, weather));}
@@ -130,7 +130,18 @@ public class Calculators extends Database {
         return total;
     }
 
-    private static double getAbilityMultiplierAttacker(){return 1;}
+    private static int secondaryAbilModifierYou(int calcedStat, Constants.Stats stat, String ability){
+        int mod = switch(stat){
+            case Attack -> {
+                switch(ability){
+                    case "Huge Power" -> {yield 2;}
+                    default -> throw new IllegalStateException("Unexpected value: " + ability);
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + stat);
+        };
+        return calcedStat*mod;
+    }
 
     //returns a modifier for the damage
     private static double abilityDamageModifier(EVCalculatorUI.CurrentPokemon currentPokemon, Move move, String ability, boolean isAttacking){

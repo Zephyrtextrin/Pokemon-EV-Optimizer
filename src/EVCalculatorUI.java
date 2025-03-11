@@ -307,7 +307,7 @@ public class EVCalculatorUI extends Database{
         private final String status;
         private final String ability;
 
-        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status,boolean subject){
+        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status){
             base = getPokemon(name);
             this.nature = nature;
             this.level = level;
@@ -326,12 +326,11 @@ public class EVCalculatorUI extends Database{
             this.stats[4] = Calculators.statCalculation(base.baseSpdef,31,EVs[4],nature.spdef,level,boosts[3]);
             this.stats[5] = Calculators.statCalculation(base.baseSpeed,31,EVs[5],nature.speed,level,boosts[4]);
 
-            this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true),subject);
+            this.abilityStatModifierOpp(HelperMethods.getComponentValue("Weather",true));
         }
 
         //directly modifies pokemon's stats
-        private void abilityStatModifier(String weather, boolean subject){
-            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[BEFORE ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+stats[1]+"\nbefore pokemon def: "+stats[2]+"\nbefore pokemon spatk: "+stats[3]+"\nbefore pokemon spdef: "+stats[4]+"\nbefore pokemon speed: "+stats[5]+"\n[ABILITY]: "+ability+"\n----------\n[END].");}
+        public void abilityStatModifierOpp(String weather){
 
             switch(ability){
                 case "Swift Swim"->{if(weather.equals("Rain")){stats[5]*=2;}}
@@ -342,7 +341,6 @@ public class EVCalculatorUI extends Database{
                 case "Hadron Engine"-> stats[3]*=1.3;
                 case "Solar Power"->{if(weather.equals("Sun")){stats[3]*=1.5;}}
             }
-            if(Constants.DEBUG_CALC_MODE&&subject){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS, STILL IN THE SAME METHOD THO]-\n[POKEMON]: "+base.name+"\n\nbefore pokemon atk: "+stats[1]+"\nbefore pokemon def: "+stats[2]+"\nbefore pokemon spatk: "+stats[3]+"\nbefore pokemon spdef: "+stats[4]+"\nbefore pokemon speed: "+stats[5]+"\n----------\n[END].");}
         }
 
         public int getInt(Constants.Stats stat, Constants.Attributes att){
