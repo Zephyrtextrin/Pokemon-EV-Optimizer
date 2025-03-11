@@ -4,7 +4,7 @@ import java.util.List;
 public class Constants{
     public static final boolean DEBUG_DAMAGE_MODE = false; //enable/disable debug statements for damage calculations (these are quite lengthy so they get their own)
     public static final boolean DEBUG_CALC_MODE = false; //enable/disable debug statements for other calculations
-    public static final boolean DEBUG_UI_MODE = true; //enable/disable debug statements for the UI.
+    public static final boolean DEBUG_UI_MODE = false; //enable/disable debug statements for the UI.
     public static final boolean DEBUG_DISABLE_OUTPUT = false; //if true: disables all output intended for end users
 
     public static final String[] BOOSTS = {"+0","-6","-5","-4","-3","-2","-1","+1","+2","+3","+4","+5","+6"};
@@ -48,7 +48,7 @@ public class Constants{
 
     public static final String[] WEATHER_LIST = {"No Weather","Sun","Rain","Sand","Snow"};
 
-    public static final String[] STATUS_CONDITION_LIST = {"None","Poison","Burn","Paralysis"};
+    public static final String[] STATUS_CONDITION_LIST = {"No Status Condition","Poison","Burn","Paralysis"};
 
     public static class Attribute{
         String name;

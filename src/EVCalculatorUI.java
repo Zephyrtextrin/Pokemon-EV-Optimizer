@@ -17,10 +17,11 @@ public class EVCalculatorUI extends Database{
         frame.setLayout(new GridLayout(1, 1)); //not good fix later
         frame.setVisible(true);
 
-        frame.add(new StatsPanel("Left-Side "));
-        frame.add(new StatsPanel(""));
-        frame.add(new StatsPanel("Right-Side "));
+        frame.add(new StatsPanel("Left-Side ",0,1));
+        frame.add(new StatsPanel("",0,0));
+        frame.add(new StatsPanel("Right-Side ",1,0));
 
+        frame.pack();
     }
 
     private static CurrentPokemon[] initCurrentPokemon(){
@@ -131,7 +132,7 @@ public class EVCalculatorUI extends Database{
         final GridBagConstraints c = new GridBagConstraints();
 
 
-        private StatsPanel(String name) throws IOException{
+        private StatsPanel(String name, int statPanelX, int boostPanelX) throws IOException{
             this.setLayout(new GridBagLayout());
             title = name;
             c.anchor = GridBagConstraints.LINE_START;
@@ -140,8 +141,8 @@ public class EVCalculatorUI extends Database{
             c.weightx = 0.5;
 
             if(!name.isEmpty()){
-                this.createStatsPanel();
-                this.makeBoostPanel();
+                this.createStatsPanel(statPanelX);
+                this.makeBoostPanel(boostPanelX);
             }else{this.otherPanel();}
         }
 
@@ -160,7 +161,10 @@ public class EVCalculatorUI extends Database{
             this.revalidate();
         }
 
-        public void createStatsPanel() throws IOException {
+        public void createStatsPanel(int x) throws IOException{
+            currentY = 0;
+            c.gridx = x;
+
             String header = "Pokemon 1";
             if(this.title.equals("Right-Side ")){header="Pokemon 2";}
             final String[] natDex = getNatDexList();
@@ -211,12 +215,11 @@ public class EVCalculatorUI extends Database{
         }
 
 
-        public void makeBoostPanel() {
-
+        public void makeBoostPanel(int x){
+            c.gridx = x;
+            currentY = 5;
             for(String currentStat:Constants.STATS){
                 if(!currentStat.equals("HP")) {
-                    this.addObject(new JLabel(currentStat + " Boosts"),currentStat + " Boosts");
-
                     final String name = this.title + currentStat + " Boost";
                     final JComboBox<String> boost = new JComboBox<>(Constants.BOOSTS);
                     this.addObject(boost,name);
