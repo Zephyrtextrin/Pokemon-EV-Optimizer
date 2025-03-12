@@ -68,6 +68,23 @@ public class Calculators extends Database {
         }
     }
 
+    public static int findOHKOpercentage(double rawDamage, int oppHP){
+        double rollsNoOhko = 0;
+        for(double i=0.85; i<=1;i+=0.01){
+            double rolledDamage = rawDamage*i;
+
+            if(Constants.DEBUG_CALC_MODE){System.out.println("[YOUR ROLL]: "+i+"\n[RAW DAMAGE]: "+rawDamage+"\n[ROLLED DAMAGE]: "+rolledDamage+"[OPPONENT HP]: "+oppHP+"\n");}
+
+            if(oppHP>rolledDamage){rollsNoOhko++;}
+            else{break;}
+        }
+        double percentage = (rollsNoOhko/16)*100; //16 because that is the number of rolls between 0.85 and 1
+        if(Constants.DEBUG_CALC_MODE){
+            System.out.println("\n\nROLLS NO OHKO: "+rollsNoOhko+"\nPERCENTAGE (before subtraction): "+percentage);
+        }
+        return (int)(100-percentage);
+    }
+
     //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
     private static double getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move) {
         double attackerLevel = (((double)(2* attacker.getInt(Constants.Stats.HP, Constants.Attributes.level))/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable

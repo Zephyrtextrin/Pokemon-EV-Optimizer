@@ -99,30 +99,41 @@ public class EVCalculatorUI extends Database{
     }
 
     private static void outputClean(String process, CurrentPokemon subjectMon, CurrentPokemon opponentMon, int[] EVrolls, String moveUsed){
-        if(!moveUsed.isEmpty()){moveUsed="with "+moveUsed;} //this means that a tank/ohko output will display "ev to whatever [pokemonname] with [movename] but an outspeed output will just say "evs to outspeed [pokemonname] since u have to input a move name no matter what but if ur looking to outspeed ur not using a move
-        int index = 0;
-        for(int EV:EVrolls){
-            String message = switch (index) {
-                case 0 -> "-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-";
-                case 1 -> "-[ASSUMING AVERAGE DAMAGE ROLL]-";
-                default -> "-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-";
-            };
-            if(!Objects.equals(process, "Outspeed")){System.out.println(message);}
+        if(!Constants.DEBUG_DISABLE_OUTPUT) {
+            if(!moveUsed.isEmpty()){moveUsed = "with "+moveUsed;} //this means that a tank/ohko output will display "ev to whatever [pokemonname] with [movename] but an outspeed output will just say "evs to outspeed [pokemonname] since u have to input a move name no matter what but if ur looking to outspeed ur not using a move
+            int index = 0;
+            for (int EV : EVrolls){
+                if(index!=3) {
+                    String message = switch (index) {
+                        case 0 -> "-[ASSUMING LOWEST POSSIBLE DAMAGE ROLL]-";
+                        case 1 -> "-[ASSUMING AVERAGE DAMAGE ROLL]-";
+                        default -> "-[ASSUMING HIGHEST POSSIBLE DAMAGE ROLL]-";
+                    };
 
-            if(EV != -1){
-                if(!process.equals("Outspeed")) {System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
-                }else{System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d",subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost),subjectMon.base.name,opponentMon.nature.name,opponentMon.getInt(Constants.Stats.Speed,Constants.Attributes.EV),opponentMon.base.name,EV);}
+                    if (!Objects.equals(process, "Outspeed")) {
+                        System.out.println(message);
+                    }
 
-            }else{System.out.println("NOT POSSIBLE TO " + process.toUpperCase() + "\n");}
+                    if (EV != -1) {
+                        if (!process.equals("Outspeed")) {
+                            System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
+                        } else {
+                            System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d", subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost), subjectMon.base.name, opponentMon.nature.name, opponentMon.getInt(Constants.Stats.Speed, Constants.Attributes.EV), opponentMon.base.name, EV);
+                        }
+
+                    } else {
+                        System.out.println("\nNOT POSSIBLE TO " + process.toUpperCase() + "\n");
+                    }
 
 
-            if(index==2){
-                if(!process.equals("Outspeed")&&EVrolls[2]!=-1){System.out.println("Please remember that only OHKOing with the highest possible damage roll means there's about a 6% chance you actually ohko, and with an average (median) roll is only 50%- Please do keep in mind this will make matchups RNG-dependant.\nObviously, OHKOing with the lowest possible roll will not have to account for RNG.\n");}
+                }else{
+                    if(process.equals("OHKO")&&EVrolls[3]!=-1){System.out.println("\n[CHANCE TO OHKO]: "+EV+"%\n");}
 
-                System.out.println("-----------[END]-----------");
-            } //this is appended to the end of highrolls because the highroll typically goes last
+                    System.out.println("-----------[END]-----------");
+                } //this is appended to the end of highrolls because the highroll typically goes last
 
-            index++;
+                index++;
+            }
         }
     }
 
