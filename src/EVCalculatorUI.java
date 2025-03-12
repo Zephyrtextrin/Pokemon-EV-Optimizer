@@ -59,7 +59,7 @@ public class EVCalculatorUI extends Database{
                 getNature(HelperMethods.getComponentValue("Left-Side Nature", true)),
                 leftEVs, leftBoosts,
                 HelperMethods.getComponentValue("Left-Side Ability", true),
-                HelperMethods.getComponentValue("Left-Side Status", true), true
+                HelperMethods.getComponentValue("Left-Side Status", true)
 
         );
 
@@ -71,7 +71,7 @@ public class EVCalculatorUI extends Database{
                 getNature(HelperMethods.getComponentValue("Right-Side Nature", true)),
                 rightEVs, rightBoosts,
                 HelperMethods.getComponentValue("Right-Side Ability", true),
-                HelperMethods.getComponentValue("Right-Side Status", true), false
+                HelperMethods.getComponentValue("Right-Side Status", true)
 
         );
         return new CurrentPokemon[]{leftSide,rightSide};
@@ -289,7 +289,6 @@ public class EVCalculatorUI extends Database{
                 CurrentPokemon[] allData = initCurrentPokemon();
                 CurrentPokemon subjectMon = allData[1]; //who is attacking/defending
                 CurrentPokemon opponentMon = allData[0];
-                if(Constants.DEBUG_CALC_MODE){System.out.println("\n-[AFTER ABILITY MODIFIER CALCULATIONS]-\n[POKEMON]: "+subjectMon.base.name+"\n\nafter pokemon atk: "+subjectMon.stats[1]+"\nafter pokemon def: "+subjectMon.stats[2]+"\nafter pokemon spatk: "+subjectMon.stats[3]+"\nafter pokemon spdef: "+subjectMon.stats[4]+"\nafter pokemon speed: "+subjectMon.stats[5]+"\n----------\n[END].");}
 
                 final String process = Objects.requireNonNull(toDo.getSelectedItem()).toString();
 
@@ -298,7 +297,7 @@ public class EVCalculatorUI extends Database{
                     opponentMon = allData[1];
                 }
 
-                if(!Constants.DEBUG_DISABLE_OUTPUT){output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());}
+                output(process, subjectMon, opponentMon, Objects.requireNonNull(weather.getSelectedItem()).toString(),spread.isSelected());
             });
         }
     }
@@ -387,6 +386,13 @@ public class EVCalculatorUI extends Database{
                 case ability -> this.ability;
                 default -> "yo wrong one " + att;
             };
+        }
+
+        public void setStat(Constants.Stats statToSet, int statInt){
+            switch(statToSet){
+                case Attack -> this.stats[1] = statInt;
+                default -> {}
+            }
         }
     }
 }

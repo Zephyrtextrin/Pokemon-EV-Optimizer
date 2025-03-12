@@ -100,6 +100,8 @@ public class Calculators extends Database {
 
     //finds what stat boost you need to ohko
     public static int[] findLeastAttackEVs(EVCalculatorUI.CurrentPokemon you, EVCalculatorUI.CurrentPokemon opp, Move move, String weather, boolean spread){
+        //sets up which attacking stat to use
+        Constants.Stats statToChange = Constants.Stats.Attack;
         int baseStat = you.getBase().baseAttack;
         double nature = you.getNature().attack;
         int boostCount = you.getInt(Constants.Stats.Attack, Constants.Attributes.boost);
@@ -110,19 +112,24 @@ public class Calculators extends Database {
             nature = you.getNature().spatk;
             boostCount = you.getInt(Constants.Stats.Spatk, Constants.Attributes.boost);
             defenderStat = opp.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
+            statToChange = Constants.Stats.Spatk;
         }
 
         int index = 0;
-        final int[] EVrolls = {-1,-1,-1};
+        final int[] EVrolls = {-1,-1,-1,-1};
 
-        for(double currentRoll:Constants.ROLLS) {
-            for (int EV = 0; EV <= 252; EV += 4) {//ev goes up by 4 bc the stat only goes up every 4 evs
-                final int stat = statCalculation(baseStat, 31, EV, nature, you.getInt(Constants.Stats.HP, Constants.Attributes.level), boostCount);
-                secondaryAbilModifierYou(stat,Constants.Stats.Attack,you.getString(Constants.Attributes.ability));
+        for(double currentRoll:Constants.ROLLS){
+            for (int EV = 0; EV <= 252; EV += 4){//ev goes up by 4 bc the stat only goes up every 4 evs
+                final int calcedStatTemp = statCalculation(baseStat, 31, EV, nature, you.getInt(Constants.Stats.HP, Constants.Attributes.level), boostCount);
+                you.setStat(statToChange, calcedStatTemp);
+                you.abilityStatModifierOpp(weather);
+
                 final int damage = (int)(damageCalc(you,opp,move,spread,weather) * currentRoll);
 
-                if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\nyour calced attack: %d\nyour ev: %d\nyour base attack: %d\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\n",stat,EV,baseStat,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name);}
+                //checks if EV = 0 so that way it only runs once and doesnt nuke the log with a million trillion messages
+                if(Constants.DEBUG_DAMAGE_MODE||(EV==0&&Constants.DEBUG_CALC_MODE)){System.out.printf("\nyour attack: %d\nyour special atk: %d\nyour ev: %d\nyour base attack: %d\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\nspecial or physical: %s\n", you.getInt(Constants.Stats.Attack,Constants.Attributes.stats),you.getInt(Constants.Stats.Spatk,Constants.Attributes.stats),EV,baseStat,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name,move.moveCategory);}
                 if(damage >= opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)){
+                    EVrolls[3] = findOHKOpercentage(damageCalc(you,opp,move,spread,weather),opp.getInt(Constants.Stats.HP, Constants.Attributes.stats));
                     EVrolls[index] = EV;
                     break;
                 }
@@ -147,20 +154,8 @@ public class Calculators extends Database {
         return total;
     }
 
-    private static int secondaryAbilModifierYou(int calcedStat, Constants.Stats stat, String ability){
-        int mod = switch(stat){
-            case Attack -> {
-                switch(ability){
-                    case "Huge Power" -> {yield 2;}
-                    default -> throw new IllegalStateException("Unexpected value: " + ability);
-                }
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + stat);
-        };
-        return calcedStat*mod;
-    }
 
-    //returns a modifier for the damage
+    //returns a modifier for the damage, this is for abilities that affect the actual damage num itself and not your stats
     private static double abilityDamageModifier(EVCalculatorUI.CurrentPokemon currentPokemon, Move move, String ability, boolean isAttacking){
         final String type = move.type;
         //isAttacking refers to if the attacking pokemon has this ability. so if its true then put all the positive modifiers like guts in here, and false for things like thick fat
