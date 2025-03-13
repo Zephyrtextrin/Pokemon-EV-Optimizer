@@ -8,7 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 
 public class FileReader{
-    public static String getAtt(){
+    public static void initReader(){
         final File databaseFile = Constants.DatabaseXML;
         try {
 
@@ -18,31 +18,33 @@ public class FileReader{
             database.getDocumentElement().normalize();
 
 
-            if (Constants.DEBUG_DB_MODE) {
-                debugPrint(database);
-            }
+            if (Constants.DEBUG_DB_MODE){debugPrint(database);}
 
             NodeList allPKMN = database.getElementsByTagName("pokemon");
 
             for(int temp = 0; temp<allPKMN.getLength(); temp++) {
 
-                Element currentPKMN = (Element) allPKMN.item(temp);
+                final Element currentPKMN = (Element) allPKMN.item(temp);
 
-                int stats[] = new int[6];
-
+                final int stats[] = new int[6];
                 for(int i=0; i<Constants.STATS.length; i++){
-                    System.out.println("CURRENT STAT: "+);
+                    if(Constants.DEBUG_DB_MODE){System.out.println("CURRENT STAT: "+Constants.STATS[i[)};
                     stats[i] = Integer.parseInt(currentPKMN.getElementsByTagName(Constants.STATS[i].toLowerCase()).item(0).getTextContent());
-
                 }
+                
+                final Type[] typelist = new Type[]{currentPKMN.getElementsByTagName("type1").item(0).getTextContent(),currentPKMN.getElementsByTagName("type2").item(0).getTextContent()}
+                final String name = currentPKMN.getElementsByTagName("name").item(0).getTextContent();
 
+                new Pokemon(name,typeList,stats);
             }
 
         }catch(Exception e){e.printStackTrace();}
-        return "-1";
     }
 
-    public static void debugPrint(Document file){
+private static String getItem(String item, Element element){
+    return element.getElementsByTagName(item.toLowerCase()).item(0).getTextContent()
+}
+    private static void debugPrint(Document file){
 
 
         if(Constants.DEBUG_DB_MODE) {
