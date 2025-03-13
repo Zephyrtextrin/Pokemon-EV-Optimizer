@@ -1,0 +1,15 @@
+<pokemonDB>
+<pokemon id="1">
+<name>Bulbasaur</name>
+<type1>Grass</type1>
+<type2>Poison</type2>
+<stats>
+<hp>45</hp>
+<attack>49</attack>
+<defense>49</defense>
+<spatk>65</spatk>
+<spdef>65</spdef>
+<speed>45</speed>
+</stats>
+</pokemon>
+</pokemonDB>
