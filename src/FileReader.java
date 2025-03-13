@@ -3,6 +3,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.crypto.Data;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -28,22 +29,21 @@ public class FileReader{
 
                 final int stats[] = new int[6];
                 for(int i=0; i<Constants.STATS.length; i++){
-                    if(Constants.DEBUG_DB_MODE){System.out.println("CURRENT STAT: "+Constants.STATS[i[)};
-                    stats[i] = Integer.parseInt(currentPKMN.getElementsByTagName(Constants.STATS[i].toLowerCase()).item(0).getTextContent());
+                    if(Constants.DEBUG_DB_MODE){System.out.println("CURRENT STAT: "+Constants.STATS[i]);}
+                    stats[i] = Integer.parseInt(getItem(Constants.STATS[i].toLowerCase(),currentPKMN));
                 }
                 
-                final Type[] typelist = new Type[]{currentPKMN.getElementsByTagName("type1").item(0).getTextContent(),currentPKMN.getElementsByTagName("type2").item(0).getTextContent()}
-                final String name = currentPKMN.getElementsByTagName("name").item(0).getTextContent();
+                final Database.Type[] typeList = new Database.Type[]{Database.getType(getItem("type1",currentPKMN)),Database.getType(getItem("type2",currentPKMN))};
+                final String name = getItem("name",currentPKMN);
+                final String dex = getItem("id",currentPKMN);
 
-                new Pokemon(name,typeList,stats);
+                new Database.Pokemon(Integer.parseInt(dex),name,typeList,stats);
             }
 
         }catch(Exception e){e.printStackTrace();}
     }
 
-private static String getItem(String item, Element element){
-    return element.getElementsByTagName(item.toLowerCase()).item(0).getTextContent()
-}
+private static String getItem(String item, Element element){return element.getElementsByTagName(item.toLowerCase()).item(0).getTextContent();}
     private static void debugPrint(Document file){
 
 

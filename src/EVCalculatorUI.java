@@ -328,7 +328,10 @@ public class EVCalculatorUI extends Database{
             this.status = status;
             this.ability = ability;
 
+            this.recalcStats();
             this.abilityStatModifierOpp(HelperMethods.getComponentValue("Weather",true));
+
+            if(Constants.DEBUG_CALC_MODE){System.out.println("---[CURRENT POKEMON INITIALIZED!]---\n");}
         }
 
         //directly modifies pokemon's stats
@@ -348,12 +351,10 @@ public class EVCalculatorUI extends Database{
         public void recalcStats(){
             this.stats[0] = Calculators.calcHP(EVs[0],level,base.getStat(Constants.Stats.HP));
 
-            for(int i = 1; i<6;i++) {
-                this.stats[i] = Calculators.statCalculation(base.getStat(Constants.Stats.Attack), 31, EVs[i], nature.getStatsArray()[i-1], level, boosts[i-1]);
-                if(Constants.DEBUG_CALC_MODE){
-                    System.out.println(Constants.STATS[i]+": "+Calculators.statCalculation(base.getStat(Constants.Stats.Attack), 31, EVs[i], nature.getStatsArray()[i-1], level, boosts[i-1]));
-                }
-            }
+            for(int i = 1; i<6;i++) {this.stats[i] = Calculators.statCalculation(base.getStat(Constants.Stats.Attack), 31, EVs[i], nature.getStatsArray()[i-1], level, boosts[i-1]);}
+
+            this.abilityStatModifierOpp(HelperMethods.getComponentValue("Weather", true));
+
         }
         public int getInt(Constants.Stats stat, Constants.Attributes att){
             int mod = 0;
@@ -389,10 +390,10 @@ public class EVCalculatorUI extends Database{
                 default -> "yo wrong one " + att;
             };
         }
-
-        public void setStat(Constants.Stats statToSet, int statInt){
+        public void setEVs(Constants.Stats statToSet, int statInt){
             switch(statToSet){
-                case Attack -> this.stats[1] = statInt;
+                case Attack -> this.EVs[1] = statInt;
+                case Spatk -> this.EVs[3] = statInt;
                 default -> {}
             }
         }
