@@ -59,11 +59,14 @@ public class Main{
         final NodeList allPKMN = database.getElementsByTagName("pokemon");
 
         for(int temp = 0; temp<allPKMN.getLength(); temp++){
-                
             final Element currentPKMN = (Element)allPKMN.item(temp);
 
             final String name = getItem("name",currentPKMN);
-            final Database.Type[] typeList = new Database.Type[]{Database.getType(getItem("type1",currentPKMN)),Database.getType(getItem("type2",currentPKMN))};
+
+            Database.Type[] typeList;
+
+            try{typeList = new Database.Type[]{Database.getType(getItem("type1",currentPKMN)),Database.getType(getItem("type2",currentPKMN))};}
+            catch (NullPointerException e){typeList=new Database.Type[]{Database.getType(getItem("type1",currentPKMN))};}
 
             final int[] stats = new int[6];
             if(Constants.DEBUG_DB_MODE){System.out.println("\n---[DEBUG: INITIALIZING STATS]---\nPokemon name: "+name+"\n");}
