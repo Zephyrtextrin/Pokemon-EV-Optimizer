@@ -118,7 +118,7 @@ public class EVCalculatorUI extends Database{
                         if (!process.equals("Outspeed")) {
                             System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
                         } else {
-                            System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d", subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost), subjectMon.base.name, opponentMon.nature.name, opponentMon.getInt(Constants.Stats.Speed, Constants.Attributes.EV), opponentMon.base.name, EV);
+                            System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d", subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost), subjectMon.base.name, opponentMon.nature.getName(), opponentMon.getInt(Constants.Stats.Speed, Constants.Attributes.EV), opponentMon.base.name, EV);
                         }
 
                     } else {
@@ -328,14 +328,6 @@ public class EVCalculatorUI extends Database{
             this.status = status;
             this.ability = ability;
 
-
-            this.stats[0] = Calculators.calcHP(EVs[0],level,base.baseHP);
-            this.stats[1] = Calculators.statCalculation(base.baseAttack,31,EVs[1],nature.attack,level,boosts[0]);
-            this.stats[2] = Calculators.statCalculation(base.baseDefense,31,EVs[2],nature.defense,level,boosts[1]);
-            this.stats[3] = Calculators.statCalculation(base.baseSpatk,31,EVs[3],nature.spatk,level,boosts[2]);
-            this.stats[4] = Calculators.statCalculation(base.baseSpdef,31,EVs[4],nature.spdef,level,boosts[3]);
-            this.stats[5] = Calculators.statCalculation(base.baseSpeed,31,EVs[5],nature.speed,level,boosts[4]);
-
             this.abilityStatModifierOpp(HelperMethods.getComponentValue("Weather",true));
         }
 
@@ -353,6 +345,16 @@ public class EVCalculatorUI extends Database{
             }
         }
 
+        public void recalcStats(){
+            this.stats[0] = Calculators.calcHP(EVs[0],level,base.getStat(Constants.Stats.HP));
+
+            for(int i = 1; i<6;i++) {
+                this.stats[i] = Calculators.statCalculation(base.getStat(Constants.Stats.Attack), 31, EVs[i], nature.getStatsArray()[i-1], level, boosts[i-1]);
+                if(Constants.DEBUG_CALC_MODE){
+                    System.out.println(Constants.STATS[i]+": "+Calculators.statCalculation(base.getStat(Constants.Stats.Attack), 31, EVs[i], nature.getStatsArray()[i-1], level, boosts[i-1]));
+                }
+            }
+        }
         public int getInt(Constants.Stats stat, Constants.Attributes att){
             int mod = 0;
             if(att==Constants.Attributes.boost){mod = 1;} //used bc the boost array has no value for hp so the indexes r different

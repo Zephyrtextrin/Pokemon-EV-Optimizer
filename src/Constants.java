@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class Constants{
 
     public static final List<Attribute> ATTRIBUTES = new ArrayList<>();
     public static boolean isSpriteErrorPrinted = false;
+
+    public static final File DatabaseXML = new File("src/DB.xml");
 
     public enum MOVE_CATS{
         Physical,

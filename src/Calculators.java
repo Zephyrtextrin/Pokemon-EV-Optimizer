@@ -14,7 +14,7 @@ public class Calculators extends Database {
     public static int findLeastSpeedEVs(EVCalculatorUI.CurrentPokemon you, int targetStat, int boostCount){
 
         for(int EV = 0; EV<=252; EV++){
-            final int stat = statCalculation(you.getBase().baseSpeed,31,EV,you.getNature().speed,you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
+            final int stat = statCalculation(you.getBase().baseSpeed,31,EV,you.getNature().getValue(Constants.Stats.Speed),you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
             if(Constants.DEBUG_DAMAGE_MODE){System.out.println("\nOPP SPEED STAT: "+targetStat+"\nYOUR SPEED STAT: "+stat+"\nYOUR SPEED EV: "+EV+"\nOPP SPPEED BOOST: "+HelperMethods.getComponentValue("Right-Side Speed Boost", true)+"\nOPP SPPED BOOST MODIFIER: "+getBoostModifier(Double.parseDouble(HelperMethods.getComponentValue("Right-Side Speed Boost", true))));}
             if(stat>targetStat){return EV;}
         }
@@ -103,13 +103,13 @@ public class Calculators extends Database {
         //sets up which attacking stat to use
         Constants.Stats statToChange = Constants.Stats.Attack;
         int baseStat = you.getBase().baseAttack;
-        double nature = you.getNature().attack;
+        double nature = you.getNature().getValue(Constants.Stats.Attack);
         int boostCount = you.getInt(Constants.Stats.Attack, Constants.Attributes.boost);
         int defenderStat = opp.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
         if(move.moveCategory==Constants.MOVE_CATS.Special){
             baseStat = you.getBase().baseSpatk;
-            nature = you.getNature().spatk;
+            nature = you.getNature().getValue(Constants.Stats.Spatk);
             boostCount = you.getInt(Constants.Stats.Spatk, Constants.Attributes.boost);
             defenderStat = opp.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
             statToChange = Constants.Stats.Spatk;
