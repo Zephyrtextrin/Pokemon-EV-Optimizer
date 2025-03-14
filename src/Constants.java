@@ -5,18 +5,19 @@ import java.util.List;
 public class Constants{
     public static final boolean DEBUG_DAMAGE_MODE = false; //enable/disable debug statements for damage calculations (these are quite lengthy so they get their own)
     public static final boolean DEBUG_CALC_MODE = true; //enable/disable debug statements for other calculations
-    public static final boolean DEBUG_UI_MODE = false; //enable/disable debug statements for the UI.
+    public static final boolean DEBUG_UI_MODE = true; //enable/disable debug statements for the UI.
     public static final boolean DEBUG_DB_MODE = false; //used exclusively to test xml file reading
     public static final boolean DEBUG_DISABLE_OUTPUT = true; //if true: disables all output intended for end users
 
     public static final String[] BOOSTS = {"+0","-6","-5","-4","-3","-2","-1","+1","+2","+3","+4","+5","+6"};
     public static final String[] STATS = {"HP","Attack","Defense","Special Attack","Special Defense","Speed"};
+    public static final String[] NATURES_DISPLAY = {"+Attack","+Defense","+Special Attack","+Special Defense","+Speed","-Attack","-Defense","-Special Attack","-Special Defense","-Speed"};
 
     public static final double LOWEST_ROLL = 0.85;
     public static final double MEDIAN_ROLL = 0.92;
     public static final double HIGHEST_ROLL = 1;
     public static final double[] ROLLS = {LOWEST_ROLL,MEDIAN_ROLL,HIGHEST_ROLL};
-
+    public static final Stats[] ALL_STATS = Stats.values();
     public static final List<Attribute> ATTRIBUTES = new ArrayList<>();
     public static boolean isSpriteErrorPrinted = false;
 
@@ -67,7 +68,7 @@ public class Constants{
 
         public static void init(){
             new Attribute("Status",STATUS_CONDITION_LIST);
-            new Attribute("Nature",Database.getNatureList());
+            new Attribute("Nature",NATURES_DISPLAY);
             new Attribute("Ability",Database.getAbilityList());
             new Attribute("Item",Database.getItemList());
             new Attribute("Move",Database.getMoveList());

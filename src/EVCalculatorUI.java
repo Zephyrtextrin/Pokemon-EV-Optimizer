@@ -56,7 +56,7 @@ public class EVCalculatorUI extends Database{
                 Integer.parseInt(HelperMethods.getComponentValue("Left-Side Level", true)),
                 HelperMethods.getComponentValue("Left-Side Item", true),
                 getMove(HelperMethods.getComponentValue("Left-Side Move", true)),
-                getNature(HelperMethods.getComponentValue("Left-Side Nature", true)),
+                HelperMethods.getComponentValue("Left-Side Nature", true),
                 leftEVs, leftBoosts,
                 HelperMethods.getComponentValue("Left-Side Ability", true),
                 HelperMethods.getComponentValue("Left-Side Status", true)
@@ -68,7 +68,7 @@ public class EVCalculatorUI extends Database{
                 Integer.parseInt(HelperMethods.getComponentValue("Right-Side Level", true)),
                 HelperMethods.getComponentValue("Right-Side Item", true),
                 getMove(HelperMethods.getComponentValue("Right-Side Move", true)),
-                getNature(HelperMethods.getComponentValue("Right-Side Nature", true)),
+                HelperMethods.getComponentValue("Right-Side Nature", true),
                 rightEVs, rightBoosts,
                 HelperMethods.getComponentValue("Right-Side Ability", true),
                 HelperMethods.getComponentValue("Right-Side Status", true)
@@ -116,9 +116,9 @@ public class EVCalculatorUI extends Database{
 
                     if (EV != -1) {
                         if (!process.equals("Outspeed")) {
-                            System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.base.name, process.toLowerCase(), opponentMon.base.name, moveUsed, EV);
+                            System.out.printf("Minimum EVs needed for %s to %s %s %s: %d\n\n", subjectMon.name, process.toLowerCase(), opponentMon.name, moveUsed, EV);
                         } else {
-                            System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d", subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost), subjectMon.base.name, opponentMon.nature.getName(), opponentMon.getInt(Constants.Stats.Speed, Constants.Attributes.EV), opponentMon.base.name, EV);
+                            System.out.printf("Minimum EVs needed for %d boosts %s to outspeed %s nature %d EV %s: %d", subjectMon.getInt(Constants.Stats.Speed, Constants.Attributes.boost), subjectMon.name, opponentMon.nature, opponentMon.getInt(Constants.Stats.Speed, Constants.Attributes.EV), opponentMon.name, EV);
                         }
 
                     } else {
@@ -305,21 +305,26 @@ public class EVCalculatorUI extends Database{
     public static void printAllComponentNames(){for(String i:componentMap.keySet()){System.out.println(i);}}
 
     //holds data for each pokemon on the UI
-    static public class CurrentPokemon{
-        private final Pokemon base;
+    static public class CurrentPokemon extends Database.Pokemon{
         private final int level;
         private final String item;
         private final Move move;
-        private final Nature nature;
+        private final Nature.NATURES nature;
         private final int[] stats = new int[6];
         private final int[] boosts;
         private final int[] EVs;
         private final String status;
         private final String ability;
 
-        public CurrentPokemon(String name, int level, String item, Move move, Nature nature, int[] EVs, int[] boosts, String ability, String status){
-            base = getPokemon(name);
-            this.nature = nature;
+        public CurrentPokemon(String name, int level, String item, Move move, String natureTemp, int[] EVs, int[] boosts, String ability, String status){
+            super();
+            final Pokemon tempBase = getPokemon(name);
+            super.dexNumber = tempBase.dexNumber;
+            super.name = tempBase.name;
+            super.stats = tempBase.stats;
+            super.types = tempBase.types;
+
+            this.nature = setNature(natureTemp);
             this.level = level;
             this.item = item;
             this.move = move;
@@ -329,33 +334,57 @@ public class EVCalculatorUI extends Database{
             this.ability = ability;
 
             this.recalcStats();
-            this.abilityStatModifierOpp(HelperMethods.getComponentValue("Weather",true));
+            this.abilityStatModifier(HelperMethods.getComponentValue("Weather",true));
 
             if(Constants.DEBUG_CALC_MODE){System.out.println("---[CURRENT POKEMON INITIALIZED!]---\n");}
         }
 
         //directly modifies pokemon's stats
-        public void abilityStatModifierOpp(String weather){
-
+        public void abilityStatModifier(String weather){
             switch(ability){
                 case "Swift Swim"->{if(weather.equals("Rain")){stats[5]*=2;}}
                 case "Chlorophyll"->{if(weather.equals("Sun")){stats[5]*=2;}}
                 case "Huge Power"->stats[1]*=2;
-                case "Hustle"->stats[1]*=1.5;
+                case "Hustle"-> stats[1]*=1.5;
                 case "Orichalcum Pulse"-> stats[1]*=1.3;
                 case "Hadron Engine"-> stats[3]*=1.3;
                 case "Solar Power"->{if(weather.equals("Sun")){stats[3]*=1.5;}}
             }
         }
 
+        private Nature.NATURES setNature(String natureBase){
+
+            final Nature.NATURES[] naturesToArray = Nature.NATURES.values();
+
+            String natureTemp = natureBase.substring(1).toUpperCase();
+            if(natureBase.startsWith("+")){natureTemp+="_POSITIVE";}else{natureTemp+="_NEGATIVE";}
+
+            if(Constants.DEBUG_UI_MODE){System.out.println("\n---[DEBUG: SET NATURE]---\n\n[NATURE TEMP]: "+natureTemp+"\n[NATURE BASE]: "+natureBase);}
+
+
+            for(Nature.NATURES currentNature:naturesToArray){
+                if(Constants.DEBUG_UI_MODE){
+                    System.out.println("[CURRENT NATURE]: "+currentNature+"\n[MATCHES?]: "+natureTemp.equalsIgnoreCase(currentNature.toString()));
+                }
+                if(natureTemp.equalsIgnoreCase(currentNature.toString())){return currentNature;}
+            }
+
+            return Nature.NATURES.NEUTRAL;
+        }
         public void recalcStats(){
-            this.stats[0] = Calculators.calcHP(EVs[0],level,base.getStat(Constants.Stats.HP));
+            this.stats[0] = Calculators.calcHP(EVs[0],level,getStat(Constants.Stats.HP));
 
-            for(int i = 1; i<6;i++) {this.stats[i] = Calculators.statCalculation(base.getStat(Constants.Stats.Attack), 31, EVs[i], nature.getStatsArray()[i-1], level, boosts[i-1]);}
+            for(int i = 1; i<6;i++){
+                final Constants.Stats currentStat = Constants.ALL_STATS[i];
+                if(Constants.DEBUG_CALC_MODE&&((EVs[1]==0)||(EVs[3]==0))){System.out.println("\n---[DEBUG: STAT CALCULATION]---\n\n[YOUR NATURE]: "+nature+"\n[CURRENT STAT]: "+currentStat+"\n[MODIFIER]: "+getNature(currentStat)+"\n\n---[END.]---\n");}
+                this.stats[i] = Calculators.statCalculation(getStat(currentStat), 31, EVs[i], this.getNature(currentStat), level, boosts[i-1]);
+            }
 
-            this.abilityStatModifierOpp(HelperMethods.getComponentValue("Weather", true));
+            this.abilityStatModifier(HelperMethods.getComponentValue("Weather", true));
+
 
         }
+
         public int getInt(Constants.Stats stat, Constants.Attributes att){
             int mod = 0;
             if(att==Constants.Attributes.boost){mod = 1;} //used bc the boost array has no value for hp so the indexes r different
@@ -378,8 +407,16 @@ public class EVCalculatorUI extends Database{
             };
         }
 
-        public Pokemon getBase(){return base;}
-        public Nature getNature(){return nature;}
+        public double getNature(Constants.Stats stat){
+            final String natureString = this.nature.toString();
+            final String statString = stat.toString();
+            if(natureString.startsWith(statString)){
+                if(natureString.endsWith("NEGATIVE")){return 0.9;}
+                else if(natureString.endsWith("POSITIVE")){return 1.1;}
+            }
+            return 1;
+        }
+
         public Move getMove(){return move;}
 
         public String getString(Constants.Attributes att) {

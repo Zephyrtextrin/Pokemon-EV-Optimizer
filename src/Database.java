@@ -72,7 +72,6 @@ public class Database{
         Ability.init();
         Items.init();
         Move.init();
-        Nature.init();
     }
 
     static public class Pokemon {
@@ -91,6 +90,8 @@ public class Database{
 
             natDex.put(name, this);
         }
+
+        public Pokemon(){}
 
         public int getStat(Constants.Stats stat){
             return switch(stat){
@@ -775,60 +776,18 @@ public class Database{
     }
 
     public static class Nature{
-        private final String name;
-
-        private final double attack;
-        private final double defense;
-        private final double spatk;
-        private final double spdef;
-        private final double speed;
-        private final double[] statsArray;
-
-        private Nature(String name, double attack, double defense, double spatk, double spdef, double speed){
-            this.name = name;
-            this.attack = attack;
-            this.defense = defense;
-            this.spatk = spatk;
-            this.spdef = spdef;
-            this.speed = speed;
-
-            statsArray = new double[]{attack,defense,spatk,spdef,speed};
-            natureList.put(name, this);
-        }
-
-        public double getValue(Constants.Stats stat){
-            return switch(stat){
-                case Attack -> attack;
-                case Defense -> defense;
-                case Spatk -> spatk;
-                case Spdef -> spdef;
-                case Speed -> speed;
-                default -> 1;
-            };
-        }
-
-        public double[] getStatsArray(){return statsArray;}
-
-        public String getName(){return this.name;}
-
-        private static void init(){
-            new Nature("+Attack",1.1,1,1,1,1);
-            new Nature("-Attack",0.9,1,1,1,1);
-
-            new Nature("+Defense",1,1.1,1,1,1);
-            new Nature("-Defense",1,0.9,1,1,1);
-
-            new Nature("+SpAtk",1,1,1.1,1,1);
-            new Nature("-SpAtk",1,1,0.9,1,1);
-
-            new Nature("+SpDef",1,1,1,1.1,1);
-            new Nature("-SpDef",1,1,1,0.9,1);
-
-            new Nature("+Speed",1,1,1,1,1.1);
-            new Nature("-Speed",1,1,1,1,0.9);
-
-            new Nature("Neutral",1,1,1,1,1);
-
+        public enum NATURES{
+            ATTACK_POSITIVE,
+            DEFENSE_POSITIVE,
+            SPATK_POSITIVE,
+            SPDEF_POSITIVE,
+            SPEED_POSITIVE,
+            ATTACK_NEGATIVE,
+            DEFENSE_NEGATIVE,
+            SPATK_NEGATIVE,
+            SPDEF_NEGATIVE,
+            SPEED_NEGATIVE,
+            NEUTRAL
         }
     }
 
