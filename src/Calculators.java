@@ -135,6 +135,8 @@ public class Calculators extends Database {
         total*= Items.getItemEffect(attacker.getString(Constants.Attributes.item), move.moveCategory);
         total*=getWeatherMultiplier(move, defender.types, weather);
         if(spread){total*=0.75;}
+        total*=abilityDamageModifier(attacker,move,attacker.getString(Constants.Attributes.ability),true);
+        total*=abilityDamageModifier(defender,move,defender.getString(Constants.Attributes.ability),false);
 
         if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.types, weather));}
 
