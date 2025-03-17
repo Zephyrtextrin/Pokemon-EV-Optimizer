@@ -14,14 +14,9 @@ public class Database{
 
     public static String[] getMoveList(){return HelperMethods.getMapAsList(moveList.keySet());}
 
-    public static String[] getNatureList(){return HelperMethods.getMapAsList(natureList.keySet());}
-
     public static String[] getItemList(){return HelperMethods.arrayListToArray(itemList);}
 
     public static String[] getAbilityList(){return HelperMethods.arrayListToArray(abilityList);}
-
-
-    public static Nature getNature(String name){return natureList.get(name);}
 
     public static Move getMove(String input){return moveList.get(input);}
 

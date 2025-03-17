@@ -32,12 +32,12 @@
     &quot;assignee&quot;: &quot;Zephyrosickness&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Zephyrosickness/Pokemon-EV-Optimizer.git&quot;,
-    &quot;accountId&quot;: &quot;f74bdf36-e43c-4850-9360-a36f76c4e519&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Zephyrosickness/Pokemon-EV-Optimizer.git",
+    "accountId": "d7fffdeb-b127-4db7-bea3-5e2482b2f699"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -54,7 +54,7 @@
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "abils",
+    "git-widget-placeholder": "Database-Refactor",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/zephyros/Desktop/prjects/code/snake-in-java",
     "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Java"

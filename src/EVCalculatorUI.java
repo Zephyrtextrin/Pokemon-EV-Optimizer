@@ -127,7 +127,6 @@ public class EVCalculatorUI extends Database{
 
 
                 }else{
-                    if(process.equals("OHKO")&&EVrolls[3]!=-1){System.out.println("\n[CHANCE TO OHKO]: "+EV+"%\n");}
 
                     System.out.println("-----------[END]-----------");
                 } //this is appended to the end of highrolls because the highroll typically goes last
@@ -409,7 +408,7 @@ public class EVCalculatorUI extends Database{
 
         public double getNature(Constants.Stats stat){
             final String natureString = this.nature.toString();
-            final String statString = stat.toString();
+            final String statString = stat.toString().toUpperCase();
             if(natureString.startsWith(statString)){
                 if(natureString.endsWith("NEGATIVE")){return 0.9;}
                 else if(natureString.endsWith("POSITIVE")){return 1.1;}

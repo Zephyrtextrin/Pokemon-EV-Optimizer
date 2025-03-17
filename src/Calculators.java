@@ -5,8 +5,8 @@ public class Calculators extends Database {
     public static int statCalculation(int baseStat, int IV, int EV, double nature, int level, int boostCount){
         EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
         int stat = -1;
-        try {stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
-        }catch (Exception e){ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
+        try{stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
+        }catch(Exception e){ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
 
         //if(Constants.DEBUG_CALC_MODE&&EV==0){System.out.printf("\n---[DEBUG: STAT CALCULATION]---\nCALCED STAT: %d\nIV: %d\nEV: %d\nLEVEL: %d\nBOOST MODIFIER: %f\n---[END.]---\n\n",stat,IV,EV,level,getBoostModifier(boostCount));}
         return stat;
@@ -70,18 +70,6 @@ public class Calculators extends Database {
         }
     }
 
-    public static int findOHKOpercentage(double rawDamage, int oppHP){
-        double rollsNoOhko = 0;
-        for(double i=0.85; i<=1;i+=0.01){
-            double rolledDamage = rawDamage*i;
-
-            if(oppHP>rolledDamage){rollsNoOhko++;}
-            else{break;}
-        }
-        double percentage = (rollsNoOhko/16)*100; //16 because that is the number of rolls between 0.85 and 1
-        return (int)(100-percentage);
-    }
-
     //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
     private static double getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move){
         int attackStat = attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
@@ -129,7 +117,6 @@ public class Calculators extends Database {
                 //checks if EV = 0 so that way it only runs once and doesnt nuke the log with a million trillion messages
                 if(Constants.DEBUG_DAMAGE_MODE||(EV==0&&Constants.DEBUG_CALC_MODE)){System.out.printf("\n---[DEBUG: DISPLAYING ALL STATS BEFORE DAMAGE CHECK]---\n\nnyour pokemon: %s\nyour attack: %d\nyour special atk: %d\nyour ev: %d\nyour base attack: %d\n\nopponent's mon: %s\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\nspecial or physical: %s\n\n---[END.]---\n\n", you.name,you.getInt(Constants.Stats.Attack,Constants.Attributes.stats),you.getInt(Constants.Stats.Spatk,Constants.Attributes.stats),EV,baseStat,opp.name,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name,move.moveCategory);}
                 if(damage >= opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)){
-                    EVrolls[3] = findOHKOpercentage(damageCalc(you,opp,move,spread,weather),opp.getInt(Constants.Stats.HP, Constants.Attributes.stats));
                     EVrolls[index] = EV;
                     break;
                 }
