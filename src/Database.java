@@ -120,6 +120,7 @@ public class Database{
         }
 
         protected static void init(){
+            
             new Move("Absorb", 20, "Grass", Constants.MOVE_CATS.Special);
             new Move("Accelerock", 40, "Rock", Constants.MOVE_CATS.Physical);
             new Move("Acid", 40, "Poison", Constants.MOVE_CATS.Special);

@@ -154,33 +154,6 @@ public class Calculators extends Database {
         return total;
     }
 
-
-    //returns a modifier for the damage, this is for abilities that affect the actual damage num itself and not your stats
-    private static double abilityDamageModifier(EVCalculatorUI.CurrentPokemon currentPokemon, Move move, String ability, boolean isAttacking){
-        final String type = move.type;
-        //isAttacking refers to if the attacking pokemon has this ability. so if its true then put all the positive modifiers like guts in here, and false for things like thick fat
-
-        if(isAttacking){
-            return switch(ability){
-                case "Guts"->{if(!currentPokemon.getString(Constants.Attributes.status).equals("None")){yield 1.5;}else{yield 1;}}
-                case "Iron Fist"->{if(move.moveCategory.equals(Constants.MOVE_CATS.Physical)){yield 1.2;}else{yield 1;}}
-                case "Tough Claws"->{if(move.moveCategory.equals(Constants.MOVE_CATS.Physical)){yield 1.3;}else{yield 1;}}
-                
-                default -> 1;
-            };
-        }else{
-            return switch(ability){
-                case "Thick Fat"->{if(type.equals("Fire")||type.equals("Ice")){yield 0.5;}else{yield 1;}}
-                case "Marvel Scale"->{if(!currentPokemon.getString(Constants.Attributes.status).equals("None")){yield 0.5;}else{yield 1;}}
-                case "Heatproof"->{if(type.equals("Fire")){yield 0.5;}else{yield 1;}}
-                case "Dry Skin"->{if(type.equals("Fire")){yield 1.25;}else if(type.equals("Water")) {yield 0;}else{yield 1;}}
-
-
-                default -> 1;
-            };
-        }
-    }
-
     private static double STAB(EVCalculatorUI.CurrentPokemon you, Move move){
             if(containsType(you.getBase().types, getType(move.type))){
                 if(you.getString(Constants.Attributes.ability).equals("Adaptability")){return 2;}
