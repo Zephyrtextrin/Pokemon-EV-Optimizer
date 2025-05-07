@@ -16,6 +16,7 @@ public class Main{
         Database.initialize(); //loads the pokedex
         initReader();
         Constants.Attribute.init();
+
         final int SIZE = 200;
 
         final JFrame frame = new JFrame();
@@ -44,14 +45,21 @@ public class Main{
 
     
     private static void initReader() throws ParserConfigurationException {
-        final File databaseFile = Constants.DatabaseXML;
+        final File pokemonDB = Constants.pokemonDatabaseXML;
+        final File moveDB = Constants.moveDatabaseXML;
         try {
             final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance(); //this method allows you to make document builders
             final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder(); //this method parses xml files
-            final Document database = dBuilder.parse(databaseFile); //this is the parsed xml file
+            final Document database = dBuilder.parse(pokemonDB); //this is the parsed xml file
             database.getDocumentElement().normalize();
 
             initAllPokemon(database);
+
+            final Document moveDatabase = dBuilder.parse(moveDB); //this is the parsed xml file
+            moveDatabase.getDocumentElement().normalize();
+
+            initAllMoves(moveDatabase);
+
         }catch(IOException|SAXException e){throw new RuntimeException(e);}
     }
     
@@ -91,6 +99,21 @@ public class Main{
                 System.out.println("GET HP VIA METHOD: "+finalPokemon.getStat(Constants.Stats.HP));
             }
 
+        }
+    }
+
+    private static void initAllMoves(Document database){
+        final NodeList allMoves = database.getElementsByTagName("move");
+
+        for (int temp = 0; temp < allMoves.getLength(); temp++) {
+            final Element currentMove = (Element) allMoves.item(temp);
+
+            final String name = getItem("name", currentMove);
+            final String type = getItem("type", currentMove);
+            final String bp = getItem("bp", currentMove);
+            final String category = getItem("category", currentMove);
+
+            new Database.Move(name, Integer.parseInt(bp),type,category);
         }
     }
 

@@ -20,7 +20,8 @@ public class Constants{
     public static final List<Attribute> ATTRIBUTES = new ArrayList<>();
     public static boolean isSpriteErrorPrinted = false;
 
-    public static final File DatabaseXML = new File("src/DB.xml");
+    public static final File pokemonDatabaseXML = new File("src/pokemonDB.xml");
+    public static final File moveDatabaseXML = new File("src/moveDB.xml");
 
     public enum MOVE_CATS{
         Physical,
