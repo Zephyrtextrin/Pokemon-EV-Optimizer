@@ -6,7 +6,8 @@ public class Calculators extends Database {
         EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
         int stat = -1;
         try{stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
-        }catch(Exception e){ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
+        }catch(Exception e){
+            Printer.errorHandler(Printer.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
 
         //if(Constants.DEBUG_CALC_MODE&&EV==0){System.out.printf("\n---[DEBUG: STAT CALCULATION]---\nCALCED STAT: %d\nIV: %d\nEV: %d\nLEVEL: %d\nBOOST MODIFIER: %f\n---[END.]---\n\n",stat,IV,EV,level,getBoostModifier(boostCount));}
         return stat;
@@ -16,7 +17,7 @@ public class Calculators extends Database {
     public static int findLeastSpeedEVs(EVCalculatorUI.CurrentPokemon you, int targetStat, int boostCount){
 
         for(int EV = 0; EV<=252; EV++){
-            final int stat = statCalculation(you.getStat(Constants.Stats.Speed),31,EV,you.getNature(Constants.Stats.Speed),you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
+            final int stat = statCalculation(you.getStat(Constants.Stats.Speed),31,EV,you.getNatureMultiplier(Constants.STATS[5]),you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
             if(Constants.DEBUG_DAMAGE_MODE){System.out.println("\nOPP SPEED STAT: "+targetStat+"\nYOUR SPEED STAT: "+stat+"\nYOUR SPEED EV: "+EV+"\nOPP SPPEED BOOST: "+HelperMethods.getComponentValue("Right-Side Speed Boost", true)+"\nOPP SPPED BOOST MODIFIER: "+getBoostModifier(Double.parseDouble(HelperMethods.getComponentValue("Right-Side Speed Boost", true))));}
             if(stat>targetStat){return EV;}
         }
@@ -65,24 +66,30 @@ public class Calculators extends Database {
 
             return (int)finalDamage;
         }catch(Exception e){
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_DAMAGE_CALCULATION_ERROR, e);
+            Printer.errorHandler(Printer.ERROR_CODE.ERR_CC_DAMAGE_CALCULATION_ERROR, e);
             return -1;
         }
     }
 
     //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
-    private static double getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move){
-        int attackStat = attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
-        int defenseStat = defender.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
+    private static int getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move){
+        double attackStat = attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
+        double defenseStat = defender.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
         if(move.moveCategory==Constants.MOVE_CATS.Special){
             attackStat = attacker.getInt(Constants.Stats.Spatk, Constants.Attributes.stats);
             defenseStat = defender.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
         }
 
-        double attackerLevel = (((double)(2* attacker.getInt(null, Constants.Attributes.level))/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
-        final double AD = (double)attackStat/defenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
-        return (int)(((attackerLevel*move.baseDamage*AD)/50)+2);
+        final int attackerLevel = (int)(((double)(2* attacker.getInt(null, Constants.Attributes.level))/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
+        final double AD = attackStat/defenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
+        final int stepOne = (int)(attackerLevel*move.baseDamage*AD);
+
+        if(Constants.DEBUG_CALC_MODE){
+            Printer.debug("RAW DAMAGE CALC",new String[]{"ATTACKER LEVEL","AD","STEP ONE","STEP TWO"},new double[]{attackerLevel,AD, stepOne, ((double)stepOne/50)});
+        };
+
+        return(stepOne/50)+2;
     }
 
     //get stat boost modifier
@@ -108,16 +115,25 @@ public class Calculators extends Database {
         final int[] EVrolls = {-1,-1,-1,-1};
 
         for(double currentRoll:Constants.ROLLS){
+            if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("DISPLAYING ALL STATS BEFORE DAMAGE CALC",new String[]{"your pokemon","your attack","your special attack","your base atk","opponent's mon","opponent hp","opp defense","roll","move name","category"},new String[]{you.name, String.valueOf(you.getInt(Constants.Stats.Attack,Constants.Attributes.stats)), String.valueOf(you.getInt(Constants.Stats.Spatk,Constants.Attributes.stats)), String.valueOf(baseStat),opp.name, String.valueOf(opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)), String.valueOf(defenderStat), String.valueOf(currentRoll),move.name, String.valueOf(move.moveCategory)});}
             for (int EV = 0; EV <= 252; EV += 4){//ev goes up by 4 bc the stat only goes up every 4 evs
                 you.setEVs(statToChange, EV);
                 you.recalcStats();
 
+
                 final int damage = (int)(damageCalc(you,opp,move,spread,weather) * currentRoll);
 
                 //checks if EV = 0 so that way it only runs once and doesnt nuke the log with a million trillion messages
-                if(Constants.DEBUG_DAMAGE_MODE||(EV==0&&Constants.DEBUG_CALC_MODE)){System.out.printf("\n---[DEBUG: DISPLAYING ALL STATS BEFORE DAMAGE CHECK]---\n\nnyour pokemon: %s\nyour attack: %d\nyour special atk: %d\nyour ev: %d\nyour base attack: %d\n\nopponent's mon: %s\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\nspecial or physical: %s\n\n---[END.]---\n\n", you.name,you.getInt(Constants.Stats.Attack,Constants.Attributes.stats),you.getInt(Constants.Stats.Spatk,Constants.Attributes.stats),EV,baseStat,opp.name,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name,move.moveCategory);}
                 if(damage >= opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)){
                     EVrolls[index] = EV;
+                    if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("[OHKO FOUND!]","Further damage calculations for this roll will be terminated.");}
+                    if(EV==0){ //if the current roll's EV is 0, make all future rolls 0 too and end program early
+                        for(; index<EVrolls.length; index++){EVrolls[index] = 0;}
+                        if(Constants.DEBUG_DAMAGE_MODE){
+                            Printer.debug("OHKO WITH NO EVS!","All additional roll calculations will be terminated and set to zero.");
+                        }
+                        return EVrolls;
+                    }
                     break;
                 }
             }
@@ -135,10 +151,8 @@ public class Calculators extends Database {
         total*= Items.getItemEffect(attacker.getString(Constants.Attributes.item), move.moveCategory);
         total*=getWeatherMultiplier(move, defender.types, weather);
         if(spread){total*=0.75;}
-        total*=abilityDamageModifier(attacker,move,attacker.getString(Constants.Attributes.ability),true);
-        total*=abilityDamageModifier(defender,move,defender.getString(Constants.Attributes.ability),false);
 
-        if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.types, weather));}
+        if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("OTHER MULTIPLIERS",new String[]{"type","stab","item","weather"}),new double[]{getMatchups(defender.types,move.type),STAB(attacker,move),Items.getItemEffect(attacker.getString(Constants.Attributes.item)),}+"\nItem: "+,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.types, weather));}
 
         return total;
     }

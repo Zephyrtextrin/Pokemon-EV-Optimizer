@@ -21,6 +21,14 @@ public class HelperMethods {
         return HelperMethods.arrayListToArray(list);
     }
 
+    public static String[] parseAllNums(double[] list){
+        final String[] result = new String[list.length];
+        for(int i=0;i<list.length;i++){
+            result[i] = String.valueOf(list[i]);
+        }
+        return result;
+    }
+
     public static String getComponentValue(String name, boolean isEV){
         int max = 255;
         if(name.equals("Left-Side Level")||name.equals("Right-Side Level")){max=100;}
@@ -32,15 +40,15 @@ public class HelperMethods {
 
         String tempString = "";
         if(component==null){
-            ErrorPrinter.setDetails(name,false);
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT,new NullPointerException());
+            Printer.setDetails(name,false);
+            Printer.errorHandler(Printer.ERROR_CODE.ERR_UI_UNKNOWN_COMPONENT,new NullPointerException());
         }
 
         assert component != null;
         if(component.getClass()==JComboBox.class){
             try{tempString = Objects.requireNonNull(((JComboBox<String>) component).getSelectedItem()).toString();}catch(Exception e){
-                ErrorPrinter.setDetails(name,false);
-                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE, e);
+                Printer.setDetails(name,false);
+                Printer.errorHandler(Printer.ERROR_CODE.ERR_UI_COMPONENT_DATA_DNE, e);
             }
         }else if(component.getClass()==JTextField.class){
             tempString = ((JTextField)component).getText();
@@ -64,8 +72,8 @@ public class HelperMethods {
             try {
                 file = new File("src/assets/" + dex + ".png");
             } catch (Exception e) {
-                ErrorPrinter.setDetails("src/assets/" + dex + ".png", false);
-                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, e);
+                Printer.setDetails("src/assets/" + dex + ".png", false);
+                Printer.errorHandler(Printer.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, e);
             }
         }
         if (!file.exists()) {
@@ -73,8 +81,8 @@ public class HelperMethods {
                 System.out.println("Nothing is broken. This is entirely a visual glitch.\nAll Paldea Pokemon don't have sprites available for bulk download.\nAlternate forms such as Regionals and Megas have sprites but it needs me to manually change the file name and the dex number in the codebase so its all still a work in progress.\nstay tuned.");
                 Constants.isSpriteErrorPrinted = true;
             }else if(Database.getPokemon(name).dexNumber<=906){
-                ErrorPrinter.setDetails(file.toString(), false);
-                ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, null);
+                Printer.setDetails(file.toString(), false);
+                Printer.errorHandler(Printer.ERROR_CODE.ABN_UI_MALFORMED_IMAGE_FILE, null);
             }
             file = new File("src/assets/0.png");
 

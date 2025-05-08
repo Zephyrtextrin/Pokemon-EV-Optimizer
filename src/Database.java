@@ -6,7 +6,6 @@ public class Database{
     private static final HashMap<String, Move> moveList = new HashMap<>();
     private static final ArrayList<String> itemList = new ArrayList<>();
     private static final ArrayList<String> abilityList = new ArrayList<>();
-    private static final HashMap<String, Nature> natureList = new HashMap<>();
     private static final Map<String, Type> typeList = new HashMap<>(); //allows u to sort by type name
 
     //ughhh repeated code.. u have to do the same thing for every method here cuz the parameters dont match up otherwise-----
@@ -14,14 +13,9 @@ public class Database{
 
     public static String[] getMoveList(){return HelperMethods.getMapAsList(moveList.keySet());}
 
-    public static String[] getNatureList(){return HelperMethods.getMapAsList(natureList.keySet());}
-
     public static String[] getItemList(){return HelperMethods.arrayListToArray(itemList);}
 
     public static String[] getAbilityList(){return HelperMethods.arrayListToArray(abilityList);}
-
-
-    public static Nature getNature(String name){return natureList.get(name);}
 
     public static Move getMove(String input){return moveList.get(input);}
 
@@ -30,15 +24,15 @@ public class Database{
 
 
         if(result==null) {
-            ErrorPrinter.setDetails(input, false);
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_MISSINGNO, null);
+            Printer.setDetails(input, false);
+            Printer.errorHandler(Printer.ERROR_CODE.ABN_DB_MISSINGNO, null);
             return natDex.get("Gallade");
         }
 
         boolean secondTypeMalformed = result.types.length>1&&result.types[1]==null;
         if(result.types[0]==null||secondTypeMalformed){
-            ErrorPrinter.setDetails(input, false);
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_BIRDTYPE, null);
+            Printer.setDetails(input, false);
+            Printer.errorHandler(Printer.ERROR_CODE.ABN_DB_BIRDTYPE, null);
             return natDex.get("Gallade");
         }
 
@@ -50,8 +44,8 @@ public class Database{
         Type output = typeList.get(input);
 
         if(output==null){
-            ErrorPrinter.setDetails(input,false);
-            ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ABN_DB_TYPE_DNE, null);
+            Printer.setDetails(input,false);
+            Printer.errorHandler(Printer.ERROR_CODE.ABN_DB_TYPE_DNE, null);
             return typeList.get("Normal");
         }else{return output;}
     }
@@ -67,11 +61,10 @@ public class Database{
 
     //THANK U SO MUCH FOR DOING ALL THE TEDIOUS ASS FORMATTING LEXI!!! :HEART EMOJI:
     public static void initialize(){
-        ErrorPrinter.init();
+        Printer.init();
         Type.init();
         Ability.init();
         Items.init();
-        Nature.init();
     }
 
     static public class Pokemon {
@@ -236,64 +229,6 @@ public class Database{
             itemList.add("Choice Scarf"); //use when u make outspeed calc
             itemList.add("Life Orb");
             //itemList.add("Booster Energy [doesn't work rn]");
-        }
-    }
-
-    public static class Nature{
-        private final String name;
-
-        private final double attack;
-        private final double defense;
-        private final double spatk;
-        private final double spdef;
-        private final double speed;
-        private final double[] statsArray;
-
-        private Nature(String name, double attack, double defense, double spatk, double spdef, double speed){
-            this.name = name;
-            this.attack = attack;
-            this.defense = defense;
-            this.spatk = spatk;
-            this.spdef = spdef;
-            this.speed = speed;
-
-            statsArray = new double[]{attack,defense,spatk,spdef,speed};
-            natureList.put(name, this);
-        }
-
-        public double getValue(Constants.Stats stat){
-            return switch(stat){
-                case Attack -> attack;
-                case Defense -> defense;
-                case Spatk -> spatk;
-                case Spdef -> spdef;
-                case Speed -> speed;
-                default -> 1;
-            };
-        }
-
-        public double[] getStatsArray(){return statsArray;}
-
-        public String getName(){return this.name;}
-
-        private static void init(){
-            new Nature("+Attack",1.1,1,1,1,1);
-            new Nature("-Attack",0.9,1,1,1,1);
-
-            new Nature("+Defense",1,1.1,1,1,1);
-            new Nature("-Defense",1,0.9,1,1,1);
-
-            new Nature("+SpAtk",1,1,1.1,1,1);
-            new Nature("-SpAtk",1,1,0.9,1,1);
-
-            new Nature("+SpDef",1,1,1,1.1,1);
-            new Nature("-SpDef",1,1,1,0.9,1);
-
-            new Nature("+Speed",1,1,1,1,1.1);
-            new Nature("-Speed",1,1,1,1,0.9);
-
-            new Nature("Neutral",1,1,1,1,1);
-
         }
     }
 

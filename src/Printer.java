@@ -1,7 +1,6 @@
-import java.io.IOException;
 import java.util.*;
 
-public class ErrorPrinter {
+public class Printer {
     private static final Map<ERROR_CODE,Error> errorDB = new HashMap<>();
     private static String additionalDetails;
 
@@ -24,10 +23,14 @@ public class ErrorPrinter {
         ABN_DB_STAT_DNE, //attempting to call a base stat of a pokemon and the base stat doesnt exist
         ABN_DB_TYPE_DNE, //attempting to call a type of a pokemon and the base stat doesnt exist
 
+        //debug
+        ABN_DG_LIST_VALUE_DISCREPENCY,
+
         //other
         ABSTRUSE
     }
-    public static void handler(ERROR_CODE code, Exception e){
+
+    public static void errorHandler(ERROR_CODE code, Exception e){
         System.out.println("------------------------------------------------------------------------------------------------");
         Error error = errorDB.get(code);
         if(error==null){
@@ -39,7 +42,7 @@ public class ErrorPrinter {
         init.updateValues();
 
         //first portion of error printing system: prints out details of what happened
-        //ERROR is for actual game-impeding issues; ABNORMALITY is for unintended things of lower destructiveness/priority. (honestly most of these are fringe cases that never happen ever but its good to have a handler)
+        //ERROR is for actual game-impeding issues; ABNORMALITY is for unintended things of lower destructiveness/priority. (honestly most of these are fringe cases that never happen ever but its good to have a errorHandler)
         headerBuilder(error.isError, true,"");
 
         System.out.println(error.cause); //explains what happened and a likely explanation for why
@@ -60,15 +63,17 @@ public class ErrorPrinter {
 
         System.out.println("------------------------------------------------------------------------------------------------");
 
-        if(error.isError){System.out.println("\n[a message from alex regarding errors]\n-this is automatically appended to all errors-\nso there's actually two types of issues in the error handler i wrote: abnormalities and errors\nabnormaities are just unintended issues i should probably fix\nand errors are active issues that completely impede the functioning of the program\nso it's really important you report errors to me\nthanks bro\n-alexander");}
+        if(error.isError){System.out.println("\n[a message from alex regarding errors]\n-this is automatically appended to all errors-\nso there's actually two types of issues in the error errorHandler i wrote: abnormalities and errors\nabnormaities are just unintended issues i should probably fix\nand errors are active issues that completely impede the functioning of the program\nso it's really important you report errors to me\nthanks bro\n-alexander");}
 
         boolean stackYN = false;
         if(error.isError){stackYN = getYN("Would you like to print a stack-trace? (if you're reading this, and you arent me, you should probably say yes.");}
-            if(stackYN&&e!=null){
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
+        if(stackYN&&e!=null){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
+
+        additionalDetails = "";
+    }
 
     private static void headerBuilder(boolean isError, boolean isMainHeader, String message){
         String header = "[[--%s--]]";
@@ -83,7 +88,7 @@ public class ErrorPrinter {
         System.out.printf("\n"+ header +"\n",message);
     }
 
-    public ErrorPrinter(){new init();}
+    public Printer(){new init();}
 
     public static void setDetails(String errorDetails, boolean append){
         if(append){additionalDetails += errorDetails;
@@ -140,6 +145,9 @@ public class ErrorPrinter {
 
             //unique
             new Error(ERROR_CODE.ABSTRUSE, true, "This is a fallback error: Something called the ErrorPrinter class, but the error-code specified is malformed or does not exist. ", null, "It's very likely I just made a typo somewhere, or forgot to add any details to an error.");
+
+            //debug
+            new Error(ERROR_CODE.ABN_DG_LIST_VALUE_DISCREPENCY,false,"Index of ItemNames and ItemValues lists are different!","This is a debug-only error. If you dont know what this means, you don't need to worry.",null);
         }
 
         private init(){initialize();}
@@ -155,6 +163,7 @@ public class ErrorPrinter {
             errorDB.get(ERROR_CODE.ABN_DB_CACOPHONY).details = "[SPECIFIED ABILITY]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_TYPE_DNE).details = "[SPECIFIED TYPE]: "+additionalDetails;
             errorDB.get(ERROR_CODE.ABN_DB_STAT_DNE).details = "[SPECIFIED STAT]: "+additionalDetails;
+            errorDB.get(ERROR_CODE.ABN_DG_LIST_VALUE_DISCREPENCY).details = additionalDetails;
         }
     }
 
@@ -175,5 +184,35 @@ public class ErrorPrinter {
             errorDB.put(code, this);
         }
     }
+
+    //printing for debug statements
+    public static void debug(String action, String[] itemNames, String[] itemValues){
+
+        if(itemNames.length!=itemValues.length){
+            setDetails("[ITEM-NAMES INDEX]: "+itemNames.length,true);
+            setDetails("[ITEM-VALUES INDEX]: "+itemValues.length,true);
+            errorHandler(ERROR_CODE.ABN_DG_LIST_VALUE_DISCREPENCY,new Exception());
+            return;
+        }
+
+        System.out.printf("\n---[[DEBUG: %s]]---\n\n",action.toUpperCase());
+        for(int i=0;i<itemNames.length;i++){System.out.printf("\n[%s]: %s\n",itemNames[i].toUpperCase(), itemValues[i]);}
+        System.out.printf("\n---[[END: %s]]---\n",action.toUpperCase());
+    }
+
+    public static void debug(String action, String[] itemNames, double[] itemValues){
+        if(itemNames.length!=itemValues.length){
+            setDetails("[ITEM-NAMES INDEX]: "+itemNames.length,true);
+            setDetails("[ITEM-VALUES INDEX]: "+itemValues.length,true);
+            errorHandler(ERROR_CODE.ABN_DG_LIST_VALUE_DISCREPENCY,new Exception());
+            return;
+        }
+
+        System.out.printf("\n---[[DEBUG: %s]]---\n\n",action.toUpperCase());
+        for(int i=0;i<itemNames.length;i++){System.out.printf("\n[%s]: %f\n",itemNames[i].toUpperCase(), itemValues[i]);}
+        System.out.printf("\n---[[END: %s]]---\n",action.toUpperCase());
+    }
+
+    public static void debug(String action, String additional){System.out.printf("\n---[[DEBUG: %s]]---\n\n%s\n\n---[[END: %s]]---\n",action.toUpperCase(),additional,action.toUpperCase());}
 }
 

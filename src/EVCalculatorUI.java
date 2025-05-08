@@ -308,7 +308,7 @@ public class EVCalculatorUI extends Database{
         private final int level;
         private final String item;
         private final Move move;
-        private final Nature.NATURES nature;
+        private final String nature;
         private final int[] stats = new int[6];
         private final int[] boosts;
         private final int[] EVs;
@@ -316,17 +316,12 @@ public class EVCalculatorUI extends Database{
         private final String ability;
 
         public CurrentPokemon(String name, int level, String item, Move move, String natureTemp, int[] EVs, int[] boosts, String ability, String status){
-            super();
-            final Pokemon tempBase = getPokemon(name);
-            super.dexNumber = tempBase.dexNumber;
-            super.name = tempBase.name;
-            super.stats = tempBase.stats;
-            super.types = tempBase.types;
+            super(getPokemon(name).dexNumber, getPokemon(name).name, getPokemon(name).types, getPokemon(name).stats);
 
-            this.nature = setNature(natureTemp);
             this.level = level;
             this.item = item;
             this.move = move;
+            this.nature = natureTemp;
             this.EVs = EVs;
             this.boosts = boosts;
             this.status = status;
@@ -351,32 +346,28 @@ public class EVCalculatorUI extends Database{
             }
         }
 
-        private Nature.NATURES setNature(String natureBase){
+        double getNatureMultiplier(String stat){
+            assert nature != null;
 
-            final Nature.NATURES[] naturesToArray = Nature.NATURES.values();
+            final String natureTemp = nature.substring(1).toUpperCase();
+            double natureMod = 0.9;
+            if(nature.startsWith("+")){natureMod = 1.1;}
 
-            String natureTemp = natureBase.substring(1).toUpperCase();
-            if(natureBase.startsWith("+")){natureTemp+="_POSITIVE";}else{natureTemp+="_NEGATIVE";}
-
-            if(Constants.DEBUG_UI_MODE){System.out.println("\n---[DEBUG: SET NATURE]---\n\n[NATURE TEMP]: "+natureTemp+"\n[NATURE BASE]: "+natureBase);}
-
-
-            for(Nature.NATURES currentNature:naturesToArray){
-                if(Constants.DEBUG_UI_MODE){
-                    System.out.println("[CURRENT NATURE]: "+currentNature+"\n[MATCHES?]: "+natureTemp.equalsIgnoreCase(currentNature.toString()));
-                }
-                if(natureTemp.equalsIgnoreCase(currentNature.toString())){return currentNature;}
+            if(stat.equalsIgnoreCase(natureTemp)){
+                return natureMod;
             }
 
-            return Nature.NATURES.NEUTRAL;
+            if(Constants.DEBUG_UI_MODE){System.out.println("\n---[DEBUG: SET NATURE]---\n\n[NATURE TEMP]: "+natureTemp+"\n[NATURE BASE]: "+nature);}
+
+            return 1;
         }
         public void recalcStats(){
             this.stats[0] = Calculators.calcHP(EVs[0],level,getStat(Constants.Stats.HP));
 
             for(int i = 1; i<6;i++){
                 final Constants.Stats currentStat = Constants.ALL_STATS[i];
-                if(Constants.DEBUG_CALC_MODE&&((EVs[1]==0)||(EVs[3]==0))){System.out.println("\n---[DEBUG: STAT CALCULATION]---\n\n[YOUR NATURE]: "+nature+"\n[CURRENT STAT]: "+currentStat+"\n[MODIFIER]: "+getNature(currentStat)+"\n\n---[END.]---\n");}
-                this.stats[i] = Calculators.statCalculation(getStat(currentStat), 31, EVs[i], this.getNature(currentStat), level, boosts[i-1]);
+                if(Constants.DEBUG_CALC_MODE&&((EVs[1]==0)||(EVs[3]==0))){System.out.println("\n---[DEBUG: STAT CALCULATION]---\n\n[YOUR NATURE]: "+nature+"\n[CURRENT STAT]: "+currentStat+"\n[MODIFIER]: "+this.getNatureMultiplier(String.valueOf(currentStat))+"\n\n---[END.]---\n");}
+                this.stats[i] = Calculators.statCalculation(getStat(currentStat), 31, EVs[i], this.getNatureMultiplier(String.valueOf(currentStat)), level, boosts[i-1]);
             }
 
             this.abilityStatModifier(HelperMethods.getComponentValue("Weather", true));
@@ -404,16 +395,6 @@ public class EVCalculatorUI extends Database{
                 case Spdef -> list[4-mod];
                 case Speed -> list[5-mod];
             };
-        }
-
-        public double getNature(Constants.Stats stat){
-            final String natureString = this.nature.toString();
-            final String statString = stat.toString().toUpperCase();
-            if(natureString.startsWith(statString)){
-                if(natureString.endsWith("NEGATIVE")){return 0.9;}
-                else if(natureString.endsWith("POSITIVE")){return 1.1;}
-            }
-            return 1;
         }
 
         public Move getMove(){return move;}
