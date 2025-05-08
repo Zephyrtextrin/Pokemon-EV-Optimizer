@@ -414,5 +414,15 @@ public class EVCalculatorUI extends Database{
                 default -> {}
             }
         }
+
+        public void printAllAttributes(){
+            String[] atts = {name, String.valueOf(level),item, move.name,nature};
+            String[] attsTitle = {"NAME","LEVEL","ITEM","MOVE","NATURE"};
+            for(int i = 0;i<atts.length;i++){System.out.println("["+attsTitle[i]+"]: "+atts[i]);}
+            int index = 0;
+            for(Constants.Stats currentStat:Constants.Stats.values()){
+                //System.out.println("["+currentStat+" EV]: "+); //ugh finish later
+            }
+        }
     }
 }
