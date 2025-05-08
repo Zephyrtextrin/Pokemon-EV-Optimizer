@@ -6,8 +6,7 @@ public class Calculators extends Database {
         EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
         int stat = -1;
         try{stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
-        }catch(Exception e){
-            Printer.errorHandler(Printer.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
+        }catch(Exception e){Printer.errorHandler(Printer.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
 
         //if(Constants.DEBUG_CALC_MODE&&EV==0){System.out.printf("\n---[DEBUG: STAT CALCULATION]---\nCALCED STAT: %d\nIV: %d\nEV: %d\nLEVEL: %d\nBOOST MODIFIER: %f\n---[END.]---\n\n",stat,IV,EV,level,getBoostModifier(boostCount));}
         return stat;
@@ -73,8 +72,8 @@ public class Calculators extends Database {
 
     //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
     private static int getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move){
-        double attackStat = attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
-        double defenseStat = defender.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
+        float attackStat = attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
+        float defenseStat = defender.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
         if(move.moveCategory==Constants.MOVE_CATS.Special){
             attackStat = attacker.getInt(Constants.Stats.Spatk, Constants.Attributes.stats);
@@ -82,12 +81,10 @@ public class Calculators extends Database {
         }
 
         final int attackerLevel = (int)(((double)(2* attacker.getInt(null, Constants.Attributes.level))/5)+2); //this is done here to decrease verbosity of the rawDamage calc and make it more readable and testable
-        final double AD = attackStat/defenseStat; //attack divided by defense. this is done in a seperate variable to decrease verbosity.
+        final float AD = (attackStat/defenseStat); //attack divided by defense. this is done in a seperate variable to decrease verbosity.
         final int stepOne = (int)(attackerLevel*move.baseDamage*AD);
 
-        if(Constants.DEBUG_CALC_MODE){
-            Printer.debug("RAW DAMAGE CALC",new String[]{"ATTACKER LEVEL","AD","STEP ONE","STEP TWO"},new double[]{attackerLevel,AD, stepOne, ((double)stepOne/50)});
-        };
+        if(Constants.DEBUG_CALC_MODE){Printer.debug("RAW DAMAGE CALC",new String[]{"ATTACKER LEVEL","AD","STEP ONE","STEP TWO"},new double[]{attackerLevel,AD, stepOne, ((double)stepOne/50)});}
 
         return(stepOne/50)+2;
     }
@@ -126,14 +123,11 @@ public class Calculators extends Database {
                 //checks if EV = 0 so that way it only runs once and doesnt nuke the log with a million trillion messages
                 if(damage >= opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)){
                     EVrolls[index] = EV;
-                    if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("[OHKO FOUND!]","Further damage calculations for this roll will be terminated.");}
                     if(EV==0){ //if the current roll's EV is 0, make all future rolls 0 too and end program early
                         for(; index<EVrolls.length; index++){EVrolls[index] = 0;}
-                        if(Constants.DEBUG_DAMAGE_MODE){
-                            Printer.debug("OHKO WITH NO EVS!","All additional roll calculations will be terminated and set to zero.");
-                        }
+                        if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("OHKO WITH NO EVS!","All additional roll calculations will be terminated and set to zero.");}
                         return EVrolls;
-                    }
+                    }else if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("OHKO FOUND!","Further damage calculations for this roll will be terminated.");}
                     break;
                 }
             }
@@ -152,7 +146,7 @@ public class Calculators extends Database {
         total*=getWeatherMultiplier(move, defender.types, weather);
         if(spread){total*=0.75;}
 
-        if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("OTHER MULTIPLIERS",new String[]{"type","stab","item","weather"}),new double[]{getMatchups(defender.types,move.type),STAB(attacker,move),Items.getItemEffect(attacker.getString(Constants.Attributes.item)),}+"\nItem: "+,move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.types, weather));}
+        if(Constants.DEBUG_DAMAGE_MODE){Printer.debug("OTHER MULTIPLIERS",new String[]{"type","stab","item","weather"},new double[]{getMatchups(defender.types,move.type),STAB(attacker,move),Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory),getWeatherMultiplier(move, defender.types, weather)});}
 
         return total;
     }

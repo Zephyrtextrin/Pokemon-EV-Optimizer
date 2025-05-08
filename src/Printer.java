@@ -188,6 +188,8 @@ public class Printer {
     //printing for debug statements
     public static void debug(String action, String[] itemNames, String[] itemValues){
 
+        System.out.printf("\n---[[DEBUG: %s]]---\n\n",action.toUpperCase());
+
         if(itemNames.length!=itemValues.length){
             setDetails("[ITEM-NAMES INDEX]: "+itemNames.length,true);
             setDetails("[ITEM-VALUES INDEX]: "+itemValues.length,true);
@@ -195,24 +197,12 @@ public class Printer {
             return;
         }
 
-        System.out.printf("\n---[[DEBUG: %s]]---\n\n",action.toUpperCase());
-        for(int i=0;i<itemNames.length;i++){System.out.printf("\n[%s]: %s\n",itemNames[i].toUpperCase(), itemValues[i]);}
+        for(int i=0;i<itemNames.length;i++){System.out.printf("[%s]: %s\n",itemNames[i].toUpperCase(), itemValues[i]);}
         System.out.printf("\n---[[END: %s]]---\n",action.toUpperCase());
     }
 
-    public static void debug(String action, String[] itemNames, double[] itemValues){
-        if(itemNames.length!=itemValues.length){
-            setDetails("[ITEM-NAMES INDEX]: "+itemNames.length,true);
-            setDetails("[ITEM-VALUES INDEX]: "+itemValues.length,true);
-            errorHandler(ERROR_CODE.ABN_DG_LIST_VALUE_DISCREPENCY,new Exception());
-            return;
-        }
+    public static void debug(String action, String[] itemNames, double[] itemValues){debug(action,itemNames,HelperMethods.parseAllNums(itemValues));}
 
-        System.out.printf("\n---[[DEBUG: %s]]---\n\n",action.toUpperCase());
-        for(int i=0;i<itemNames.length;i++){System.out.printf("\n[%s]: %f\n",itemNames[i].toUpperCase(), itemValues[i]);}
-        System.out.printf("\n---[[END: %s]]---\n",action.toUpperCase());
-    }
-
-    public static void debug(String action, String additional){System.out.printf("\n---[[DEBUG: %s]]---\n\n%s\n\n---[[END: %s]]---\n",action.toUpperCase(),additional,action.toUpperCase());}
+    public static void debug(String action, String additional){System.out.printf("---[[DEBUG: %s]]---\n%s\n---[[END: %s]]---\n\n",action.toUpperCase(),additional,action.toUpperCase());}
 }
 
