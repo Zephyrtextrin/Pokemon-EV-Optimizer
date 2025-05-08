@@ -5,8 +5,8 @@ public class Calculators extends Database {
     public static int statCalculation(int baseStat, int IV, int EV, double nature, int level, int boostCount){
         EV/=4; //divides ev by 4 because ev is divided by 4 in stat calcs
         int stat = -1;
-        try {stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
-        }catch (Exception e){ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
+        try{stat=(int)((int)((((double)((2*baseStat+IV+EV)*level)/100)+5)*nature)*getBoostModifier(boostCount));
+        }catch(Exception e){ErrorPrinter.handler(ErrorPrinter.ERROR_CODE.ERR_CC_STAT_CALCULATION_ERROR, e);}
 
         //if(Constants.DEBUG_CALC_MODE&&EV==0){System.out.printf("\n---[DEBUG: STAT CALCULATION]---\nCALCED STAT: %d\nIV: %d\nEV: %d\nLEVEL: %d\nBOOST MODIFIER: %f\n---[END.]---\n\n",stat,IV,EV,level,getBoostModifier(boostCount));}
         return stat;
@@ -16,7 +16,7 @@ public class Calculators extends Database {
     public static int findLeastSpeedEVs(EVCalculatorUI.CurrentPokemon you, int targetStat, int boostCount){
 
         for(int EV = 0; EV<=252; EV++){
-            final int stat = statCalculation(you.getBase().getStat(Constants.Stats.Speed),31,EV,you.getNature().getValue(Constants.Stats.Speed),you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
+            final int stat = statCalculation(you.getStat(Constants.Stats.Speed),31,EV,you.getNature(Constants.Stats.Speed),you.getInt(Constants.Stats.HP, Constants.Attributes.level),boostCount);
             if(Constants.DEBUG_DAMAGE_MODE){System.out.println("\nOPP SPEED STAT: "+targetStat+"\nYOUR SPEED STAT: "+stat+"\nYOUR SPEED EV: "+EV+"\nOPP SPPEED BOOST: "+HelperMethods.getComponentValue("Right-Side Speed Boost", true)+"\nOPP SPPED BOOST MODIFIER: "+getBoostModifier(Double.parseDouble(HelperMethods.getComponentValue("Right-Side Speed Boost", true))));}
             if(stat>targetStat){return EV;}
         }
@@ -26,7 +26,7 @@ public class Calculators extends Database {
     //finds what stat boost you need to ohko
     public static int[] findLeastHPEVs(EVCalculatorUI.CurrentPokemon opponentMon, EVCalculatorUI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
         int oppAttackStat = opponentMon.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
-        int targetBaseHP = targetMon.getBase().getStat(Constants.Stats.HP);
+        int targetBaseHP = targetMon.getStat(Constants.Stats.HP);
         int targetDefStat = targetMon.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
         if(move.moveCategory== Constants.MOVE_CATS.Special){
@@ -70,18 +70,6 @@ public class Calculators extends Database {
         }
     }
 
-    public static int findOHKOpercentage(double rawDamage, int oppHP){
-        double rollsNoOhko = 0;
-        for(double i=0.85; i<=1;i+=0.01){
-            double rolledDamage = rawDamage*i;
-
-            if(oppHP>rolledDamage){rollsNoOhko++;}
-            else{break;}
-        }
-        double percentage = (rollsNoOhko/16)*100; //16 because that is the number of rolls between 0.85 and 1
-        return (int)(100-percentage);
-    }
-
     //rawDamage is the damage calc before any situational modifiers. more info here: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward
     private static double getRawDamage(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, Move move){
         int attackStat = attacker.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
@@ -107,11 +95,11 @@ public class Calculators extends Database {
     public static int[] findLeastAttackEVs(EVCalculatorUI.CurrentPokemon you, EVCalculatorUI.CurrentPokemon opp, Move move, String weather, boolean spread){
         //sets up which attacking stat to use
         Constants.Stats statToChange = Constants.Stats.Attack;
-        int baseStat = you.getBase().getStat(Constants.Stats.Attack);
+        int baseStat = you.getStat(Constants.Stats.Attack);
         int defenderStat = opp.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
         if(move.moveCategory==Constants.MOVE_CATS.Special){
-            baseStat = you.getBase().getStat(Constants.Stats.Spatk);
+            baseStat = you.getStat(Constants.Stats.Spatk);
             defenderStat = opp.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
             statToChange = Constants.Stats.Spatk;
         }
@@ -127,9 +115,8 @@ public class Calculators extends Database {
                 final int damage = (int)(damageCalc(you,opp,move,spread,weather) * currentRoll);
 
                 //checks if EV = 0 so that way it only runs once and doesnt nuke the log with a million trillion messages
-                if(Constants.DEBUG_DAMAGE_MODE||(EV==0&&Constants.DEBUG_CALC_MODE)){System.out.printf("\n---[DEBUG: DISPLAYING ALL STATS BEFORE DAMAGE CHECK]---\n\nnyour pokemon: %s\nyour attack: %d\nyour special atk: %d\nyour ev: %d\nyour base attack: %d\n\nopponent's mon: %s\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\nspecial or physical: %s\n\n---[END.]---\n\n", you.getBase().name,you.getInt(Constants.Stats.Attack,Constants.Attributes.stats),you.getInt(Constants.Stats.Spatk,Constants.Attributes.stats),EV,baseStat,opp.getBase().name,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name,move.moveCategory);}
+                if(Constants.DEBUG_DAMAGE_MODE||(EV==0&&Constants.DEBUG_CALC_MODE)){System.out.printf("\n---[DEBUG: DISPLAYING ALL STATS BEFORE DAMAGE CHECK]---\n\nnyour pokemon: %s\nyour attack: %d\nyour special atk: %d\nyour ev: %d\nyour base attack: %d\n\nopponent's mon: %s\nopp hp: %d\nopp defense: %d\ndamage: %d\nroll: %f\nmove name: %s\nspecial or physical: %s\n\n---[END.]---\n\n", you.name,you.getInt(Constants.Stats.Attack,Constants.Attributes.stats),you.getInt(Constants.Stats.Spatk,Constants.Attributes.stats),EV,baseStat,opp.name,opp.getInt(Constants.Stats.HP, Constants.Attributes.stats),defenderStat,damage,currentRoll,move.name,move.moveCategory);}
                 if(damage >= opp.getInt(Constants.Stats.HP, Constants.Attributes.stats)){
-                    EVrolls[3] = findOHKOpercentage(damageCalc(you,opp,move,spread,weather),opp.getInt(Constants.Stats.HP, Constants.Attributes.stats));
                     EVrolls[index] = EV;
                     break;
                 }
@@ -143,19 +130,21 @@ public class Calculators extends Database {
 
     //other factors
     private static double other(EVCalculatorUI.CurrentPokemon attacker, EVCalculatorUI.CurrentPokemon defender, double total, Move move, boolean spread, String weather){
-        total*=getMatchups(defender.getBase().types,move.type);
+        total*=getMatchups(defender.types,move.type);
         total*=STAB(attacker,move);
         total*= Items.getItemEffect(attacker.getString(Constants.Attributes.item), move.moveCategory);
-        total*=getWeatherMultiplier(move, defender.getBase().types, weather);
+        total*=getWeatherMultiplier(move, defender.types, weather);
         if(spread){total*=0.75;}
+        total*=abilityDamageModifier(attacker,move,attacker.getString(Constants.Attributes.ability),true);
+        total*=abilityDamageModifier(defender,move,defender.getString(Constants.Attributes.ability),false);
 
-        if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.getBase().types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.getBase().types, weather));}
+        if(Constants.DEBUG_DAMAGE_MODE){System.out.println("type "+getMatchups(defender.types,move.type)+"\nSTAB: "+STAB(attacker,move)+"\nItem: "+Items.getItemEffect(attacker.getString(Constants.Attributes.item),move.moveCategory)+"\nWeather: "+getWeatherMultiplier(move, defender.types, weather));}
 
         return total;
     }
 
     private static double STAB(EVCalculatorUI.CurrentPokemon you, Move move){
-            if(containsType(you.getBase().types, getType(move.type))){
+            if(containsType(you.types, getType(move.type))){
                 if(you.getString(Constants.Attributes.ability).equals("Adaptability")){return 2;}
                 else{return 1.5;}
             }else{
