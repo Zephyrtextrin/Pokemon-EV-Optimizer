@@ -88,8 +88,6 @@ public class Printer {
         System.out.printf("\n"+ header +"\n",message);
     }
 
-    public Printer(){new init();}
-
     public static void setDetails(String errorDetails, boolean append){
         if(append){additionalDetails += errorDetails;
         }else{additionalDetails=errorDetails;}

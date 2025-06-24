@@ -25,26 +25,20 @@ public class Calculators extends Database {
 
     //finds what stat boost you need to ohko
     public static int[] findLeastHPEVs(EVCalculatorUI.CurrentPokemon opponentMon, EVCalculatorUI.CurrentPokemon targetMon, Move move, String weather, boolean spread){
-        int oppAttackStat = opponentMon.getInt(Constants.Stats.Attack, Constants.Attributes.stats);
         int targetBaseHP = targetMon.getStat(Constants.Stats.HP);
-        int targetDefStat = targetMon.getInt(Constants.Stats.Defense, Constants.Attributes.stats);
 
-        if(move.moveCategory== Constants.MOVE_CATS.Special){
-            targetDefStat = targetMon.getInt(Constants.Stats.Spdef, Constants.Attributes.stats);
-            oppAttackStat = opponentMon.getInt(Constants.Stats.Spatk, Constants.Attributes.stats);
-        }
         final int[] EVRolls = {-1,-1,-1};
 
         int index = 0;
-        final int damage = damageCalc(targetMon,opponentMon,move,spread,weather);
+        final int damage = damageCalc(opponentMon,targetMon,move,spread,weather);
 
         for(double currentRoll:Constants.ROLLS){
-            if(Constants.DEBUG_DAMAGE_MODE){System.out.println();}
-            for (int EV = 0; EV <= 252; EV += 4){//ev goes up by 4 bc the stat only goes up every 4 evs
+            for (int EV = 0; EV <= 252; EV += 4){ //ev goes up by 4 bc the stat only goes up every 4 evs
+                if(Constants.DEBUG_DAMAGE_MODE){System.out.println("EV: "+EV);}
                 final int targetCalcedHPStat = calcHP(EV, targetMon.getInt(Constants.Stats.HP, Constants.Attributes.level), targetBaseHP);
 
                 if((damage*currentRoll)<targetCalcedHPStat){
-                    if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nyour defense stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp attack stat %d\nopp attack ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, targetDefStat,EV, targetCalcedHPStat, oppAttackStat, opponentMon.getInt(Constants.Stats.Attack, Constants.Attributes.EV),damage,currentRoll);}
+                    if(Constants.DEBUG_DAMAGE_MODE){System.out.printf("\n[RESULT FOUND!]\nyour baseHP stat: %d\nEV: %d\nyour calculated HP stat: %d\nopp attack ev: %d\ndamage: %d\nroll:%f\n--------------------------------------------\n[END].\n", targetBaseHP, EV, targetCalcedHPStat, opponentMon.getInt(Constants.Stats.Attack, Constants.Attributes.EV),damage,currentRoll);}
                     EVRolls[index] = EV;
                     break;
                 }
